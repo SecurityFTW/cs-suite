@@ -12,7 +12,7 @@
   printf "\n\n"
   aws_region=`aws configure get region`
   printf "${BOLD}############\n"
-  printf "  AWS SSH\n"
+  printf "AWS SSH AUDIT\n"
   printf "############${NC}\n\n"
   # Check for SSH keys
   users=`aws iam list-users --query 'Users[].UserName' --output text`
