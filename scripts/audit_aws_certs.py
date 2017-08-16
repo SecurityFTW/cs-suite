@@ -4,7 +4,7 @@ from termcolor import colored
 import subprocess
 print "\n\n" 
 print "################"
-print "    CERTS       "
+print "  CERTS AUDIT   "
 print "################"
 epoch=int(time.time())
 certs = subprocess.check_output(['aws', 'iam', 'list-server-certificates', '--region', 'us-east-1', '--query', 'ServerCertificateMetadataList[].ServerCertificateName', '--output', 'text'])

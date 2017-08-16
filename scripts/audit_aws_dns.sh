@@ -13,7 +13,7 @@
   BOLD='\033[1m'
   printf "\n\n"
   printf "${BOLD}############\n"
-  printf "  Route53\n"
+  printf " Route53 AUDIT\n"
   printf "############${NC}\n\n" 
   for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 sa-east-1 ca-central-1 ap-southeast-1 ap-southeast-2 eu-central-1 us-east-1 us-east-2 us-west-1 us-west-2;do
       domains=`aws route53domains --region $aws_region list-domains --query 'Domains[].DomainName' --output text 2> /dev/null`

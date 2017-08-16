@@ -5,7 +5,7 @@ GREEN='\033[0;32m'
 BOLD='\033[1m'
 printf "\n\n"
 printf "${BOLD}############\n"
-printf " Cloudfront\n"
+printf " Cloudfront AUDIT\n"
 printf "############${NC}\n\n"
 aws configure set preview.cloudfront true
 cdns=`aws cloudfront list-distributions  --query 'DistributionList.Items[].Id' --output text` 
