@@ -1,0 +1,3 @@
+python-dateutil>=2.2
+netaddr>=0.7.11
+opinel>=3.0.13,<4.0.0
