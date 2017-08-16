@@ -1,6 +1,6 @@
 # CS_Suite
 # Installation # 
-Clone this repo
+Clone cs-suite repo
 
 cd ./cs-suite
 
