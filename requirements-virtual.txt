@@ -1,4 +1,5 @@
 ansi2html==1.2.0
+awscli==1.11.135
 boto3==1.4.6
 botocore==1.6.2
 certifi==2017.7.27.1
@@ -18,5 +19,6 @@ PyYAML==3.12
 requests==2.18.4
 rsa==3.4.2
 s3transfer==0.1.10
+six==1.10.0
 termcolor==1.1.0
 urllib3==1.22
