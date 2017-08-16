@@ -1,5 +1,10 @@
 # cs-suite
 
+# Pre-requisites
+	Python 2.7
+	pip
+	sshpass
+	
 # Installation #
 	git clone https://github.com/SecurityFTW/cs-suite.git
 	cd cs-suite/
