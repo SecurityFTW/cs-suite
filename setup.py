@@ -10,8 +10,6 @@ def main():
         subprocess.call(['python', 'setup.py', 'install'], cwd='tools/Scout2')
         print ("Installing other requirements")
         subprocess.call(['sudo', 'pip', 'install', '-r', './scripts/requirements.txt'])
-        print ("Setting up aws-security-test")
-        subprocess.call(['python', 'setup.py', 'install'], cwd='tools/aws-security-test')
         print ("Installing AWS CLI") # WINDOWS HAS NO SUDO 
         subprocess.call(['sudo', 'pip', 'install', 'awscli', '--ignore-installed', 'six'])
         print ("Please enter your AWS credetionals")
