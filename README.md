@@ -1,5 +1,5 @@
-# CS_Suite
-# Installation # 
+# cs-suite
+# Installation #
 Clone cs-suite repo
 
 cd ./cs-suite
