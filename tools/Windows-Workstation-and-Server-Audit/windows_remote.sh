@@ -20,6 +20,7 @@ if [ "$#" -eq 4 ];then
          printf "${GREEN}Cleaning up files${NC}\n"
          clean=`ssh Administrator@$2 "rm -rf /tmp/WIN-*"`
          printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+         open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
       else
          printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
       fi
@@ -42,6 +43,7 @@ elif [[ -z "$6" && -z "$7" ]];then
          printf "${GREEN}Cleaning up files${NC}\n"
          clean=`ssh $5@$2 "rm -rf ~/WIN-*"`
          printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+         open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
       else
          printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
       fi
@@ -64,6 +66,7 @@ elif [[ -z "$5" && -z "$7" ]];then
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`ssh -i $6  Administrator@$2 "rm -rf /tmp/WIN-*"`
            printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
         else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"        
         fi
@@ -86,6 +89,7 @@ elif [[ -z "$5" && -z "$6" ]];then
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh Administrator@$2 "rm -rf /tmp/WIN-*"`
            printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
         else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
         fi
@@ -108,6 +112,7 @@ elif [ -z "$6" ];then
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh $5@$2 "rm -rf ~/WIN-*"`
            printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
         else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
         fi
@@ -129,6 +134,7 @@ elif [ -z "$7" ];then
           printf "${GREEN}Cleaning up files${NC}\n"
           clean=`ssh -i $6 $5@$2 "rm -rf ~/WIN-*"`
           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+          open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
       else
        printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
       fi
@@ -151,6 +157,7 @@ elif [ -z "$5" ];then
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh -i $6 Administrator@$2 "rm -rf /tmp/WIN-*"`
            printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user Administrator... try using help 'python cs.py -h'${NC}\n"
        fi
@@ -173,6 +180,7 @@ else
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh -i $6 $5@$2 "rm -rf ~/WIN-*"`
            printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../..reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user $5... try using help 'python cs.py -h'${NC}\n"
        fi
