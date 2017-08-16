@@ -23,54 +23,54 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
     # Check if version upgrades are enabled
     check=`aws redshift describe-clusters --region $aws_region --cluster-identifier $db --query 'Clusters[].AllowVersionUpgrade' |grep true`
     if [ ! "$check" ]; then
-       printf "${RED}Redshift instance $db does not have version upgrades enabled${NC}"
+       printf "${RED}Redshift instance $db does not have version upgrades enabled${NC}\n"
     else
-       printf "${GREEN}Redshift instance $db has version upgrades enabled${NC}"
+       printf "${GREEN}Redshift instance $db has version upgrades enabled${NC}\n"
     fi
     # Check if audit logging is enabled
     check=`aws redshift describe-logging-status --region $aws_region --cluster-identifier $db |grep true`
     if [ ! "$check" ]; then
-      printf "${RED}Redshift instance $db does not have logging enabled${NC}"
+      printf "${RED}Redshift instance $db does not have logging enabled${NC}\n"
     else
-      printf "${GREEN}Redshift instance $db has logging enabled${NC}"
+      printf "${GREEN}Redshift instance $db has logging enabled${NC}\n"
     fi
     # Check if encryption is enabled
     check=`aws redshift describe-logging-status --region $aws_region --cluster-identifier $db --query 'Clusters[].Encrypted' |grep true`
     if [ ! "$check" ]; then
-      printf "${RED}Redshift instance $db does not have encryption enabled${NC}"
+      printf "${RED}Redshift instance $db does not have encryption enabled${NC}\n"
     else
-      printf "${GREEN}Redshift instance $db has encryption enabled${NC}"
+      printf "${GREEN}Redshift instance $db has encryption enabled${NC}\n"
     fi
     # Check if KMS keys are being used
     check=`aws redshift describe-logging-status --region $aws_region --cluster-identifier $db --query 'Clusters[].[Encrypted,KmsKeyId]' |grep true`
     if [ ! "$check" ]; then
-      printf "${RED}Redshift instance $db is not using KMS keys${NC}"
+      printf "${RED}Redshift instance $db is not using KMS keys${NC}\n"
     else
-      printf "${GREEN}Redshift instance $db is using KMS keys${NC}"
+      printf "${GREEN}Redshift instance $db is using KMS keys${NC}\n"
     fi
     # Check if EC2-VPC platform is being used rather than EC2-Classic
     check=`aws redshift describe-logging-status --region $aws_region --cluster-identifier $db --query 'Clusters[].VpcId' --output text`
     if [ ! "$check" ]; then
-      printf "${RED}Redshift instance $db may be using the EC2-Classic platform${NC}"
+      printf "${RED}Redshift instance $db may be using the EC2-Classic platform${NC}\n"
     else
-      printf "${GREEN}Redshift instance $db is using the EC2-VPC platform${NC}"
+      printf "${GREEN}Redshift instance $db is using the EC2-VPC platform${NC}\n"
     fi
     # Check that parameter groups require SSL
     groups=`aws redshift describe-logging-status --region $aws_region --cluster-identifier $db --query 'Clusters[].ClusterParameterGroups[].ParameterGroupName[]' --output text`
     for group in $groups; do
       check=`aws redshift describe-cluster-parameters --region $aws_region --parameter-group-name $group --query 'Parameters[].Description' |grep -i ssl`
       if [ ! "$check" ]; then
-        printf "${RED}Redshift instance $db parameter group $group is not using SSL${NC}"
+        printf "${RED}Redshift instance $db parameter group $group is not using SSL${NC}\n"
       else
-        printf "${GREEN}Redshift instance $db parameter group $group is using SSL${NC}"
+        printf "${GREEN}Redshift instance $db parameter group $group is using SSL${NC}\n"
       fi
     done
     # Check if Redshift is publicly available
     check=`aws redshift describe-logging-status --region $aws_region --cluster-identifier $db --query 'Clusters[].PubliclyAccessible' |grep true`
     if [ "$check" ]; then
-      printf "${RED}Redshift instance $db is publicly available${NC}"
+      printf "${RED}Redshift instance $db is publicly available${NC}\n"
     else
-      printf "${GREEN}Redshift instance $db is not publicly available${NC}"
+      printf "${GREEN}Redshift instance $db is not publicly available${NC}\n"
     fi
   done
 done
