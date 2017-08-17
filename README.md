@@ -3,6 +3,7 @@
 # Pre-requisites
 	Python 2.7
 	pip
+	git
 	
 # Installation #
 	git clone https://github.com/SecurityFTW/cs-suite.git
