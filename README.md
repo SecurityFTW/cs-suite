@@ -1,4 +1,4 @@
-# cs-suite
+# cs-suite (Cloud Security Suite)
 
 # Pre-requisites
 	Python 2.7
