@@ -8,7 +8,7 @@
 # Installation #
 	git clone https://github.com/SecurityFTW/cs-suite.git
 	cd cs-suite/
-	python setup.py
+	sudo python setup.py
 
 ### Virtual Environment installation
    (So you don't mess with the already installed python libraries)
