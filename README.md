@@ -9,7 +9,7 @@
 	git clone https://github.com/SecurityFTW/cs-suite.git
 	cd cs-suite/
 	sudo python setup.py
-Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the installation.
+Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the installation process.
 
 ### Virtual Environment installation
    (So you don't mess with the already installed python libraries)
