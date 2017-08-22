@@ -33,3 +33,5 @@ Once installation is done, the tool will ask you for the AWS keys and region. Th
 ## Thanks ##
 	Scout2 - https://github.com/nccgroup/Scout2
 	Prowler - https://github.com/Alfresco/prowler
+	Lynis - https://github.com/CISOfy/lynis
+	@alanrenouf - https://github.com/alanrenouf/Windows-Workstation-and-Server-Audit
