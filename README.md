@@ -30,7 +30,8 @@ Once installation is done, the tool will ask you for the AWS keys and region. Th
 ## Run ##
 	python cs.py
 
-
+## Documentation ##
+	https://securityftw.github.io/Docs/
 ## Thanks ##
 	Scout2 - https://github.com/nccgroup/Scout2
 	Prowler - https://github.com/Alfresco/prowler
