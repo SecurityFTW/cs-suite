@@ -38,3 +38,4 @@ Once installation is done, the tool will ask you for the AWS keys and region. Th
 	Prowler - https://github.com/Alfresco/prowler
 	Lynis - https://github.com/CISOfy/lynis
 	@alanrenouf - https://github.com/alanrenouf/Windows-Workstation-and-Server-Audit
+	Ranjeet Sengar - https://github.com/sengar23
