@@ -5,7 +5,7 @@ import subprocess
 print "\n\n" 
 print "################"
 print "  CERTS AUDIT   "
-print "################"
+print "################\n\n"
 epoch=int(time.time())
 certs = subprocess.check_output(['aws', 'iam', 'list-server-certificates', '--region', 'us-east-1', '--query', 'ServerCertificateMetadataList[].ServerCertificateName', '--output', 'text'])
 if  certs:
