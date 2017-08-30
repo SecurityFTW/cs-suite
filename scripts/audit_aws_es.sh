@@ -23,7 +23,7 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
     fi
     check=`aws es describe-elasticsearch-domain --domain-name $domain --query 'DomainStatus.AccessPolicies' --output text |grep "aws:SourceIp" |grep "[0-9]\."`
     if [ ! "$check" ]; then
-      printf "${RED}Elasticsearch domain $domain does not have and IP based access policy${NC}\n"
+      printf "${RED}Elasticsearch domain $domain does not have an IP based access policy${NC}\n"
     else
       printf "${GREEN}Elasticsearch doamin $domain has an IP based access policy${NC}\n"
     fi
