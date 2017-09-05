@@ -16,7 +16,7 @@ Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the
    
  - `pip install virtualenvironmentwrapper`
  - add it to the respective rc file of your shell (bashrc/zshrc) (for fish shell users check [virtualfish](https://github.com/adambrenecki/virtualfish))
- - `echo "source /usr/local/bin/virtualenvwrapper.sh" > ~/.bashrc`
+ - `echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc`
  - source the file 
     `source ~/.bashrc`
  - `cd cs-suite/` 
