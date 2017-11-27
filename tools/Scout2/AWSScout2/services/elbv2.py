@@ -3,9 +3,11 @@
 ELBv2-related classes and functions
 """
 
+from opinel.utils.aws import handle_truncated_response
 from opinel.utils.globals import manage_dictionary
 
-from AWSScout2.configs.regions import RegionalServiceConfig, RegionConfig
+from AWSScout2.configs.regions import RegionalServiceConfig, RegionConfig, api_clients
+from AWSScout2.configs.vpc import VPCConfig
 from AWSScout2.utils import ec2_classic, get_keys
 
 
@@ -21,38 +23,41 @@ class ELBv2RegionConfig(RegionConfig):
     :ivar vpcs:                         Dictionary of VPCs [id]
     """
 
-    def __init__(self):
-        self.vpcs = {}
-
-
-    def parse_elb(self, global_params, region, lb):
+    def parse_lb(self, global_params, region, lb):
         """
 
         :param global_params:
         :param region:
-        :param elb:
+        :param source:
         :return:
         """
-        elb = {}
-        elb['name'] = lb.pop('LoadBalancerName')
-        vpc_id = lb['VPCId'] if 'VPCId' in lb and lb['VPCId'] else ec2_classic
-        manage_dictionary(self.vpcs, vpc_id, ELBv2VPCConfig())
-        get_keys(lb, elb, ['DNSName', 'CreatedTime', 'AvailabilityZones', 'Subnets', 'Policies', 'Scheme'])
-        elb['security_groups'] = []
-        for sg in lb['SecurityGroups']:
-            elb['security_groups'].append({'GroupId': sg})
-        #manage_dictionary(elb, 'listeners', {})
-        #for l in lb['ListenerDescriptions']:
-        #    listener = l['Listener']
-        #    manage_dictionary(listener, 'policies', {})
-        #    for policy_name in l['PolicyNames']:
-        #        manage_dictionary(listener['policies'], policy_name, {})
-        #    elb['listeners'][l['Listener']['LoadBalancerPort']] = listener
-        #manage_dictionary(elb, 'instances', [])
-        #for i in lb['Instances']:
-        #    elb['instances'].append(i['InstanceId'])
-        self.vpcs[vpc_id].elbs[self.get_non_aws_id(elb['name'])] = elb
+        lb['arn'] = lb.pop('LoadBalancerArn')
+        lb['name'] = lb.pop('LoadBalancerName')
+        vpc_id = lb.pop('VpcId') if 'VpcId' in lb and lb['VpcId'] else ec2_classic
+        manage_dictionary(self.vpcs, vpc_id, VPCConfig(self.vpc_resource_types))
+        lb['security_groups'] = []
+        try:
+            for sg in lb['SecurityGroups']:
+                lb['security_groups'].append({'GroupId': sg})
+            lb.pop('SecurityGroups')
+        except Exception as e:
+            # Network load balancers do not have security groups
+            pass
+        lb['listeners'] = {}
+        # Get listeners
+        listeners = handle_truncated_response(api_clients[region].describe_listeners, {'LoadBalancerArn': lb['arn']}, ['Listeners'])['Listeners']
+        for listener in listeners:
+            listener.pop('ListenerArn')
+            listener.pop('LoadBalancerArn')
+            port = listener.pop('Port')
+            lb['listeners'][port] = listener
+        # Get attributes
+        lb['attributes'] = api_clients[region].describe_load_balancer_attributes(LoadBalancerArn = lb['arn'])['Attributes']
+        self.vpcs[vpc_id].lbs[self.get_non_aws_id(lb['name'])] = lb
 
+    def parse_ssl_policie(self, global_params, region, policy):
+        id = self.get_non_aws_id(policy['Name'])
+        self.ssl_policies[id] = policy
 
 
 ########################################
@@ -62,33 +67,8 @@ class ELBv2RegionConfig(RegionConfig):
 class ELBv2Config(RegionalServiceConfig):
     """
     ELBv2 configuration for all AWS regions
-
-    :cvar targets:                      Tuple with all ELBv2 resource names that may be fetched
-    :cvar config_class:                 Class to be used when initiating the service's configuration in a new region/VPC
     """
-    targets = (
-        ('elbs', 'LoadBalancers', 'describe_load_balancers', False),
-    )
     region_config_class = ELBv2RegionConfig
 
-    def finalize(self):
-        pass
-
-
-
-########################################
-# ELBv2VPCConfig
-########################################
-
-class ELBv2VPCConfig(object):
-    """
-    ELBv2 configuration for a single VPC
-
-    :ivar flow_logs:                    Dictionary of flow logs [id]
-    :ivar instances:                    Dictionary of instances [id]
-    """
-
-    def __init__(self, name = None):
-        self.name = name
-        self.elbs = {}
-
+    def __init__(self, service_metadata, thread_config = 4):
+        super(ELBv2Config, self).__init__(service_metadata, thread_config)

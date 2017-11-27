@@ -71,6 +71,11 @@ class RulesArgumentParser(SharedArgumentParser):
                                  dest='generator_dir',
                                  default=DEFAULT_REPORT_DIR,
                                  help='Path of the Scout2 rules generator.')
+        self.parser.add_argument('--no-browser',
+                                 dest='no_browser',
+                                 default=False,
+                                 action='store_true',
+                                 help='Do not automatically open the report in the browser.')
 
 
 
@@ -126,7 +131,6 @@ class Scout2ArgumentParser(SharedArgumentParser):
         super(Scout2ArgumentParser, self).__init__()
         self.add_argument('profile', default_args)
         self.add_argument('regions', default_args)
-        self.add_argument('partition-name', default_args)
         self.add_argument('vpc', default_args)
         self.add_argument('ip-ranges', default_args)
         self.add_argument('ip-ranges-name-key', default_args)
@@ -142,7 +146,7 @@ class Scout2ArgumentParser(SharedArgumentParser):
                                 dest='fetch_local',
                                 default=False,
                                 action='store_true',
-                                help='Use local data previously fetched and re-run the analyzis.')
+                                help='Use local data previously fetched and re-run the analysis.')
         self.parser.add_argument('--resume',
                                 dest='resume',
                                 default=False,
@@ -163,6 +167,11 @@ class Scout2ArgumentParser(SharedArgumentParser):
                                  default=False,
                                  action='store_true',
                                  help='Do not automatically open the report in the browser.')
+        self.parser.add_argument('--thread-config',
+                                 dest='thread_config',
+                                 type=int,
+                                 default=4,
+                                 help='Level of multi-threading wanted [1-5]; defaults to 4.')
 
     def parse_args(self):
         args = self.parser.parse_args()

@@ -3,6 +3,18 @@
 var loaded_config_array = new Array();
 
 //
+// Display the account ID -- use of the generic function + templates result in the div not being at the top of the page
+//
+var load_aws_account_id = function() {
+    var element = document.getElementById('aws_account_id');
+    var value = aws_info['aws_account_id'];
+    if (('organization' in aws_info) && (value in aws_info['organization'])) {
+        value += ' (' + aws_info['organization'][value]['Name'] + ')'
+    }
+    element.textContent = value;
+}
+
+//
 // Generic load JSON function
 //
 function load_aws_config_from_json(script_id, cols) {
@@ -44,6 +56,11 @@ function load_aws_config_from_json(script_id, cols) {
         return 1;
     }
 
+    // Default # of columns is 2
+    if ((cols === undefined) || (cols === null)) {
+        cols = 2;
+    }
+
     // Update the DOM
     hideAll();
     if (cols == 0) {
@@ -83,6 +100,10 @@ function process_template(id1, container_id, list) {
 function hideAll() {
     $("[id*='.list']").not("[id*='metadata.list']").not("[id*='filters.list']").hide();
     $("[id*='.details']").hide();
+    var element = document.getElementById('scout2_display_account_id_on_all_pages');
+    if ((element != undefined) && (element.checked == true)) {
+        showRow('aws_account_id');
+    }
 }
 
 
@@ -103,6 +124,12 @@ function hideRow(path) {
     path = path.replace(/.id./g, '\.[^.]+\.');
     $('div').filter(function(){ return this.id.match(path + '.list') }).hide();
     $('div').filter(function(){ return this.id.match(path + '.details') }).hide();
+}
+
+function hideRegion(path) {
+    $("[id='" + path + "']").hide();
+    path = path.replace('.list', '');
+    hideItems(path);
 }
 
 
@@ -156,6 +183,9 @@ function showFindings(path, resource_path) {
     items = get_value_at(path);
     level = get_value_at(path.replace('items', 'level'));
     resource_path_array = resource_path.split('.');
+    split_path = path.split('.');
+    finding_service = split_path[1];
+    finding_key = split_path[split_path.length - 2];
     for (item in items) {
         var id_array = items[item].split('.');
         var id = 'services.' + id_array.slice(0, resource_path_array.length).join('.');
@@ -166,6 +196,21 @@ function showFindings(path, resource_path) {
             $('[id="' + items[item] + '"]').addClass('finding-' + level);
         }
         $('[id="' + items[item] + '"]').removeClass('finding-hidden');
+        $('[id="' + items[item] +'"]').attr('data-finding-service', finding_service);
+        $('[id="' + items[item] +'"]').attr('data-finding-key', finding_key);
+        $('[id="' + items[item] + '"]').click(function(e) {
+            finding_id = e.target.id;
+            if (!(finding_service in exceptions)) {
+                exceptions[finding_service] = new Object();
+            }
+            if (!(finding_key in exceptions[finding_service])) {
+                exceptions[finding_service][finding_key] = new Array();
+            }
+            is_exception = confirm('Mark this item as an exception ?');
+            if (is_exception && (exceptions[finding_service][finding_key].indexOf(finding_id) == -1)) {
+                exceptions[finding_service][finding_key].push(finding_id);
+            }
+        });
     }
 }
 
@@ -390,6 +435,7 @@ function hidePopup() {
 // Set up dashboards and dropdown menus
 //
 function load_metadata() {
+    load_aws_account_id();
     load_aws_config_from_json('last_run', 1);
     load_aws_config_from_json('metadata', 0);
     load_aws_config_from_json('services.id.findings', 1);
@@ -398,6 +444,9 @@ function load_metadata() {
     show_main_dashboard();
     for (group in aws_info['metadata']) {
       for (service in aws_info['metadata'][group]) {
+        if (service == 'summaries') {
+            continue;
+        }
         for (section in aws_info['metadata'][group][service]) {
             for (resource_type in aws_info['metadata'][group][service][section]) {
                 add_templates(group, service, section, resource_type, aws_info['metadata'][group][service][section][resource_type]['path'], aws_info['metadata'][group][service][section][resource_type]['cols']);
@@ -428,6 +477,7 @@ function about() {
 //
 function show_main_dashboard() {
     hideAll();
+    showRowWithItems('aws_account_id');
     showRowWithItems('last_run');
     $('#section_title-h2').text('');
 }
@@ -450,9 +500,10 @@ function showAllResources(script_id) {
 // Make title from resource path
 //
 function makeTitle(resource_path) {
+    resource_path = resource_path.replace('service_groups.', '');
     service = getService(resource_path);
     resource = resource_path.split('.').pop();
-    resource = resource.replace('_', ' ').replace('<', '').replace('>',
+    resource = resource.replace(/_/g, ' ').replace('<', '').replace('>',
     '').replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace("Acl","ACL").replace("Findings", "Dashboard");
     return service + ' ' + resource;
 }
@@ -591,6 +642,9 @@ function lazy_loading(path) {
     var resource_type = resource_path_array[resource_path_array.length - 1];
     for (group in aws_info['metadata']) {
         if (service in aws_info['metadata'][group]) {
+            if (service == 'summaries') {
+                continue;
+            }
             if (resource_type in aws_info['metadata'][group][service]['resources']) {
                 var cols = aws_info['metadata'][group][service]['resources'][resource_type]['cols'];
             }
@@ -637,12 +691,14 @@ var make_title = function(title) {
         return title.toString();
     }
     title = title.toLowerCase();
-    if (['ec2', 'iam', 'rds', 'sns', 'ses', 'sqs', 'vpc'].indexOf(title) != -1) {
+    if (['ec2', 'efs', 'iam', 'rds', 'sns', 'ses', 'sqs', 'vpc'].indexOf(title) != -1) {
         return title.toUpperCase();
     } else if (title == 'cloudtrail') {
         return 'CloudTrail';
     } else if (title == 'cloudwatch') {
         return 'CloudWatch';
+    } else if (title == 'awslambda') {
+        return 'Lambda';
     } else {
         return (title.charAt(0).toUpperCase() + title.substr(1).toLowerCase()).replace('_', ' ');
     }
@@ -650,6 +706,9 @@ var make_title = function(title) {
 
 // Add one or
 var add_templates = function(group, service, section, resource_type, path, cols) {
+    if (cols == undefined) {
+        cols = 2;
+    }
     add_template(group, service, section, resource_type, path, 'details');
     if (cols > 1) {
         add_template(group, service, section, resource_type, path, 'list');
@@ -698,13 +757,15 @@ var add_summary_template = function(path) {
 }
 
 // Rules generator
-var filter_rules = function(service) {
+var filter_rules = function(group, service) {
     if (service == undefined) {
         $("[id*='rule-']").show();
     } else {
         $("[id*='rule-']").not("[id*='rule-" + service + "']").hide();
         $("[id*='rule-" + service + "']").show();
     }
+    var id = "groups." + group + ".list";
+    $("[id='" + id + "']").hide();
 }
 
 var generate_ruleset = function() {
@@ -732,15 +793,38 @@ var generate_ruleset = function() {
         }     
         ruleset['rules'].push(rule);
     }
-    console.log(ruleset)
-    
-    var uriContent = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ruleset, null, 4));
-    var dlAnchorElem = document.getElementById('downloadAnchorElem');
-    dlAnchorElem.setAttribute("href", uriContent);
-    dlAnchorElem.setAttribute("download", aws_info['name'] + '.json');
-    dlAnchorElem.click();
-
-    //var uriContent = "data:application/octet-stream;charset=utf-16le;base64,//5mAG8AbwAgAGIAYQByAAoA";
-    //newWindow = window.open(uriContent, 'custom-ruleset.json');
+    download_configuration(ruleset, aws_info['name'], '');
 }
 
+var download_configuration = function(configuration, name, prefix) {
+
+    var uriContent = "data:text/json;charset=utf-8," + encodeURIComponent(prefix + JSON.stringify(configuration, null, 4));
+    var dlAnchorElem = document.getElementById('downloadAnchorElem');
+    dlAnchorElem.setAttribute("href", uriContent);
+    dlAnchorElem.setAttribute("download", name + '.json');
+    dlAnchorElem.click();
+}
+
+var download_exceptions = function() {
+    var url = window.location.pathname;
+    var profile_name = url.substring(url.lastIndexOf('/')+1).replace('report-', '').replace('.html', '');
+    console.log(exceptions);
+    download_configuration(exceptions, 'exceptions-' + profile_name, 'exceptions = \n');
+}
+
+var show_element = function(element_id) {
+//    document.getElementById(element_id).style.display = 'block';
+    $('#' + element_id).show();
+}
+
+var hide_element = function(element_id) {
+//    var id = '#' + element_id;
+    $('#' + element_id).hide();
+//    document.getElementById(element_id).style.display = 'none';
+}
+
+var toggle_element = function(element_id) {
+//    var id = '#' + element_id;
+//    $(id).toggle();
+    $('#' + element_id).toggle();
+}

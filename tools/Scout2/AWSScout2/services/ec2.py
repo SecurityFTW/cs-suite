@@ -10,7 +10,8 @@ from opinel.utils.console import printException, printInfo
 from opinel.utils.fs import load_data
 from opinel.utils.globals import manage_dictionary
 
-from AWSScout2.configs.regions import RegionalServiceConfig, RegionConfig
+from AWSScout2.configs.regions import RegionalServiceConfig, RegionConfig, api_clients
+from AWSScout2.configs.vpc import VPCConfig
 from AWSScout2.utils import get_keys, ec2_classic
 
 
@@ -30,26 +31,7 @@ protocols_dict = load_data('protocols.json', 'protocols')
 class EC2RegionConfig(RegionConfig):
     """
     EC2 configuration for a single AWS region
-
-    :ivar vpcs:                         Dictionary of VPCs [id]
-    :ivar instances_count:              Number of instances in the region
-    :ivar parameter_groups:             Dictionary of parameter groups [id]
-    :ivar parameter_groups_count:       Number of parameter groups in the region
-    :ivar security_groups:              Dictionary of security groups [id]
-    :ivar security_groups_count:        Number of security groups in the region
     """
-
-    def __init__(self):
-        self.vpcs = {}
-        self.elastic_ips = {}
-        self.elastic_ips_count = 0
-        self.flow_logs_count = 0
-        self.instances_count = 0
-        self.network_acls_count = 0
-        self.security_groups_count = 0
-        self.subnets = {}               # This is a temporary artifact that is removed in the finalize() calls
-        self.subnets_count = 0
-
 
     def parse_elastic_ip(self, global_params, region, eip):
         """
@@ -73,16 +55,16 @@ class EC2RegionConfig(RegionConfig):
         for i in reservation['Instances']:
             instance = {}
             vpc_id = i['VpcId'] if 'VpcId' in i and i['VpcId'] else ec2_classic
-            manage_dictionary(self.vpcs, vpc_id, EC2VPCConfig())
+            manage_dictionary(self.vpcs, vpc_id, VPCConfig(self.vpc_resource_types))
             instance['reservation_id'] = reservation['ReservationId']
             instance['id'] = i['InstanceId']
             get_name(i, instance, 'InstanceId')
-            get_keys(i, instance, ['KeyName', 'LaunchTime', 'InstanceType', 'State', 'IamInstanceProfile'])
+            get_keys(i, instance, ['KeyName', 'LaunchTime', 'InstanceType', 'State', 'IamInstanceProfile', 'SubnetId'])
             # Network interfaces & security groups
             manage_dictionary(instance, 'network_interfaces', {})
             for eni in i['NetworkInterfaces']:
                 nic = {}
-                get_keys(eni, nic, ['Association', 'Groups', 'PrivateIpAddresses'])
+                get_keys(eni, nic, ['Association', 'Groups', 'PrivateIpAddresses', 'SubnetId'])
                 instance['network_interfaces'][eni['NetworkInterfaceId']] = nic
             self.vpcs[vpc_id].instances[i['InstanceId']] = instance
 
@@ -96,7 +78,7 @@ class EC2RegionConfig(RegionConfig):
         :param security)_group:         Security group
         """
         vpc_id = group['VpcId'] if 'VpcId' in group and group['VpcId'] else ec2_classic
-        manage_dictionary(self.vpcs, vpc_id, EC2VPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, VPCConfig(self.vpc_resource_types))
         security_group = {}
         security_group['name'] = group['GroupName']
         security_group['id'] = group['GroupId']
@@ -146,6 +128,34 @@ class EC2RegionConfig(RegionConfig):
         return protocols, rules_count
 
 
+    def parse_snapshot(self, global_params, region, snapshot):
+        """
+
+        :param global_params:           Parameters shared for all regions
+        :param region:                  Name of the AWS region
+        :param snapshot:                  Single snapshot
+        :return:
+        """
+        snapshot['id'] = snapshot.pop('SnapshotId')
+        snapshot['name'] = get_name(snapshot, snapshot, 'id')
+        self.snapshots[snapshot['id']] = snapshot
+        # Get snapshot attribute
+        snapshot['createVolumPermission'] = api_clients[region].describe_snapshot_attribute(Attribute = 'createVolumePermission', SnapshotId = snapshot['id'])['CreateVolumePermissions']
+
+
+    def parse_volume(self, global_params, region, volume):
+        """
+
+        :param global_params:           Parameters shared for all regions
+        :param region:                  Name of the AWS region
+        :param volume:                  Single EBS volume
+        :return:
+        """
+        volume['id'] = volume.pop('VolumeId')
+        volume['name'] = get_name(volume, volume, 'id')
+        self.volumes[volume['id']] = volume
+
+
 
 ########################################
 # EC2Config
@@ -154,38 +164,12 @@ class EC2RegionConfig(RegionConfig):
 class EC2Config(RegionalServiceConfig):
     """
     EC2 configuration for all AWS regions
-
-    :cvar targets:                      Tuple with all EC2 resource names that may be fetched
-    :cvar config_class:                 Class to be used when initiating the service's configuration in a new region/VPC
     """
-    targets = (
-        ('security_groups', 'SecurityGroups', 'describe_security_groups', False),
-        ('instances', 'Reservations', 'describe_instances', False)
-    )
+
     region_config_class = EC2RegionConfig
 
-
-
-########################################
-# EC2VPCConfig
-########################################
-
-class EC2VPCConfig(object):
-    """
-    EC2 configuration for a single VPC
-
-    :ivar flow_logs:                    Dictionary of flow logs [id]
-    :ivar instances:                    Dictionary of instances [id]
-    """
-
-    def __init__(self, name = None):
-        self.name = name
-        self.flow_logs = {}
-        self.instances = {}
-        self.network_acls = {}
-        self.route_tables = {}
-        self.security_groups = {}
-        self.subnets = {}
+    def __init__(self, service_metadata, thread_config = 4):
+        super(EC2Config, self).__init__(service_metadata, thread_config)
 
 
 

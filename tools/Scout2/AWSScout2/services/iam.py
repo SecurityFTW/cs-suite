@@ -39,7 +39,7 @@ class IAMConfig(BaseConfig):
         # TODO: KMS ?
     )
 
-    def __init__(self):
+    def __init__(self, target_config):
         self.credential_report = {}
         self.groups = {}
         self.password_policy = {}
@@ -47,7 +47,7 @@ class IAMConfig(BaseConfig):
         self.policies = {}
         self.roles = {}
         self.users = {}
-        super(IAMConfig, self).__init__()
+        super(IAMConfig, self).__init__(target_config)
 
 
 
@@ -77,7 +77,7 @@ class IAMConfig(BaseConfig):
         """
         iam_report = {}
         try:
-            api_client = connect_service('iam', credentials)
+            api_client = connect_service('iam', credentials, silent = True)
             response = api_client.generate_credential_report()
             if response['State'] != 'COMPLETE':
                 if not ignore_exception:
@@ -169,7 +169,7 @@ class IAMConfig(BaseConfig):
         self.fetchstatuslogger.counts['password_policy']['discovered'] = 0
         self.fetchstatuslogger.counts['password_policy']['fetched'] = 0
         try:
-            api_client = connect_service('iam', credentials)
+            api_client = connect_service('iam', credentials, silent = True)
             self.password_policy = api_client.get_account_password_policy()['PasswordPolicy']
             if 'PasswordReusePrevention' not in self.password_policy:
                 self.password_policy['PasswordReusePrevention'] = False
@@ -320,8 +320,11 @@ class IAMConfig(BaseConfig):
         try:
             policy_names = list_policy_method(**args)['PolicyNames']
         except Exception as e:
-            printException(e)
-            return fetched_policies
+            if is_throttled(e):
+                raise e
+            else:
+                printException(e)
+                return fetched_policies
         try:
             for policy_name in policy_names:
                 args['PolicyName'] = policy_name
@@ -332,7 +335,10 @@ class IAMConfig(BaseConfig):
                 fetched_policies[policy_id]['name'] = policy_name
                 self.__parse_permissions(policy_id, policy_document, 'inline_policies', iam_resource_type + 's', resource_id)
         except Exception as e:
-            printException(e)
+            if is_throttled(e):
+                raise e
+            else:
+                printException(e)
         return fetched_policies
 
 

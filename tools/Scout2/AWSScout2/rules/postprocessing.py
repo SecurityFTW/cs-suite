@@ -26,20 +26,25 @@ def update_last_run(aws_config, current_time, ruleset):
     last_run['cmd'] = ' '.join(sys.argv)
     last_run['version'] = scout2_version
     last_run['ruleset_name'] = ruleset.name
-    last_run['ruleset_about'] = ruleset.ruleset['about'] if 'about' in ruleset.ruleset else ''
+    last_run['ruleset_about'] = ruleset.about
     last_run['summary'] = {}
     for service in aws_config['services']:
-        last_run['summary'][service] = {'checked_items': 0, 'flagged_items': 0, 'max_level': 'warning', 'rules_count': 0}
+        last_run['summary'][service] = {'checked_items': 0, 'flagged_items': 0, 'max_level': 'warning', 'rules_count': 0, 'resources_count': 0}
         if aws_config['services'][service] == None:
             # Not supported yet
             continue
         elif 'findings' in aws_config['services'][service]:
-            for finding in aws_config['services'][service]['findings']:
+            for finding in aws_config['services'][service]['findings'].values():
                 last_run['summary'][service]['rules_count'] += 1
-                last_run['summary'][service]['checked_items'] += aws_config['services'][service]['findings'][finding]['checked_items']
-                last_run['summary'][service]['flagged_items'] += aws_config['services'][service]['findings'][finding]['flagged_items']
-                if last_run['summary'][service]['max_level'] != 'danger':
-                    last_run['summary'][service]['max_level'] = aws_config['services'][service]['findings'][finding]['level']
+                last_run['summary'][service]['checked_items'] += finding['checked_items']
+                last_run['summary'][service]['flagged_items'] += finding['flagged_items']
+                items = finding.get('items', [])
+                if last_run['summary'][service]['max_level'] != 'danger' and len(items) > 0:
+                    last_run['summary'][service]['max_level'] = finding['level']
+        # Total number of resources
+        for key in aws_config['services'][service]:
+            if key != 'regions_count' and key.endswith('_count'):
+                last_run['summary'][service]['resources_count'] += aws_config['services'][service][key]
     aws_config['last_run'] = last_run
 
 
@@ -48,6 +53,8 @@ def update_metadata(aws_config):
         for service_group in aws_config['metadata']:
             for service in aws_config['metadata'][service_group]:
                 if service not in aws_config['service_list']:
+                    continue
+                if 'hidden' in aws_config['metadata'][service_group][service] and aws_config['metadata'][service_group][service]['hidden'] == True:
                     continue
                 if 'resources' not in aws_config['metadata'][service_group][service]:
                     continue

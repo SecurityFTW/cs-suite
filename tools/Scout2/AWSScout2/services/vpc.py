@@ -9,6 +9,7 @@ from opinel.utils.fs import load_data, read_ip_ranges
 
 from AWSScout2.utils import ec2_classic, get_keys
 from AWSScout2.configs.regions import RegionalServiceConfig, RegionConfig
+from AWSScout2.configs.vpc import VPCConfig as SingleVPCConfig
 
 
 
@@ -27,18 +28,11 @@ protocols_dict = load_data('protocols.json', 'protocols')
 class VPCRegionConfig(RegionConfig):
     """
     VPC configuration for a single AWS region
-
-    :ivar subnets:                       Dictionary of subnets [name]
-    :ivar subnets_count:                 Number of subnets in the region
     """
 
-    def __init__(self):
-        self.flow_logs = {}
-        self.flow_logs_count = 0
-        self.network_acls_count = 0
-        self.vpcs = {}
-        # Gateways etc... (vpn, internet, nat, ...)
-
+    def parse_customer_gateway(self, global_params, region, cgw):
+        cgw['id'] = cgw.pop('CustomerGatewayId')
+        self.customer_gateways[cgw['id']] = cgw
 
     def parse_flow_log(self, global_params, region, fl):
         """
@@ -69,7 +63,7 @@ class VPCRegionConfig(RegionConfig):
         network_acl['rules']['egress'] = self.__parse_network_acl_entries(network_acl['Entries'], True)
         network_acl.pop('Entries')
         # Save
-        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig(self.vpc_resource_types))
         self.vpcs[vpc_id].network_acls[network_acl['id']] = network_acl
 
 
@@ -80,7 +74,7 @@ class VPCRegionConfig(RegionConfig):
         :param egress:
         :return:
         """
-        acl_list = []
+        acl_dict = {}
         for entry in entries:
             if entry['Egress'] == egress:
                 acl = {}
@@ -94,8 +88,8 @@ class VPCRegionConfig(RegionConfig):
                 else:
                     acl['port_range'] = '1-65535'
 
-                acl_list.append(acl)
-        return acl_list
+                acl_dict[acl.pop('RuleNumber')] = acl
+        return acl_dict
 
 
     def parse_route_table(self, global_params, region, rt):
@@ -104,7 +98,7 @@ class VPCRegionConfig(RegionConfig):
         get_name(rt, route_table, 'VpcId') # TODO: change get_name to have src then dst
         get_keys(rt, route_table, ['Routes', 'Associations', 'PropagatingVgws'])
         # Save
-        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig(self.vpc_resource_types))
         self.vpcs[vpc_id].route_tables[rt['RouteTableId']] = route_table
 
 
@@ -117,12 +111,12 @@ class VPCRegionConfig(RegionConfig):
         :return:
         """
         vpc_id = subnet['VpcId']
-        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig(self.vpc_resource_types))
         subnet_id = subnet['SubnetId']
         get_name(subnet, subnet, 'SubnetId')
         subnet['flow_logs'] = []
         # Save
-        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig(self.vpc_resource_types))
         self.vpcs[vpc_id].subnets[subnet_id] = subnet
 
 
@@ -136,8 +130,18 @@ class VPCRegionConfig(RegionConfig):
         """
         vpc_id = vpc['VpcId']
         # Save
-        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, SingleVPCConfig(self.vpc_resource_types))
         self.vpcs[vpc_id].name = get_name(vpc, {}, 'VpcId')
+
+
+    def parse_vpn_connection(self, global_params, region_name, vpnc):
+        vpnc['id'] = vpnc.pop('VpnConnectionId')
+        self.vpn_connections[vpnc['id']] = vpnc
+
+
+    def parse_vpn_gateway(self, global_params, region_name, vpng):
+        vpng['id'] = vpng.pop('VpnGatewayId')
+        self.vpn_gateways[vpng['id']] = vpng
 
 
 
@@ -148,54 +152,12 @@ class VPCRegionConfig(RegionConfig):
 class VPCConfig(RegionalServiceConfig):
     """
     VPC configuration for all AWS regions
-
-    :cvar targets:                      Tuple with all VPC resource names that may be fetched
-    :cvar region_config_class:          Class to be used when initiating the service's configuration in a new region
     """
-    targets = (
-        ('vpcs', 'Vpcs', 'describe_vpcs', False),
-        ('flow_logs', 'FlowLogs', 'describe_flow_logs', False),
-        ('network_acls', 'NetworkAcls', 'describe_network_acls', False),
-        ('route_tables', 'RouteTables', 'describe_route_tables', False),
-        ('subnets', 'Subnets', 'describe_subnets', False)
-    )
+
     region_config_class = VPCRegionConfig
 
-
-
-########################################
-# SingleVPCConfig
-########################################
-
-class SingleVPCConfig(object):
-    """
-    Configuration for a single VPC
-
-    :ivar flow_logs:                    Dictionary of flow logs [id]
-    :ivar instances:                    Dictionary of instances [id]
-    """
-
-    def __init__(self, name = None):
-        self.name = name
-        self.network_acls = {}
-        self.route_tables = {}
-        self.subnets = {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def __init__(self, service_metadata, thread_config):
+        super(VPCConfig, self).__init__(service_metadata, thread_config)
 
 
 

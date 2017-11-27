@@ -211,6 +211,14 @@ Handlebars.registerHelper('ifShow', function(v1, v2, options) {
   }
 });
 
+Handlebars.registerHelper('ifType', function(v1, v2, options) {
+    if(typeof v1 == v2) {
+        return options.fn(v1);
+    } else {
+        return options.inverse(v1);
+    }
+});
+
 Handlebars.registerHelper('fixBucketName', function(bucket_name) {
     if (bucket_name != undefined) {
         return bucket_name.replace(/\./g, '-');
@@ -323,10 +331,6 @@ Handlebars.registerHelper('other_level', function() {
     }
 });
 
-Handlebars.registerHelper('get_service', function() {
-    return getService(arguments[0]);
-});
-
 // http://funkjedi.com/technology/412-every-nth-item-in-handlebars, slightly tweaked to work with a dictionary
 Handlebars.registerHelper('grouped_each', function(every, context, options) {
     var out = "", subcontext = [], i;
@@ -359,3 +363,29 @@ Handlebars.registerHelper('escape_dots', function() {
     return arguments[0].replace(/\./g, '\\.');
 });
 
+
+/*********************/
+/* Ruleset generator */
+/*********************/
+
+Handlebars.registerHelper('get_rule', function(rule_filename, attribute) {
+    if (attribute == 'service') {
+        return rule_filename.split('-')[0];
+    } else {
+        rule = aws_info['rule_definitions'][rule_filename];
+        if (attribute == '') {
+            return rule;
+        } else {
+            return rule[attribute];
+        }
+    }
+});
+
+Handlebars.registerHelper('get_arg_name', function(rule_filename, arg_index) {
+    if ('arg_names' in aws_info['rule_definitions'][rule_filename]) {
+        return  aws_info['rule_definitions'][rule_filename]['arg_names'][arg_index];
+    } else {
+        console.log('Error, arg_names is not declared in ' + rule_filename);
+        return '';
+    }
+});

@@ -3,29 +3,30 @@
 Exceptions handling
 """
 
+import json
 
+from opinel.utils.console import printDebug
 
-def process_exceptions(aws_config, exceptions_filename = None):
-    """
-    DDDD
+from AWSScout2 import EXCEPTIONS
+from AWSScout2.output.js import JavaScriptReaderWriter
 
-    :param aws_config:
-    :param exceptions_filename:
-    :return:
-    """
+class RuleExceptions(object):
 
-    # Load exceptions
-    if not exceptions_filename:
-        return
-    with open(exceptions_filename, 'rt') as f:
-        exceptions = json.load(f)
+    def __init__(self, profile, file_path = None, foobar = None): 
+        self.profile = profile
+        self.file_path = file_path
+        self.jsrw = JavaScriptReaderWriter(self.profile)
+        self.exceptions = self.jsrw.load_from_file(config_type = EXCEPTIONS, config_path = self.file_path, first_line = True)
 
-    # Process exceptions
-        for service in exceptions['services']:
-            for rule in exceptions['services'][service]['exceptions']:
+    def process(self, aws_config):
+        for service in self.exceptions:
+            for rule in self.exceptions[service]:
                 filtered_items = []
-                for item in aws_config['services'][service]['violations'][rule]['items']:
-                    if item not in exceptions['services'][service]['exceptions'][rule]:
+                if rule not in aws_config['services'][service]['findings']:
+                    printDebug('Warning:: key error should not be happening')
+                    continue
+                for item in aws_config['services'][service]['findings'][rule]['items']:
+                    if item not in self.exceptions[service][rule]:
                         filtered_items.append(item)
-                aws_config['services'][service]['violations'][rule]['items'] = filtered_items
-                aws_config['services'][service]['violations'][rule]['flagged_items'] = len(aws_config['services'][service]['violations'][rule]['items'])
+                aws_config['services'][service]['findings'][rule]['items'] = filtered_items
+                aws_config['services'][service]['findings'][rule]['flagged_items'] = len(aws_config['services'][service]['findings'][rule]['items'])

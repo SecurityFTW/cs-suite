@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from opinel.utils.aws import handle_truncated_response
+from opinel.utils.console import printError, printException
 from opinel.utils.globals import manage_dictionary
 
 from AWSScout2.configs.regions import RegionalServiceConfig, RegionConfig, api_clients
+from AWSScout2.configs.vpc import VPCConfig
 from AWSScout2.utils import ec2_classic
 
 
@@ -15,21 +17,7 @@ from AWSScout2.utils import ec2_classic
 class RDSRegionConfig(RegionConfig):
     """
     RDS configuration for a single AWS region
-
-    :ivar vpcs:                         Dictionary of VPCs [id]
-    :ivar instances_count:              Number of instances in the region
-    :ivar parameter_groups:             Dictionary of parameter groups [id]
-    :ivar parameter_groups_count:       Number of parameter groups in the region
-    :ivar security_groups_count:        Number of security groups in the region
     """
-
-    def __init__(self):
-        self.vpcs = {}
-        self.instances_count = 0
-        self.parameter_groups = {}
-        self.parameter_groups_count = 0
-        self.security_groups_count = 0
-
 
     def parse_instance(self, global_params, region, dbi):
         """
@@ -54,7 +42,7 @@ class RDSRegionConfig(RegionConfig):
             cluster = api_client.describe_db_clusters(DBClusterIdentifier = dbi['DBClusterIdentifier'])['DBClusters'][0]
             instance['MultiAZ'] = cluster['MultiAZ']
         # Save
-        manage_dictionary(self.vpcs, vpc_id,RDSVPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, VPCConfig(self.vpc_resource_types))
         self.vpcs[vpc_id].instances[instance['name']] = instance
 
 
@@ -81,7 +69,7 @@ class RDSRegionConfig(RegionConfig):
         attributes = api_client.describe_db_snapshot_attributes(DBSnapshotIdentifier = snapshot_id)['DBSnapshotAttributesResult']
         snapshot['attributes'] = attributes['DBSnapshotAttributes'] if 'DBSnapshotAttributes' in attributes else {}
         # Save
-        manage_dictionary(self.vpcs, vpc_id,RDSVPCConfig())
+        manage_dictionary(self.vpcs, vpc_id, VPCConfig(self.vpc_resource_types))
         self.vpcs[vpc_id].snapshots[snapshot_id] = snapshot
 
 
@@ -89,15 +77,21 @@ class RDSRegionConfig(RegionConfig):
         parameter_group['arn'] = parameter_group.pop('DBParameterGroupArn')
         parameter_group['name'] = parameter_group.pop('DBParameterGroupName')
         api_client = api_clients[region]
-        parameters = handle_truncated_response(api_client.describe_db_parameters, {'DBParameterGroupName': parameter_group['name']}, ['Parameters'])['Parameters']
-        for parameter in parameters:
-            param = {}
-            param['value'] = parameter['ParameterValue'] if 'ParameterValue' in parameter else None
-            param['source'] = parameter['Source']
+        try:
+            parameters = handle_truncated_response(api_client.describe_db_parameters, {'DBParameterGroupName': parameter_group['name']}, ['Parameters'])['Parameters']
             manage_dictionary(parameter_group, 'parameters', {})
-            parameter_group['parameters'][parameter['ParameterName']] = param
+            for parameter in parameters:
+                if not parameter['IsModifiable']:
+                    # Discard non-modifiable parameters
+                    continue
+                parameter_name = parameter.pop('ParameterName')
+                parameter_group['parameters'][parameter_name] = parameter
+        except Exception as e:
+            printException(e)
+            printError('Failed fetching DB parameters for %s' % parameter_group['name'])
         # Save
-        (self).parameter_groups[parameter_group['name']] = parameter_group
+        parameter_group_id = self.get_non_aws_id(parameter_group['name'])
+        (self).parameter_groups[parameter_group_id] = parameter_group
 
 
     def parse_security_group(self, global_params, region, security_group):
@@ -108,13 +102,14 @@ class RDSRegionConfig(RegionConfig):
         :param region:                  Name of the AWS region
         :param security)_group:         Security group
         """
-        vpc_id = security_group.pop('VpcId') if 'VpcId' in security_group else ec2_classic
-        manage_dictionary(self.vpcs, vpc_id, RDSVPCConfig())
+        #vpc_id = security_group.pop('VpcId') if 'VpcId' in security_group else ec2_classic
+        #manage_dictionary(self.vpcs, vpc_id, VPCConfig(self.vpc_resource_types))
         security_group['arn'] = security_group.pop('DBSecurityGroupArn')
         security_group['name'] = security_group.pop('DBSecurityGroupName')
         # Save
-        manage_dictionary(self.vpcs, vpc_id,RDSVPCConfig())
-        self.vpcs[vpc_id].security_groups['name'] = security_group
+        #manage_dictionary(self.vpcs, vpc_id, VPCConfig(self.vpc_resource_types))
+        #self.vpcs[vpc_id].security_groups[security_group['name']] = security_group
+        self.security_groups[security_group['name']] = security_group
 
 
 
@@ -125,38 +120,12 @@ class RDSRegionConfig(RegionConfig):
 class RDSConfig(RegionalServiceConfig):
     """
     RDS configuration for all AWS regions
-
-    :cvar targets:                      Tuple with all RDS resource names that may be fetched
-    :cvar config_class:                 Class to be used when initiating the service's configuration in a new region/VPC
     """
-    targets = (
-        ('instances', 'DBInstances', 'describe_db_instances', False),
-        ('snapshots', 'DBSnapshots', 'describe_db_snapshots', False),
-        ('parameter_groups', 'DBParameterGroups', 'describe_db_parameter_groups', False),
-        ('security_groups', 'DBSecurityGroups', 'describe_db_security_groups', True),
-        # TODO ('subnets', 'DBSubnetGroups', 'describe_db_subnet_group', False),
-    )
+
     region_config_class = RDSRegionConfig
 
-
-
-########################################
-# RDSVPCConfig
-########################################
-
-class RDSVPCConfig(object):
-    """
-    RDS configuration for a single VPC
-
-    :ivar instances:                     Dictionary of instances [id]
-    :ivar security_groups:              Dictionary of security groups [name]
-    """
-
-    def __init__(self):
-        self.instances = {}
-        self.security_groups = {}
-        self.snapshots = {}
-
+    def __init__(self, service_metadata, thread_config = 4):
+        super(RDSConfig, self).__init__(service_metadata, thread_config)
 
 
 def get_security_groups_info(rds_client, region_info):

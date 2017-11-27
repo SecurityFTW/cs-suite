@@ -28,17 +28,17 @@ class S3Config(BaseConfig):
         ('buckets', 'Buckets', 'list_buckets', {}, False),
     )
 
-    def __init__(self):
+    def __init__(self, thread_config):
         self.buckets = {}
         self.buckets_count = 0
-        super(S3Config, self).__init__()
+        super(S3Config, self).__init__(thread_config)
 
     def parse_buckets(self, bucket, params):
         """
         Parse a single S3 bucket TODO
         """
         bucket['name'] = bucket.pop('Name')
-        api_client = params['api_clients']['us-east-1']
+        api_client = params['api_clients'][get_s3_list_region(params['api_clients'].keys()[0])]
 
         bucket['CreationDate'] = str(bucket['CreationDate'])
         bucket['region'] = get_s3_bucket_location(api_client, bucket['name'])

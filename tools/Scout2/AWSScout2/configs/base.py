@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import copy
+
 from hashlib import sha1
 from threading import Event, Thread
 # Python2 vs Python3
@@ -11,6 +13,7 @@ except ImportError:
 from opinel.utils.aws import build_region_list, connect_service, handle_truncated_response
 from opinel.utils.console import printException, printInfo
 
+from AWSScout2.configs.threads import thread_configs
 from AWSScout2.output.console import FetchStatusLogger
 from AWSScout2.utils import format_service_name
 
@@ -42,13 +45,14 @@ class BaseConfig(GlobalConfig):
     FooBar
     """
     
-    def __init__(self):
+    def __init__(self, thread_config = 4):
         self.service = type(self).__name__.replace('Config', '').lower()  # TODO: use regex with EOS instead of plain replace
+        self.thread_config = thread_configs[thread_config]
 
 
     def fetch_all(self, credentials, regions = [], partition_name = 'aws', targets = None):
         """
-        Fetch all the SNS configuration supported by Scout2
+        Generic fetching function that iterates through all of the service's targets
 
         :param credentials:             F
         :param service:                 Name of the service
@@ -68,22 +72,22 @@ class BaseConfig(GlobalConfig):
         if self.service in [ 's3' ]: # S3 namespace is global but APIs aren't....
             api_clients = {}
             for region in build_region_list(self.service, regions, partition_name):
-                api_clients[region] = connect_service('s3', credentials, region)
+                api_clients[region] = connect_service('s3', credentials, region, silent = True)
             api_client = api_clients[list(api_clients.keys())[0]]
         elif self.service == 'route53domains':
-            api_client = connect_service(self.service, credentials, 'us-east-1') # TODO: use partition's default region
+            api_client = connect_service(self.service, credentials, 'us-east-1', silent = True) # TODO: use partition's default region
         else:
-            api_client = connect_service(self.service, credentials)
+            api_client = connect_service(self.service, credentials, silent = True)
         # Threading to fetch & parse resources (queue consumer)
         params = {'api_client': api_client}
         if self.service in ['s3']:
             params['api_clients'] = api_clients
-        q = self._init_threading(self.__fetch_target, params, 20)
+        q = self._init_threading(self.__fetch_target, params, self.thread_config['parse'])
         # Threading to list resources (queue feeder)
         params = {'api_client': api_client, 'q': q}
         if self.service in ['s3']:
             params['api_clients'] = api_clients
-        qt = self._init_threading(self.__fetch_service, params, 10)
+        qt = self._init_threading(self.__fetch_service, params, self.thread_config['list'])
         # Init display
         self.fetchstatuslogger = FetchStatusLogger(targets)
         # Go
@@ -153,12 +157,17 @@ class BaseConfig(GlobalConfig):
             while True:
                 try:
                     target_type, target = q.get()
+                    # Make a full copy of the target in case we need to re-queue it
+                    backup = copy.deepcopy(target)
                     method = getattr(self, 'parse_%s' % target_type)
                     method(target, params)
                     self.fetchstatuslogger.counts[target_type]['fetched'] += 1
                     self.fetchstatuslogger.show()
                 except Exception as e:
-                    printException(e)
+                    if hasattr(e, 'response') and 'Error' in e.response and e.response['Error']['Code'] in [ 'Throttling' ]:
+                        q.put((target_type, backup),)
+                    else:
+                        printException(e)
                 finally:
                     q.task_done()
         except Exception as e:

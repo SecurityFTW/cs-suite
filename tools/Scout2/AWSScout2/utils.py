@@ -15,11 +15,12 @@ formatted_service_name = {
     'cloudformation': 'CloudFormation',
     'cloudtrail': 'CloudTrail',
     'cloudwatch': 'CloudWatch',
+    'directconnect': 'Direct Connect',
+    'elasticache': 'ElastiCache',
     'lambda': 'Lambda',
     'redshift': 'RedShift',
     'route53': 'Route53',
-    'route53domains': 'Route53Domains',
-    'elasticache': 'ElastiCache'
+    'route53domains': 'Route53Domains'
 }
 
 
@@ -59,3 +60,13 @@ def no_camel(name):
     """
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+
+def is_throttled(e):
+    """
+    Determines whether the exception is due to API throttling.
+
+    :param e:                           Exception raised
+    :return:                            True if it's a throttling exception else False
+    """
+    return True if  (hasattr(e, 'response') and 'Error' in e.response and e.response['Error']['Code'] in [ 'Throttling', 'RequestLimitExceeded', 'ThrottlingException' ]) else False
