@@ -4,6 +4,7 @@
 	Python 2.7
 	pip
 	git
+	gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
 	
 # Installation #
 	git clone https://github.com/SecurityFTW/cs-suite.git
