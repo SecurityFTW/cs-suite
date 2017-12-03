@@ -2,7 +2,7 @@
 #
 # docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports cs-suite
 #
-FROM python:2.7
+FROM python:2.7-alpine
 LABEL MAINTAINER="Madhu Akula"
 
 COPY . /app
