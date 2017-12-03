@@ -6,9 +6,11 @@ FROM python:2.7-alpine
 LABEL MAINTAINER="Madhu Akula"
 
 COPY . /app
-RUN apk add --no-cache sshpass gcc bash \
-    && apk --update add grep \
-    && pip install -r /app/requirements.txt \
+
+WORKDIR /app
+
+RUN apk update && apk add --no-cache grep sshpass bash \
+    && pip install -r requirements.txt \
     && pip install awscli --ignore-installed six
 
 ENTRYPOINT ["python", "/app/cs.py"]
