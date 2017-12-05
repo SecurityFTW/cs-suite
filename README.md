@@ -80,6 +80,7 @@ python cs.py
 ## Thanks
 * Scout2 - https://github.com/nccgroup/Scout2
 * Prowler - https://github.com/Alfresco/prowler
+* Lunar - https://github.com/lateralblast/lunar
 * Lynis - https://github.com/CISOfy/lynis
 * @alanrenouf - https://github.com/alanrenouf/Windows-Workstation-and-Server-Audit
 * Ranjeet Sengar - https://github.com/sengar23
