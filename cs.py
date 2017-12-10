@@ -10,10 +10,26 @@ from IPy import IP
 from getpass import getpass
 import webbrowser
 
-account_details = {}
-account_details = subprocess.check_output(['aws', 'iam', 'list-account-aliases'])
-account_details = json.loads(str(account_details))
-account_name = account_details['AccountAliases'][0]
+
+def get_account_alias():
+    account_details = subprocess.check_output(['aws', 'iam', 'list-account-aliases'])
+    account_details = json.loads(str(account_details))
+    try:
+        return account_details['AccountAliases'][0]
+    except IndexError:
+        return None
+
+
+def get_account_id():
+    caller_identity = subprocess.check_output(['aws', 'sts', 'get-caller-identity'])
+    caller_identity = json.loads(str(caller_identity))
+    try:
+        return caller_identity['Account']
+    except IndexError:
+        return None
+
+
+account_name = get_account_alias() or get_account_id()
 timestmp = time.strftime("%Y%m%d-%H%M%S")
 
 
