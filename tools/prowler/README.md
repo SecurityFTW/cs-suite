@@ -1,17 +1,36 @@
 # Prowler: AWS CIS Benchmark Tool
 
+## Table of Contents  
+- [Description](#description)
+- [Features](#features)  
+- [Requirements](#requirements)  
+- [Usage](#usage)
+- [Fix](#fix)
+- [Screenshots](#screenshots)
+- [Troubleshooting](#troubleshooting)
+- [Extras](#extras)
+
 ## Description
 
-Tool based on AWS-CLI commands for AWS account hardening, following guidelines of the [CIS Amazon Web Services Foundations Benchmark 1.1 ](https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf)
+Tool based on AWS-CLI commands for AWS account security assessment and hardening, following guidelines of the [CIS Amazon Web Services Foundations Benchmark 1.1 ](https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf)
 
-It covers hardening and security best practices for all regions related to:
+## Features
+
+It covers hardening and security best practices for all AWS regions related to:
 
 - Identity and Access Management (24 checks)
 - Logging (8 checks)
 - Monitoring (15 checks)
 - Networking (5 checks)
+- Extra checks (5 checks) *see Extras section
 
 For a comprehesive list and resolution look at the guide on the link above.
+
+With Prowler you can:
+- get a colourish or monochrome report
+- a CSV format report for diff
+- run specific checks without having to run the entire report
+- check multiple AWS accounts in parallel
 
 ## Requirements
 This script has been written in bash using AWS-CLI and it works in Linux and OSX.
@@ -40,9 +59,9 @@ arn:aws:iam::aws:policy/SecurityAudit
 ```
 > In some cases you may need more list or get permissions in some services, look at the Troubleshooting section for a more comprehensive policy if you find issues with the default SecurityAudit policy.
 
-## How to create a report
+## Usage
 
-1 - Run the prowler.sh command without options (it will use your default credentials and run checks over all regions when needed, default region is us-east-1):
+1 - Run the prowler.sh command without options (it will use your environment variable credentials if exist or default in ~/.aws/credentials file and run checks over all regions when needed, default region is us-east-1):
 
 ```
 ./prowler
@@ -79,8 +98,24 @@ or if you want a colored HTML report do:
 pip install ansi2html
 ./prowler | ansi2html -la > report.html
 ```
+or if you want a pipe-delimited report file, do:
+```
+./prowler -M csv > output.psv
+```
 
-5 - For help use:
+5 - To perform an assessment based on CIS Profile Definitions you can use level1 or level2 with `-c` flag, more information about this [here, page 8](https://d0.awsstatic.com/whitepapers/compliance/AWS_CIS_Foundations_Benchmark.pdf):
+```
+./prowler -c level1
+```
+
+6 - If you want to run Prowler to check multiple AWS accounts in parallel (runs up to 4 simultaneously `-P 4`):
+
+```
+grep -E '^\[([0-9A-Aa-z_-]+)\]'  ~/.aws/credentials | tr -d '][' | shuf |  \
+xargs -n 1 -L 1 -I @ -r -P 4 ./prowler -p @ -M csv  2> /dev/null  >> all-accounts.csv
+```
+
+7 - For help use:
 
 ```
 ./prowler -h
@@ -90,14 +125,16 @@ USAGE:
   Options:
       -p <profile>        specify your AWS profile to use (i.e.: default)
       -r <region>         specify an AWS region to direct API requests to (i.e.: us-east-1)
-      -c <checknum>       specify a check number or group from the AWS CIS benchmark (i.e.: check11 for check 1.1 or check3 for entire section 3)
+      -c <checknum>       specify a check number or group from the AWS CIS benchmark (i.e.: check11 for check 1.1, check3 for entire section 3 or level1 for CIS Level 1 Profile Definitions)
       -f <filterregion>   specify an AWS region to run checks against (i.e.: us-west-1)
       -m <maxitems>       specify the maximum number of items to return for long-running requests (default: 100)
-      -b                  do not use colors in the output
+      -M <mode>           output mode: text (defalut), mono, csv (separator is ","; data is on stdout; progress on stderr)
+      -k                  keep the credential report
+      -n                  show check numbers to sort easier (i.e.: 1.01 instead of 1.1)
       -h                  this help
 
 ```
-## How to fix all WARNINGS:
+## Fix:
  Check your report and fix the issues following all specific guidelines per check in https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf
 
 ## Screenshots
@@ -446,7 +483,7 @@ Instead of using default policy SecurityAudit for the account you use for checks
             "redshift:describe*",
             "route53:getchange",
             "route53:getcheckeripranges",
-            "route53:getgeolocations",
+            "route53:getgeolocation",
             "route53:gethealthcheck",
             "route53:gethealthcheckcount",
             "route53:gethealthchecklastfailurereason",
@@ -490,4 +527,66 @@ Instead of using default policy SecurityAudit for the account you use for checks
         "Resource": "*"
     }]
 }
+```
+
+### Incremental IAM Policy
+
+Alternatively, here is a policy which defines the permissions which are NOT present in the AWS Managed SecurityAudit policy. Attach both this policy and the AWS Managed SecurityAudit policy to the group and you're good to go.  
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "acm:DescribeCertificate",
+        "acm:ListCertificates",
+        "cloudwatchlogs:describeLogGroups",
+        "cloudwatchlogs:DescribeMetricFilters",
+        "es:DescribeElasticsearchDomainConfig",
+        "ses:GetIdentityVerificationAttributes",
+        "sns:ListSubscriptionsByTopic"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### Bootstrap Script
+
+Quick bash script to set up a "prowler" IAM user and "SecurityAudit" group with the required permissions. To run the script below, you need user with administrative permissions; set the AWS_DEFAULT_PROFILE to use that account.
+
+```
+export AWS_DEFAULT_PROFILE=default
+export ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' | tr -d '"')
+aws iam create-group --group-name SecurityAudit
+aws iam create-policy --policy-name ProwlerAuditAdditions --policy-document file://$(pwd)/prowler-policy-additions.json
+aws iam attach-group-policy --group-name SecurityAudit --policy-arn arn:aws:iam::aws:policy/SecurityAudit
+aws iam attach-group-policy --group-name SecurityAudit --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/ProwlerAuditAdditions
+aws iam create-user --user-name prowler
+aws iam add-user-to-group --user-name prowler --group-name SecurityAudit
+aws iam create-access-key --user-name prowler
+unset ACCOUNT_ID AWS_DEFAULT_PROFILE
+```
+
+The `aws iam create-access-key` command will output the secret access key and the key id; keep these somewhere safe, and add them to ~/.aws/credentials with an appropriate profile name to use them with prowler. This is the only time they secret key will be shown.  If you loose it, you will need to generate a replacement.
+
+## Extras
+We are adding additional checks to improve the information gather from each account, these checks are out of the scope of the CIS benchmark for AWS but we consider them very helpful to get to know each AWS account set up and find issues on it.
+At this momment we have 5 extra checks:
+
+- 7.1 (`extra71`) Ensure users with AdministratorAccess policy have MFA tokens enabled (Not Scored) (Not part of CIS benchmark)
+- 7.2 (`extra72`) Ensure there are no EBS Snapshots set as Public (Not Scored) (Not part of CIS benchmark)
+- 7.3 (`extra73`) Ensure there are no S3 buckets open to the Everyone or Any AWS user (Not Scored) (Not part of CIS benchmark)
+- 7.4 (`extra74`) Ensure there are no Security Groups without ingress filtering being used (Not Scored) (Not part of CIS benchmark)
+- 7.5 (`extra75`) Ensure there are no Security Groups not being used (Not Scored) (Not part of CIS benchmark)
+
+```
+./prowler -c extras
+```
+or to run just one of the checks, to see if you have S3 buckets open:
+```
+./prowler -c extraNUMBER
 ```
