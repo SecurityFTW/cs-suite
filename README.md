@@ -37,6 +37,7 @@ docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-
 ![cs-suite report](cs-suite.png)
 
 ## Pre-requisites for Manual setup
+* OS - MacOS or Linux
 * Python 2.7
 * pip
 * git
