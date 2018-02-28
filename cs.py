@@ -1,6 +1,9 @@
  #! /usr/bin/env python
 from __future__ import print_function
 from multiprocessing import Process
+from multiprocessing import Pool
+from multiprocessing.dummy import Pool as ThreadPool
+import csv
 import os
 import argparse
 import json
@@ -33,15 +36,58 @@ account_name = get_account_alias() or get_account_id()
 timestmp = time.strftime("%Y%m%d-%H%M%S")
 
 
-def prowler():
+def prowler(check):
     """ this function calls the prowler script """
-    print ("started prowler")
-    file_name = 'prowler_report.txt'
-    with open('reports/aws_audit/%s/%s/delta/%s' % (account_name, timestmp, file_name), 'w') as output:
-        subprocess.call(['./prowler', '-c', 'checkNotScout'], stdout=output, cwd='tools/prowler')
-    print ("Prowler Audit done")
+    file_name = check
+    with open('tools/prowler/%s.csv' %(check), 'w') as output:
+        subprocess.call(['./prowler_copy', '-M', 'csv', '-c', check], stdout=output, cwd='tools/prowler')
+    
+    csvfile = open('tools/prowler/%s.csv' %(check), 'r')
+    jsonfile = open('tools/prowler/%s.json' %(check), 'w')
+    fieldnames = ("aws-cli_profile", "account", "region", "check_no", "type", "score", "level", "check", "value")
+    reader = csv.DictReader( csvfile, fieldnames)
+    for row in reader:
+        json.dump(row, jsonfile)
+        jsonfile.write('\n')
     return 0
 
+def multi_threaded_prowler():
+    """ this function using multi-threading for prowler """
+    checks = ['check13','check14', 'check15', 'check16', 'check17', 'check18', 'check19', 'check114', 'check115','check116', 'check118', 'check122', 'check123', 'check124', 'check21', 'check23', 'check24', 'check25', 'check26', 'check27', 'check28', 'check31','check32','check33','check34','check35','check36','check37','check38','check39', 'check310','check311','check312','check313','check314','check315','check43','check44','check45']
+    #checks=['check14']
+    p = Pool(5)
+    p.map(prowler, checks)
+    final_json = {}
+    final_json['account_info']={'aws-cli_profile':['default']}
+    final_json['account_info'].update({'date':timestmp})
+    final_json['account_info'].update({'aws_api_region':['us-east-1']})
+    final_json['account_info'].update({'aws_filter_region':['all']})
+    identity = subprocess.check_output(['aws', 'sts', 'get-caller-identity'])
+    identity = json.loads(str(identity))
+    final_json['account_info'].update({'caller_identity':identity})
+    print (final_json)
+    report = []
+    for check in checks:
+        dict = {}
+        data = []
+        with open('tools/prowler/%s.json' %check, 'r') as f:
+            for line in f:
+                new_dict={}
+                j = json.loads(line)
+                dict['check'] =j['check']
+                new_dict['check_no']=j['check_no']
+                new_dict['score']=j['score']
+                new_dict['level']=j['level']
+                new_dict['type']=j['type']
+                new_dict['region']=j['region']
+                new_dict['value']=j['value']
+                data.append(new_dict)
+        dict['data']=data
+        report.append(dict)
+        final_json['report']=report
+    print (final_json)   
+    print ("Prowler Audit Done")
+    return 0
 
 def scout2():
     """ this function calls Scout2 tool """
@@ -264,9 +310,12 @@ def main():
 
 
     else:
-        subprocess.call(['mkdir', '-p', 'reports/aws_audit/%s/%s/delta' %(account_name, timestmp)])
-        p1 = Process(target=prowler)
+        #subprocess.call(['mkdir', '-p', 'reports/aws_audit/%s/%s/delta' %(account_name, timestmp)])
+        p1 = Process(target=multi_threaded_prowler)
         p1.start()
+        print ("Started Prowler")
+        p1.join()
+'''
         p2 = Process(target=scout2)
         p2.start()
         p4 = Process(target=audit_aws_certs)
@@ -325,6 +374,7 @@ def main():
         webbrowser.open('file://'+os.path.realpath("./reports/aws_audit/%s/%s/final_report/report.html") %(account_name, timestmp))
         fin = os.path.realpath("./reports/aws_audit/%s/%s/final_report/report.html") %(account_name, timestmp)
         print ("THE FINAL REPORT IS LOCATED AT -------->  %s" % (fin))
+'''
 
 if __name__ == '__main__':
     main()

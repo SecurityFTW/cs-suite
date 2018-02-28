@@ -374,11 +374,12 @@ TITLE11="Avoid the use of the root account (Scored)."
 ID12="1.2,1.02"
 TITLE12="Ensure multi-factor authentication (MFA) is enabled for all IAM users that have a console password (Scored)"
 ID13="1.3,1.03"
-TITLE13="Ensure credentials unused for 90 days or greater are disabled (Scored)"
+#TITLE13="Ensure credentials unused for 90 days or greater are disabled (Scored)"
+TITLE13="Ensure credentials unused for 90 days or greater are disabled"
 ID14="1.4,1.04"
-TITLE14="Ensure access keys are rotated every 90 days or less (Scored)" # also checked by Security Monkey
+TITLE14="Ensure access keys are rotated every 90 days or less" # also checked by Security Monkey
 ID15="1.5,1.05"
-TITLE15="Ensure IAM password policy requires at least one uppercase letter (Scored)"
+TITLE15="Ensure IAM password policy requires at least one uppercase letter"
 ID16="1.6,1.06"
 TITLE16="Ensure IAM password policy require at least one lowercase letter (Scored)"
 ID17="1.7,1.07"
@@ -551,9 +552,9 @@ getWhoami(){
       exit $EXITCODE
     fi
     CALLER_ARN=$(echo $CALLER_ARN_RAW | tr -d '"')
-    printCsvHeader
-    textTitle "0.0" "Show report generation info" "NOT_SCORED" "SUPPORT"
-    textNotice "ARN: $CALLER_ARN  TIMESTAMP: $SCRIPT_START_TIME"
+    #printCsvHeader
+    #textTitle "0.0" "Show report generation info" "NOT_SCORED" "SUPPORT"
+    #textNotice "ARN: $CALLER_ARN  TIMESTAMP: $SCRIPT_START_TIME"
   else
     echo ""
     echo "This report is being generated using credentials below:"
@@ -664,6 +665,7 @@ check12(){
 check13(){
   # "Ensure credentials unused for 90 days or greater are disabled (Scored)"
   textTitle "$ID13" "$TITLE13" "SCORED" "LEVEL1"
+  #echo "$TITLE13"
   COMMAND12_LIST_USERS_WITH_PASSWORD_ENABLED=$(cat $TEMP_REPORT_FILE|awk -F, '{ print $1,$4 }' |grep true | awk '{ print $1 }')
   if [[ $COMMAND12_LIST_USERS_WITH_PASSWORD_ENABLED ]]; then
     COMMAND13=$(
@@ -678,9 +680,9 @@ check13(){
         DATEUSED=$($AWSCLI iam list-users --query "Users[?UserName=='$i'].PasswordLastUsed" --output text $PROFILE_OPT --region $REGION | cut -d'T' -f1)
         HOWOLDER=$(how_older_from_today $DATEUSED)
         if [ $HOWOLDER -gt "90" ];then
-          textWarn "User \"$i\" has not logged in during the last 90 days "
+          textWarn "User '$i' has not logged in during the last 90 days "
         else
-          textOK "User \"$i\" found with credentials used in the last 90 days"
+          textOK "User '$i' found with credentials used in the last 90 days"
         fi
       done
     fi
@@ -2382,7 +2384,7 @@ if [[ $MODE != "csv" ]]; then
   printColorsCode
 fi
 getWhoami
-genCredReport
+#genCredReport
 saveReport
 callCheck
 
