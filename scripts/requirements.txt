@@ -1,3 +1,0 @@
-IPy
-ansi2html
-termcolor
