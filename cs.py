@@ -40,7 +40,7 @@ def prowler(check):
     """ this function calls the prowler script """
     file_name = check
     with open('tools/prowler/%s.csv' %(check), 'w') as output:
-        subprocess.call(['./prowler_copy', '-M', 'csv', '-c', check], stdout=output, cwd='tools/prowler')
+        subprocess.call(['./prowler', '-M', 'csv', '-c', check], stdout=output, cwd='tools/prowler')
     
     csvfile = open('tools/prowler/%s.csv' %(check), 'r')
     jsonfile = open('tools/prowler/%s.json' %(check), 'w')
