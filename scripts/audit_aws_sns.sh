@@ -19,16 +19,16 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
     # Check SNS topics have subscribers
     subscribers=`aws sns list-subscriptions-by-topic --region $aws_region --topic-arn $topic --output text`
     if [ ! "$subscribers" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,SNS_AUDIT,${RED}SNS topic $topic has no subscribers${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,SNS_AUDIT,SNS topic $topic has no subscribers\n"
     else
-      printf "default,$account,$aws_region,null,PASS,Scored,null,SNS_AUDIT,${GREEN}SNS topic $topic has subscribers${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,SNS_AUDIT,SNS topic $topic has subscribers\n"
     fi
     #check SNS topics are not publicly accessible
     check=`aws sns get-topic-attributes --region $aws_region --topic-arn $topic --query 'Attributes.Policy'  |egrep "\*|{\"AWS\":\"\*\"}"`
     if [ "$check" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,SNS_AUDIT,${RED}SNS topic $topic is publicly accessible${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,SNS_AUDIT,SNS topic $topic is publicly accessible\n"
     else
-      printf "default,$account,$aws_region,null,PASS,Scored,null,SNS_AUDIT,${GREEN}SNS topic $topic is not  publicly accessible${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,SNS_AUDIT,SNS topic $topic is not  publicly accessible\n"
     fi
   done
 done

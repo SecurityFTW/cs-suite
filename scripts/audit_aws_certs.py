@@ -17,6 +17,6 @@ if  certs:
         expire_time=time.mktime(time.strptime(expire_date,'%Y-%m-%dT%H:%M:%SZ'))
         epoch=int(time.time())
         if epoch > expire_time:
-            print colored("default,%s,us-east-1,null,WARNING,Scored,null,CERT_AUDIT,certificate %s has expired",'red') % (account,cert)
+            print ("default,%s,us-east-1,null,WARNING,Scored,null,CERT_AUDIT,certificate %s has expired") % (account,cert)
         else:
-            print colored("default,%s,us-east-1,null,PASS,Scored,null,DNS_AUDIT,certificate %s not expired", 'green') % (account,cert)
+            print ("default,%s,us-east-1,null,PASS,Scored,null,DNS_AUDIT,certificate %s not expired") % (account,cert)

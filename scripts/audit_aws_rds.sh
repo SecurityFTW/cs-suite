@@ -23,9 +23,9 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
   for db in $dbs; do
     check=`aws rds describe-db-instances --region $aws_region --db-instance-identifier $db --query 'DBInstances[].MasterUsername' |grep "awsuser"`
     if [ "$check" ]; then
-      echo -e "default,$account,$aws_region,null,WARNING,Scored,null,RDS_AUDIT,${RED}RDS instance $db is using aws-user as master username${NC}"
+      echo -e "default,$account,$aws_region,null,WARNING,Scored,null,RDS_AUDIT,RDS instance $db is using aws-user as master username"
     else
-      echo -e "default,$account,$aws_region,null,PASS,Scored,null,RDS_AUDIT,${GREEN}RDS instance $db is not using aws-user as master username${NC}"
+      echo -e "default,$account,$aws_region,null,PASS,Scored,null,RDS_AUDIT,RDS instance $db is not using aws-user as master username"
     fi
   done
 done

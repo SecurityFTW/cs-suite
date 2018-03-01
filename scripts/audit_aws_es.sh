@@ -18,15 +18,15 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
   for domain in $domains; do
     check=`aws es describe-elasticsearch-domain --domain-name $domain --query 'DomainStatus.AccessPolicies' --output text |grep Principle | grep "{\"AWS\":\"\*\"}"`
     if [ ! "$check" ]; then
-      printf "default,$account,$aws_region,null,PASS,Scored,null,ES_AUDIT,${GREEN}Elasticsearch doamin $domain is not publicly accessible${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,ES_AUDIT,Elasticsearch doamin $domain is not publicly accessible\n"
     else
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,ES_AUDIT,${RED}Elasticsearch doamin $domain is publicly accessible${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,ES_AUDIT,Elasticsearch doamin $domain is publicly accessible\n"
     fi
     check=`aws es describe-elasticsearch-domain --domain-name $domain --query 'DomainStatus.AccessPolicies' --output text |grep "aws:SourceIp" |grep "[0-9]\."`
     if [ ! "$check" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,ES_AUDIT,${RED}Elasticsearch domain $domain does not have an IP based access policy${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,ES_AUDIT,Elasticsearch domain $domain does not have an IP based access policy\n"
     else
-      printf "default,$account,$aws_region,null,PASS,Scored,null,ES_AUDIT,${GREEN}Elasticsearch doamin $domain has an IP based access policy${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,ES_AUDIT,Elasticsearch doamin $domain has an IP based access policy\n"
     fi
   done
 done

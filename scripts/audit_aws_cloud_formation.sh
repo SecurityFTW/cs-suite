@@ -20,9 +20,9 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
     check=`aws cloudformation describe-stacks --region $aws_region --stack-name $stack --query 'Stack[].NotificationARNs' --output text`
     stack=`printf "$stack" |cut -f2 -d/`
     if [ ! "$check" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,CF_AUDIT,${RED}SNS topic does not exist for CloudFormation stack $stack${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,CF_AUDIT,SNS topic does not exist for CloudFormation stack $stack\n"
     else 
-      printf "default,$account,$aws_region,null,PASS,Scored,null,CF_AUDIT,${GREEN}SNS topic does exist for CloudFormation stack $stack${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,CF_AUDIT,SNS topic does exist for CloudFormation stack $stack\n"
     fi
   done
   # Check stacks have a policy
@@ -30,9 +30,9 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
     for stack in $stacks; do 
     check=`aws cloudformation get-stack-policy --region $aws_region --stack-name $stack --query 'StackPolicyBody' --output text 2> /dev/null`
     if [ ! "$check" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,CF_AUDIT,${RED}CloudFormation stack $stack does not have a policy${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,CF_AUDIT,CloudFormation stack $stack does not have a policy\n"
     else
-      printf "default,$account,$aws_region,null,PASS,Scored,null,CF_AUDIT,${GREEN}CloudFormation stack $stack has a policy${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,CF_AUDIT,CloudFormation stack $stack has a policy\n"
     fi
   done
 done

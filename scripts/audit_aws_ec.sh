@@ -16,9 +16,9 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
   for cache in $caches; do 
     check=`aws elasticache describe-replication-groups --region $aws_region --replication-group-id $cache --query 'ReplicationGroups[].AutomaticFailover' |grep enabled`
     if [ ! "$check" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC_AUDIT,${RED}ElastiCache $cache is not Multi-AZ enabled${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC_AUDIT,ElastiCache $cache is not Multi-AZ enabled\n"
     else
-      printf "default,$account,$aws_region,null,PASS,Scored,null,EC_AUDIT,${GREEN}ElastiCache $cache is Multi-AZ enabled${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,EC_AUDIT,ElastiCache $cache is Multi-AZ enabled\n"
     fi
   done
 done

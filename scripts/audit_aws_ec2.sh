@@ -20,20 +20,20 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
   check=`aws ec2 describe-instances --region $aws_region --query 'Reservations[*].Instances[?!IamInstanceProfile==\`true\`].InstanceId[]' --output text`
   if [[ ! -z $check ]];then
       checkb=`aws ec2 describe-instances --region $aws_region --query 'Reservations[*].Instances[?!IamInstanceProfile==\`true\`].InstanceId[]'`
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,${RED}List of servers which are not associated with IamInstanceProfile $check ${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,List of servers which are not associated with IamInstanceProfile $check \n"
   fi
   public=`aws ec2 describe-images --region $aws_region --owners self --query 'Images[?Public==\`true\`].ImageId' --output text`
     if [ "$public" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,${RED}List of Images which are public $public ${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,List of Images which are public $public\n"
     fi
   check=`aws ec2 describe-volumes --region $aws_region --query 'Volumes[?Encrypted==\`false\`].VolumeId' --output text`
   if [[ ! -z $check ]];then
       checkb=`aws ec2 describe-volumes --region $aws_region --query 'Volumes[?Encrypted==\`false\`].VolumeId'`
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,${RED}List of volumes which are not encrypted $checkb${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,List of volumes which are not encrypted $checkb\n"
   fi
   kms=`aws ec2 describe-volumes --region $aws_region --query 'Volumes[?!KmsKeyId==\`true\`].VolumeId' --output text`
   if [[ ! -z $kms ]];then
       kmsb=`aws ec2 describe-volumes --region $aws_region --query 'Volumes[?!KmsKeyId==\`true\`].VolumeId'`
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,${RED}List of volumes which are not encrypted with KMS key are $kmsb ${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,EC2_AUDIT,List of volumes which are not encrypted with KMS key are $kmsb\n"
   fi
 done

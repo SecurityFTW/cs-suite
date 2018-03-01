@@ -20,8 +20,8 @@
   for user in $users; do
     check=`aws iam list-ssh-public-keys --region $aws_region --user-name $user |grep Active |wc -l`
     if [ "$check" -gt 1 ]; then
-      printf "default,$account,us-east-1,null,WARNING,Scored,null,AWS_KEY_AUDIT,${RED}User $user does has more than one active SSH key${NC}\n"
+      printf "default,$account,us-east-1,null,WARNING,Scored,null,AWS_KEY_AUDIT,User $user does has more than one active SSH key\n"
     else
-      printf "default,$account,us-east-1,null,PASS,Scored,null,AWS_KEY_AUDIT,${GREEN}User $user does not have any active SSH key${NC}\n"
+      printf "default,$account,us-east-1,null,PASS,Scored,null,AWS_KEY_AUDIT,User $user does not have any active SSH key\n"
     fi 
   done

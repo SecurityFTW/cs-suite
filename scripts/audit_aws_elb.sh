@@ -27,7 +27,7 @@
                    if [ "$protocol" == "HTTP" ];then
                       https=`aws elb describe-load-balancers --region $aws_region --load-balancer-name $elb --query "LoadBalancerDescriptions[].ListenerDescriptions[].Listener[]" | grep -B 1 80, | grep 443`
                       if [ ! "$https" ];then
-                         printf "default,$account,$aws_region,null,WARNING,Scored,null,ELB_AUDIT,${RED}$elb is running only on http${NC}\n"
+                         printf "default,$account,$aws_region,null,WARNING,Scored,null,ELB_AUDIT,$elb is running only on http\n"
                       fi  
                    fi
                done
@@ -39,7 +39,7 @@
                     EXP-KRB5-DES-CBC-MD5 EXP-ADH-RC4-MD5 EXP-RC4-MD5 EXP-KRB5-RC4-SHA EXP-KRB5-RC4-MD5; do
                     check=`echo "$list" |grep $cipher |grep true`
                     if [ "$check" ]; then
-                        printf "default,$account,$aws_region,null,WARNING,Scored,null,ELB_AUDIT,${RED}ELB $elb is using deprecated cipher $cipher${NC}\n"
+                        printf "default,$account,$aws_region,null,WARNING,Scored,null,ELB_AUDIT,ELB $elb is using deprecated cipher $cipher\n"
                     fi
                 done
            done

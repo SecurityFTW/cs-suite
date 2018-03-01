@@ -17,9 +17,9 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
   for domain in $domains; do
     check=`aws ses get-identity-dkim-attributes --region $aws_region --identities $domain |grep DkimEnabled |grep true`
     if [ ! "$check" ]; then
-      printf "default,$account,$aws_region,null,WARNING,Scored,null,SES_AUDIT,${RED}Domain $domain does not have DKIM enabled${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,SES_AUDIT,Domain $domain does not have DKIM enabled\n"
     else
-      printf "default,$account,$aws_region,null,PASS,Scored,null,SES_AUDIT,${GREEN}Domain $domain has DKIM enabled${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,SES_AUDIT,Domain $domain has DKIM enabled\n"
     fi
   done
 done
