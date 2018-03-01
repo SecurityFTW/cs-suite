@@ -9,18 +9,19 @@
   NC='\033[0m'
   GREEN='\033[0;32m'
   BOLD='\033[1m'
-  printf "\n\n"
+  #printf "\n\n"
   aws_region=`aws configure get region`
-  printf "${BOLD}############\n"
-  printf "AWS SSH AUDIT\n"
-  printf "############${NC}\n\n"
+  #printf "${BOLD}############\n"
+  #printf "AWS SSH AUDIT\n"
+  #printf "############${NC}\n\n"
   # Check for SSH keys
+  account=`aws sts get-caller-identity --output text --query 'Account'`
   users=`aws iam list-users --query 'Users[].UserName' --output text`
   for user in $users; do
     check=`aws iam list-ssh-public-keys --region $aws_region --user-name $user |grep Active |wc -l`
     if [ "$check" -gt 1 ]; then
-      printf "${RED}User $user does has more than one active SSH key${NC}\n"
+      printf "default,$account,us-east-1,null,WARNING,Scored,null,AWS_KEY_AUDIT,${RED}User $user does has more than one active SSH key${NC}\n"
     else
-      printf "${GREEN}User $user does not have any active SSH key${NC}\n"
+      printf "default,$account,us-east-1,null,PASS,Scored,null,AWS_KEY_AUDIT,${GREEN}User $user does not have any active SSH key${NC}\n"
     fi 
   done
