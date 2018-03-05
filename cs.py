@@ -3,7 +3,7 @@ from __future__ import print_function
 from multiprocessing import Process
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
-import csv
+import csv,glob
 import os
 import argparse
 import json
@@ -34,7 +34,14 @@ def get_account_id():
 
 account_name = get_account_alias() or get_account_id()
 timestmp = time.strftime("%Y%m%d-%H%M%S")
-
+script_json = {}
+script_json['account_info']={'aws-cli_profile':['default']}
+script_json['account_info'].update({'date':timestmp})
+script_json['account_info'].update({'aws_api_region':['us-east-1']})
+script_json['account_info'].update({'aws_filter_region':['all']})
+identity = subprocess.check_output(['aws', 'sts', 'get-caller-identity'])
+identity = json.loads(str(identity))
+script_json['account_info'].update({'caller_identity':identity})
 
 def prowler(check):
     """ this function calls the prowler script """
@@ -65,7 +72,6 @@ def multi_threaded_prowler():
     identity = subprocess.check_output(['aws', 'sts', 'get-caller-identity'])
     identity = json.loads(str(identity))
     final_json['account_info'].update({'caller_identity':identity})
-    print (final_json)
     report = []
     for check in checks:
         dict = {}
@@ -85,7 +91,10 @@ def multi_threaded_prowler():
         dict['data']=data
         report.append(dict)
         final_json['report']=report
-    print (final_json)   
+    for f in glob.glob("./tools/prowler/check*"):
+        os.remove(f)
+    with open('tools/prowler/final_json', 'w') as f:
+         f.write(json.dumps(final_json))
     print ("Prowler Audit Done")
     return 0
 
@@ -97,6 +106,15 @@ def scout2():
     print ("Scout2 Audit done")
     return 0
 
+def csv_to_json(file):
+    csvfile = open(file,'r')
+    jsonfile = open('%s.json' %(file), 'w')
+    fieldnames = ("aws-cli_profile", "account", "region", "check_no", "type", "score", "level", "check", "value")
+    reader = csv.DictReader( csvfile, fieldnames)
+    for row in reader:
+        json.dump(row, jsonfile)
+        jsonfile.write('\n')
+    return 0
 '''
 def aws_security_test():
     """ this function runs aws_security_test tool """
@@ -113,6 +131,7 @@ def audit_aws_certs():
     print ("Started AWS cert audit")
     with open('reports/aws_audit/%s/%s/delta/certs' % (account_name, timestmp), 'w') as output:
         subprocess.call(['python', './scripts/audit_aws_certs.py'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/certs' % (account_name, timestmp))
     print ("Cert Audit Done")
     return 0
 
@@ -121,6 +140,7 @@ def audit_aws_cf():
     print ("Started Cloud Formation Audit ")
     with open('reports/aws_audit/%s/%s/delta/cloud_formation' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_cloud_formation.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/cloud_formation' % (account_name, timestmp))
     print ("Cloud Formation Audit Done")
     return 0
 
@@ -130,6 +150,7 @@ def audit_aws_config():
     print ("Started AWS config Audit ")
     with open('reports/aws_audit/%s/%s/delta/aws_config' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_config.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/aws_config' % (account_name, timestmp))
     print ("AWS config Audit Done")
     return 0
 
@@ -139,6 +160,7 @@ def audit_aws_dns():
     print ("Started AWS DNS Audit ")
     with open('reports/aws_audit/%s/%s/delta/dns' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_dns.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/dns' % (account_name, timestmp))
     print ("AWS DNS Audit Done")
     return 0
 
@@ -148,6 +170,7 @@ def audit_aws_ec():
     print ("Started AWS Elastic Cache Audit ")
     with open('reports/aws_audit/%s/%s/delta/ec' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_ec.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/ec' % (account_name, timestmp))
     print ("AWS Elastic Cache Audit Done ")
     return 0
 
@@ -157,6 +180,7 @@ def audit_aws_ec2():
     print ("Started AWS Instances Audit ")
     with open('reports/aws_audit/%s/%s/delta/ec2' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_ec2.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/ec2' % (account_name, timestmp))
     print ("AWS Instances Audit Done ")
     return 0
 
@@ -166,6 +190,7 @@ def audit_aws_elb():
     print ("Started AWS Load-Balancer Audit ")
     with open('reports/aws_audit/%s/%s/delta/elb' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_elb.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/elb' % (account_name, timestmp))
     print ("AWS Load-Balancer Audit Done ")
     return 0
 
@@ -175,6 +200,7 @@ def audit_aws_es():
     print ("Started AWS Elastic-Search Audit ")
     with open('reports/aws_audit/%s/%s/delta/es' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_es.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/es' % (account_name, timestmp))
     print ("AWS Elastic-Search Audit Done ")
     return 0
 
@@ -184,6 +210,7 @@ def audit_aws_keys():
     print ("Started AWS SSH Audit ")
     with open('reports/aws_audit/%s/%s/delta/keys' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_keys.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/keys' % (account_name, timestmp))
     print ("AWS SSH Audit Done ")
     return 0
 
@@ -194,6 +221,7 @@ def audit_aws_rds():
     with open('reports/aws_audit/%s/%s/delta/rds' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_rds.sh'], stdout=output)
     print ("AWS RDS Audit Done ")
+    csv_to_json('reports/aws_audit/%s/%s/delta/rds' % (account_name, timestmp))
     return 0
 
 
@@ -202,6 +230,7 @@ def audit_aws_redshift():
     print ("Started AWS Redshift Audit ")
     with open('reports/aws_audit/%s/%s/delta/redshift' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_redshift.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/redshift' % (account_name, timestmp))
     print ("AWS Redshift Audit Done ")
     return 0
 
@@ -211,6 +240,7 @@ def audit_aws_ses():
     print ("Started AWS SES Audit ")
     with open('reports/aws_audit/%s/%s/delta/ses' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_ses.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/ses' % (account_name, timestmp))
     print ("AWS SES Audit Done ")
     return 0
 
@@ -220,6 +250,7 @@ def audit_aws_cdn():
     print ("Started AWS CDN Audit ")
     with open('reports/aws_audit/%s/%s/delta/cdn' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/aws_cdn_audit.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/cdn' % (account_name, timestmp))
     print ("AWS CDN Audit Done ")
     return 0
 
@@ -229,6 +260,7 @@ def audit_aws_sns():
     print ("Started AWS SNS Audit ")
     with open('reports/aws_audit/%s/%s/delta/sns' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_sns.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/sns' % (account_name, timestmp))
     print ("AWS SNS Audit Done ")
     return 0
 
@@ -238,10 +270,31 @@ def audit_aws_vpcs():
     print ("Started AWS VPC Audit ")
     with open('reports/aws_audit/%s/%s/delta/vpc' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_vpcs.sh'], stdout=output)
+    csv_to_json('reports/aws_audit/%s/%s/delta/vpc' % (account_name, timestmp))
     print ("AWS VPC Audit Done ")
     return 0
 
-
+def json_to_final_json():
+    report = []
+    for f in glob.glob("reports/aws_audit/%s/%s/delta/*.json" %(account_name, timestmp)):
+        dict = {}
+        data = []
+        with open(f, 'r') as g:
+             for line in g:
+                 new_dict={}
+                 j = json.loads(line)
+                 dict['check'] =j['check']
+                 new_dict['check_no']=j['check_no']
+                 new_dict['score']=j['score']
+                 new_dict['level']=j['level']
+                 new_dict['type']=j['type']
+                 new_dict['region']=j['region']
+                 new_dict['value']=j['value']
+                 data.append(new_dict)
+        dict['data']=data
+        report.append(dict)
+        script_json['report']=report 
+    print (script_json)
 
 def main():
     """ main function """
@@ -310,14 +363,12 @@ def main():
 
 
     else:
-        #subprocess.call(['mkdir', '-p', 'reports/aws_audit/%s/%s/delta' %(account_name, timestmp)])
+        subprocess.call(['mkdir', '-p', 'reports/aws_audit/%s/%s/delta' %(account_name, timestmp)])
         p1 = Process(target=multi_threaded_prowler)
         p1.start()
         print ("Started Prowler")
-        p1.join()
-'''
-        p2 = Process(target=scout2)
-        p2.start()
+        #p2 = Process(target=scout2)
+        #p2.start()
         p4 = Process(target=audit_aws_certs)
         p4.start()
         p5 = Process(target=audit_aws_cf)
@@ -330,8 +381,8 @@ def main():
         p8.start()
         p9 = Process(target=audit_aws_ec2)
         p9.start()
-        p10 = Process(target=audit_aws_elb)
-        p10.start()
+        #p10 = Process(target=audit_aws_elb)
+        #p10.start()
         p11 = Process(target=audit_aws_es)
         p11.start()
         p12 = Process(target=audit_aws_keys)
@@ -349,14 +400,14 @@ def main():
         p18 = Process(target=audit_aws_vpcs)
         p18.start()
         p1.join()
-        p2.join()
+        #p2.join()
         p4.join()
         p5.join()
         p6.join()
         p7.join()
         p8.join()
         p9.join()
-        p10.join()
+        #p10.join()
         p11.join()
         p12.join()
         p13.join()
@@ -365,6 +416,8 @@ def main():
         p16.join()
         p17.join()
         p18.join()
+        json_to_final_json()
+'''
         subprocess.check_output(['cat ./reports/aws_audit/%s/%s/delta/prowler_report.txt | ansi2html > ./reports/aws_audit/%s/%s/delta/prowler_report.html' % (account_name, timestmp,account_name, timestmp)],shell=True)
         subprocess.check_output(['cat ./reports/aws_audit/%s/%s/delta/cdn ./reports/aws_audit/%s/%s/delta/certs  ./reports/aws_audit/%s/%s/delta/dns ./reports/aws_audit/%s/%s/delta/elb | ansi2html > ./reports/aws_audit/%s/%s/delta/webnet.html'  %(account_name, timestmp,account_name, timestmp,account_name, timestmp,account_name, timestmp,account_name, timestmp)  ],shell=True)
         subprocess.check_output(['cat ./reports/aws_audit/%s/%s/delta/ec ./reports/aws_audit/%s/%s/delta/es  ./reports/aws_audit/%s/%s/delta/rds ./reports/aws_audit/%s/%s/delta/redshift | ansi2html > ./reports/aws_audit/%s/%s/delta/datastores.html'  %(account_name, timestmp,account_name, timestmp,account_name, timestmp,account_name, timestmp,account_name, timestmp)  ],shell=True)
