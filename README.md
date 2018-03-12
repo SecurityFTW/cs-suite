@@ -76,7 +76,7 @@ python cs.py
 ```
 
 ## Documentation
-[https://securityftw.github.io/Docs](https://securityftw.github.io/Docs)
+[https://securityftw.github.io](https://securityftw.github.io)
 
 ## Thanks
 * Scout2 - https://github.com/nccgroup/Scout2
