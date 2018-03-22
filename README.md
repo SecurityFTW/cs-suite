@@ -1,5 +1,29 @@
 # Cloud Security Suite (cs-suite)
 
+## Pre-requisites for Manual setup
+* OS - MacOS or Linux
+* Python 2.7
+* pip
+* git
+* gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
+	
+## Installation
+
+```bash
+git clone https://github.com/SecurityFTW/cs-suite.git
+cd cs-suite/
+sudo python setup.py
+```
+
+Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the installation process.
+
+### Running cs-suite
+
+```bash
+python cs.py -env aws
+python cs.py -env gcp -pId <project_name>
+```
+
 ## Docker Setup
 
 - Create a local directory `aws` with `credentials` and `config` files
@@ -36,22 +60,6 @@ docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-
 
 ![cs-suite report](cs-suite.png)
 
-## Pre-requisites for Manual setup
-* OS - MacOS or Linux
-* Python 2.7
-* pip
-* git
-* gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
-	
-## Installation
-
-```bash
-git clone https://github.com/SecurityFTW/cs-suite.git
-cd cs-suite/
-sudo python setup.py
-```
-
-Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the installation process.
 
 ### Virtual Environment installation
 (So you don't mess with the already installed python libraries)
@@ -69,12 +77,6 @@ Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the
 
 Once installation is done, the tool will ask you for the AWS keys and region. These two are mandatory for the tool to work.
 
-### Running cs-suite
-
-```bash
-python cs.py -env aws
-python cs.py -env gcp -pId <project_name>
-```
 
 ## Documentation
 [https://securityftw.github.io](https://securityftw.github.io)
