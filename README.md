@@ -22,8 +22,8 @@ Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the
 ### Running cs-suite
 
 ```bash
-python cs.py -env aws
-python cs.py -env gcp -pId <project_name>
+To run AWS Audit - python cs.py -env aws
+To run GCP Audit - python cs.py -env gcp -pId <project_name>
 ```
 
 ## Docker Setup
