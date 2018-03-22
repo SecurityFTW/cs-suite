@@ -6,6 +6,8 @@
 * pip
 * git
 * gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
+* AWS Audit - AWS ReadOnly Keys
+* GCP Audit - gcloud setup
 	
 ## Installation
 
