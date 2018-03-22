@@ -17,7 +17,7 @@ cd cs-suite/
 sudo python setup.py
 ```
 
-Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the installation process.
+Note - Generate a set of ReadOnly AWS keyswhich the tool will ask to finish the installation process. For GCP, setup google cloud SDK.
 
 ### Running cs-suite
 
@@ -25,6 +25,15 @@ Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the
 To run AWS Audit - python cs.py -env aws
 To run GCP Audit - python cs.py -env gcp -pId <project_name>
 ```
+- The final report will be available in `reports` directory
+
+- The final AWS Audit report looks like below:
+
+![AWS Audit report](AWS_Audit_Report.png)
+
+- The final GCP Audit report looks like below:
+
+![GCP Audit report](GCP_Audit_Report.png)
 
 ## Docker Setup
 
@@ -56,12 +65,6 @@ aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXX
 ```bash
 docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-suite
 ```
-- The final report will be available in `reports` directory
-
-- The final report looks like below
-
-![cs-suite report](cs-suite.png)
-
 
 ### Virtual Environment installation
 (So you don't mess with the already installed python libraries)
