@@ -12,32 +12,33 @@
   NC='\033[0m'
   GREEN='\033[0;32m'
   BOLD='\033[1m'
-  printf "\n\n"
-  printf "${BOLD}############\n"
-  printf "VPC AUDIT\n"
-  printf "############${NC}\n\n"
+  #printf "\n\n"
+  #printf "${BOLD}############\n"
+  #printf "VPC AUDIT\n"
+  #printf "############${NC}\n\n"
+  account=`aws sts get-caller-identity --output text --query 'Account'`
 for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 sa-east-1 ca-central-1 ap-southeast-1 ap-southeast-2 eu-central-1 us-east-1 us-east-2 us-west-1 us-west-2;do
     endpoints=`aws ec2 describe-vpc-endpoints --region $aws_region --query 'VpcEndpoints[*].VpcEndpointId' --output text`
   for enpoint in $endpoints; do
     check=`aws ec2 describe-vpc-endpoints --region $aws_region --vpc-endpoint-ids $enpoint --query 'VpcEndpoints[].PolicyDocument' |grep Principal |egrep "\*|{\"AWS\":\"\*\"}"`
     if [ "$check" ]; then
-      printf "${RED}VPC $vpc has en exposed enpoint${NC}\n"
+      printf "default,$account,$aws_region,null,WARNING,Scored,null,VPC_AUDIT,VPC $vpc has en exposed enpoint\n"
     else
-      printf "${GREEN}VPC $vpc does not have an exposed endpoint${NC}\n"
+      printf "default,$account,$aws_region,null,PASS,Scored,null,VPC_AUDIT,VPC $vpc does not have an exposed endpoint\n"
     fi
   done
   # Check for VPC peering
 	peers=`aws ec2 describe-vpc-peering-connections --region $aws_region --query VpcPeeringConnections --output text`
   if [ ! "$peers" ]; then
-    printf "${RED}VPC peering is not being used${NC}\n"
+    printf "default,$account,$aws_region,null,WARNING,Scored,null,VPC_AUDIT,VPC peering is not being used\n"
   else
     vpcs=`aws ec2 describe-vpcs --region $aws_region --query Vpcs[].VpcId --output text`
     for vpc in $vpcs; do
       check=`aws ec2 describe-route-tables --region $aws_region --filter "Name=vpc-id,Values=$vpc" --query "RouteTables[*].{RouteTableId:RouteTableId, VpcId:VpcId, Routes:Routes,AssociatedSubnets:Associations[*].SubnetId}" |grep GatewayID |grep pcx-`
       if [ "$check" ]; then
-        printf "${RED}VPC peering is being used review VPC: $vpc${NC}\n"
+        printf "default,$account,$aws_region,null,WARNING,Scored,null,VPC_AUDIT,VPC peering is being used review VPC: $vpc\n"
       else
-        printf "${GREEN}VPC $vpc does not have a peer as it's gateway${NC}\n"
+        printf "default,$account,$aws_region,null,PASS,Scored,null,VPC_AUDIT,VPC $vpc does not have a peer as it's gateway\n"
       fi
     done
   fi
@@ -50,15 +51,15 @@ for  aws_region in ap-south-1 eu-west-2 eu-west-1 ap-northeast-2 ap-northeast-1 
       if [ "$check" ]; then
         active=`aws ec2 describe-flow-logs --region $aws_region --filter "Name=resource-id,Values=$vpc" |grep FlowLogStatus |grep ACTIVE`
         if [ ! "$active" ]; then
-          printf "${RED}VPC $vpc has flow logs but they are not active${NC}\n"
+          printf "default,$account,$aws_region,null,WARNING,Scored,null,VPC_AUDIT,VPC $vpc has flow logs but they are not active\n"
         else
-          printf "${GREEN}VPC $vpc has active flow logs${NC}\n"
+          printf "default,$account,$aws_region,null,PASS,Scored,null,VPC_AUDIT,VPC $vpc has active flow logs\n"
         fi
       else
-        printf "${RED}VPC $vpc does not have flow logs in region $aws_region${NC}\n"
+        printf "default,$account,$aws_region,null,WARNING,Scored,null,VPC_AUDIT,VPC $vpc does not have flow logs in region $aws_region\n"
       fi
     done
   else
-    printf "There are no VPC $vpc flow logs $aws_region\n"
+    printf "default,$account,$aws_region,null,INFO,Scored,null,VPC_AUDIT,There are no VPC $vpc flow logs $aws_region\n"
   fi
 done

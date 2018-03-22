@@ -17,13 +17,13 @@ if [ "$#" -eq 4 ];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`ssh $2 "rm -rf ~/tmp-lynis"`
            #cat ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp | ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
        fi
@@ -42,12 +42,12 @@ elif [[ -z "$6" && -z "$7" ]];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`ssh $5@$2 "rm -rf ~/tmp-lynis"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
        fi
@@ -66,12 +66,12 @@ elif [[ -z "$5" && -z "$7" ]];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`ssh -i $6 ec2-user@$2 "rm -rf ~/tmp-lynis"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user ec2-user... try using help 'python cs.py -h'${NC}\n"
        fi
@@ -90,12 +90,12 @@ elif [[ -z "$5" && -z "$6" ]];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh root@$2 "rm -rf ~/tmp-lynis"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
        fi
@@ -114,12 +114,12 @@ elif [ -z "$6" ];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh $5@$2 "rm -rf ~/tmp-lynis"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
        fi
@@ -138,12 +138,12 @@ elif [ -z "$7" ];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`ssh -i $6 $5@$2 "rm -rf ~/tmp-lynis"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user ec2-user... try using help 'python cs.py -h'${NC}\n"
        fi
@@ -162,12 +162,12 @@ elif [ -z "$5" ];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh -i $6 ec2-user@$2 "rm -rf ~/tmp-lynis"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user ec2-user... try using help 'python cs.py -h'${NC}\n"
        fi
@@ -185,12 +185,12 @@ else
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           echo "$audit" |  ansi2html > ../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           echo "$audit" |  ansi2html > ../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh -i $6 $5@$2 "rm -rf ~/tmp-lynis"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/lynis.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user ec2-user... try using help 'python cs.py -h'${NC}\n"
        fi

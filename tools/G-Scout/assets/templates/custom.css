@@ -1,0 +1,11 @@
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 0px 15px; /* adjust here */
+    margin-bottom: -1px;
+    border: 2px solid #ddd;
+    line-height: 1em /* set to text height */
+}
+.navbar{
+	min-height: 0
+}

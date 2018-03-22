@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<br>
+	<ul>
+		{% for record in records %}
+			<div class="list-group-item">
+				<h4 class="list-group-item-heading">{{record[header]}}</h4><br>
+				<p class="list-group-item-text">
+        			{% for field in fields %}
+          				{% set subrecord = [record] %}
+                {% set nested_fields = field %}
+                {% if field is iterable and field is not string %}
+                  {% for nested_field in nested_fields%}
+                    {% do subrecord.append(subrecord[-1][nested_field]) %}
+                    {% if nested_field not in subrecord[0] and nested_field == field[-1]%}
+                    <pre>{{nested_field}}: {{subrecord[-1]|pretty_print}}</pre><br>
+                    {% endif %}
+                {% endfor %}
+                {% else %}
+                  <pre>{{field}}: {{record[field]|pretty_print}}</pre><br>
+              {% endif  %}
+              {% endfor %}
+            </p>
+          </div>
+        {% endfor %}
+  </ul>
+{% endblock %}

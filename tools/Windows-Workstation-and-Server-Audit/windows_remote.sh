@@ -15,12 +15,12 @@ if [ "$#" -eq 4 ];then
       audit=`ssh -o "StrictHostKeyChecking no" Administrator@$2  "cd /tmp;powershell -File Audit.ps1"`
       if [ $status -eq 0 ];then
          printf "${GREEN}Windows Audit Done${NC}\n"
-         mkdir -p ../../reports/local_audit/$1/$3-$4/
-         file=`scp Administrator@$2:/tmp/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`       
+         mkdir -p ../../reports/AWS/local_audit/$1/$3-$4/
+         file=`scp Administrator@$2:/tmp/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`       
          printf "${GREEN}Cleaning up files${NC}\n"
          clean=`ssh Administrator@$2 "rm -rf /tmp/WIN-*"`
-         printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-         open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+         printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+         open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
       else
          printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
       fi
@@ -38,12 +38,12 @@ elif [[ -z "$6" && -z "$7" ]];then
       audit=`ssh -o "StrictHostKeyChecking no" $5@$2 "cd ~;powershell -File Audit.ps1"`
       if [ $status -eq 0 ];then
          printf "${GREEN}Windows Audit Done${NC}\n"   
-         mkdir -p ../../reports/local_audit/$1/$3-$4/
-         file=`scp $5@$2:~/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
+         mkdir -p ../../reports/AWS/local_audit/$1/$3-$4/
+         file=`scp $5@$2:~/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
          printf "${GREEN}Cleaning up files${NC}\n"
          clean=`ssh $5@$2 "rm -rf ~/WIN-*"`
-         printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-         open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+         printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+         open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
       else
          printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
       fi
@@ -61,12 +61,12 @@ elif [[ -z "$5" && -z "$7" ]];then
         audit=`ssh -o "StrictHostKeyChecking no" -i $6 Administrator@$2 "cd /tmp;powershell -File Audit.ps1"`
         if [ $status -eq 0 ];then
            printf "${GREEN}Windows Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4/
-           file=`scp -i $6  Administrator@$2:/tmp/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4/
+           file=`scp -i $6  Administrator@$2:/tmp/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`ssh -i $6  Administrator@$2 "rm -rf /tmp/WIN-*"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
         else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"        
         fi
@@ -84,12 +84,12 @@ elif [[ -z "$5" && -z "$6" ]];then
         audit=`sshpass -p $7 ssh -o 'StrictHostKeyChecking no' Administrator@$2 "cd /tmp;powershell -File Audit.ps1"`
         if [ $status -eq 0 ];then
            printf "${GREEN}Windows Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4/
-           file=`sshpass -p $7 scp Administrator@$2:/tmp/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4/
+           file=`sshpass -p $7 scp Administrator@$2:/tmp/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh Administrator@$2 "rm -rf /tmp/WIN-*"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
         else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
         fi
@@ -107,12 +107,12 @@ elif [ -z "$6" ];then
        audit=`sshpass -p $7 ssh -o 'StrictHostKeyChecking no' $5@$2 "cd ~;powershell -File Audit.ps1"`
        if [ $status -eq 0 ];then
            printf "${GREEN}Windows Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4/
-           file=`sshpass -p $7 scp $5@$2:~/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4/
+           file=`sshpass -p $7 scp $5@$2:~/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh $5@$2 "rm -rf ~/WIN-*"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
         else
            printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
         fi
@@ -129,12 +129,12 @@ elif [ -z "$7" ];then
       audit=`ssh -i $6 -o 'StrictHostKeyChecking no' $5@$2 "cd ~;powershell -File Audit.ps1"`
       if [ $status -eq 0 ];then
           printf "${GREEN}Windows Audit Done${NC}\n"
-          mkdir -p ../../reports/local_audit/$1/$3-$4/
-          file=`scp -i $6 $5@$2:~/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
+          mkdir -p ../../reports/AWS/local_audit/$1/$3-$4/
+          file=`scp -i $6 $5@$2:~/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
           printf "${GREEN}Cleaning up files${NC}\n"
           clean=`ssh -i $6 $5@$2 "rm -rf ~/WIN-*"`
-          printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-          open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+          printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+          open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
       else
        printf "${RED}Not able SSH the server...please try using help 'python cs.py -h'${NC}\n"
       fi
@@ -152,12 +152,12 @@ elif [ -z "$5" ];then
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Windows Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           file=`sshpass -p password scp -i $6 Administrator@$2:/tmp/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           file=`sshpass -p password scp -i $6 Administrator@$2:/tmp/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh -i $6 Administrator@$2 "rm -rf /tmp/WIN-*"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user Administrator... try using help 'python cs.py -h'${NC}\n"
        fi
@@ -175,12 +175,12 @@ else
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Windows Audit Done${NC}\n"
-           mkdir -p ../../reports/local_audit/$1/$3-$4
-           file=`sshpass -p password scp -i $6 $5@$2:~/WIN* ../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
+           mkdir -p ../../reports/AWS/local_audit/$1/$3-$4
+           file=`sshpass -p password scp -i $6 $5@$2:~/WIN* ../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html`
            printf "${GREEN}Cleaning up files${NC}\n"
            clean=`sshpass -p $7 ssh -i $6 $5@$2 "rm -rf ~/WIN-*"`
-           printf "${BOLD} Report ------> reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
-           open "../../reports/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
+           printf "${BOLD} Report ------> reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html${NC}\n"
+           open "../../reports/AWS/local_audit/$1/$3-$4/windows.report_$time_stamp.html"
        else
            printf "${RED}Not able SSH the server with user $5... try using help 'python cs.py -h'${NC}\n"
        fi
