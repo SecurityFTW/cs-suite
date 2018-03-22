@@ -72,7 +72,8 @@ Once installation is done, the tool will ask you for the AWS keys and region. Th
 ### Running cs-suite
 
 ```bash
-python cs.py
+python cs.py -env aws
+python cs.py -env gcp -pId <project_name>
 ```
 
 ## Documentation
@@ -83,5 +84,6 @@ python cs.py
 * Prowler - https://github.com/Alfresco/prowler
 * Lunar - https://github.com/lateralblast/lunar
 * Lynis - https://github.com/CISOfy/lynis
+* G-Scout - https://github.com/nccgroup/G-Scout
 * @alanrenouf - https://github.com/alanrenouf/Windows-Workstation-and-Server-Audit
 * Ranjeet Sengar - https://github.com/sengar23
