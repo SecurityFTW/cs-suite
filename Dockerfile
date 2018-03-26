@@ -9,7 +9,7 @@ COPY . /app
 
 WORKDIR /app
 
-RUN apk update && apk add --no-cache grep sshpass bash \
+RUN apk update && apk add --no-cache grep sshpass curl bash \
     && pip install -r requirements.txt \
     && pip install awscli --ignore-installed six
 
