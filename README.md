@@ -65,6 +65,12 @@ aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXX
 ```bash
 docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-suite
 ```
+### For AWS
+
+```bash
+docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-suite -env aws
+```
+
 
 ### Virtual Environment installation
 (So you don't mess with the already installed python libraries)
