@@ -1,4 +1,4 @@
-# Cloud Security Suite (cs-suite) - Version 2.0
+# Cloud Security Suite (cs-suite) - Version 3.0
 
 ## Pre-requisites for Manual setup
 * OS - MacOS or Linux
