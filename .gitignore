@@ -1,3 +1,4 @@
 reports/*
 .idea*
 .idea/*
+modules/*.pyc
