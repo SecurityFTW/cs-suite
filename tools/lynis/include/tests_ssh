@@ -6,7 +6,7 @@
 # ------------------
 #
 # Copyright 2007-2013, Michael Boelen
-# Copyright 2007-2017, CISOfy
+# Copyright 2007-2018, CISOfy
 #
 # Website  : https://cisofy.com
 # Blog     : http://linux-audit.com
@@ -46,7 +46,8 @@
             # Store settings in a temporary file
             CreateTempFile
             SSH_DAEMON_OPTIONS_FILE="${TEMP_FILE}"
-            ${SSHDBINARY} -T 2> /dev/null > ${SSH_DAEMON_OPTIONS_FILE}
+            # Use a non-existing user, to ensure that systems that have a Match block configured, will be evaluated as well
+            ${SSHDBINARY} -T -C user=doesnotexist,host=none,addr=none 2> /dev/null > ${SSH_DAEMON_OPTIONS_FILE}
         else
             Display --indent 2 --text "- Checking running SSH daemon" --result "${STATUS_NOT_FOUND}" --color WHITE
         fi
@@ -110,7 +111,7 @@
         SSHOPS="AllowTcpForwarding:NO,LOCAL,YES:=\
                 ClientAliveCountMax:2,4,16:<\
                 ClientAliveInterval:300,600,900:<\
-                Compression:NO,DELAYED,YES:=\
+                Compression:NO,,YES:=\
                 FingerprintHash:SHA256,MD5,:=\
                 GatewayPorts:NO,,YES:=\
                 IgnoreRhosts:YES,,NO:=\
@@ -118,7 +119,7 @@
                 LogLevel:VERBOSE,INFO,:=\
                 MaxAuthTries:2,4,6:<\
                 MaxSessions:2,4,8:<\
-                PermitRootLogin:NO,(PROHIBIT-PASSWORD|WITHOUT-PASSWORD),YES:=\
+                PermitRootLogin:(NO|PROHIBIT-PASSWORD|WITHOUT-PASSWORD),,YES:=\
                 PermitUserEnvironment:NO,,YES:=\
                 PermitTunnel:NO,,YES:=\
                 Port:,,22:!\
@@ -132,6 +133,10 @@
                 X11Forwarding:NO,,YES:=\
                 AllowAgentForwarding:NO,,YES:="
 
+        # Notes
+        # =========================================================
+        # UsePrivilegeSeparation - removed since OpenSSH 7.5
+        #
         # Disabled        MaxStartups:4,8,16:<\ (needs fixing)
 
         # Go through our list of options

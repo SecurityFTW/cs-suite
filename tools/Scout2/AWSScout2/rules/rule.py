@@ -35,12 +35,18 @@ class Rule(object):
     def to_string(self):
         return (str(vars(self)))
     
-    def __init__(self, filename, rule_type, enabled, level, arg_values):
+    def __init__(self, filename, rule_type, rule):
         self.filename = filename
         self.rule_type = rule_type
-        self.enabled = bool(enabled)
-        self.level = level
-        self.args = arg_values
+        self.enabled = bool(self.get_attribute('enabled', rule, False))
+        self.level = self.get_attribute('level', rule, '')
+        self.args = self.get_attribute('args', rule, [])
+        self.conditions = self.get_attribute('conditions', rule, [])
+        self.key_suffix = self.get_attribute('key_suffix', rule, None)
+
+
+    def get_attribute(self, name, rule, default_value):
+        return rule[name] if name in list(rule.keys()) else default_value
 
 
     def set_definition(self, rule_definitions, attributes = [], ip_ranges = [], params = {}):
@@ -55,6 +61,7 @@ class Rule(object):
         string_definition = rule_definitions[self.filename].string_definition
         # Load condition dependencies
         definition = json.loads(string_definition)
+        definition['conditions'] += self.conditions
         loaded_conditions = []
         for condition in definition['conditions']:
             if condition[0].startswith('_INCLUDE_('):
@@ -74,7 +81,9 @@ class Rule(object):
         parameters = re.findall(r'(_ARG_([a-zA-Z0-9]+)_)', string_definition)
         for param in parameters:
             index = int(param[1])
-            if type(self.args[index]) == list:
+            if len(self.args) <= index:
+                string_definition = string_definition.replace(param[0], '')
+            elif type(self.args[index]) == list:
                 value = '[ %s ]' % ', '.join('"%s"' % v for v in self.args[index])
                 string_definition = string_definition.replace('"%s"' % param[0], value)
             else:
@@ -119,3 +128,5 @@ class Rule(object):
         if not hasattr(self, 'key'):
             setattr(self, 'key', self.filename)
         setattr(self, 'key', self.key.replace('.json', ''))
+        if self.key_suffix:
+            setattr(self, 'key', '%s-%s' % (self.key, self.key_suffix))

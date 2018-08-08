@@ -98,7 +98,7 @@ function process_template(id1, container_id, list) {
 // Hide all lists and details 
 //
 function hideAll() {
-    $("[id*='.list']").not("[id*='metadata.list']").not("[id*='filters.list']").hide();
+    $("[id*='.list']").not("[id*='metadata.list']").not("[id='regions.list']").not("[id*='filters.list']").hide();
     $("[id*='.details']").hide();
     var element = document.getElementById('scout2_display_account_id_on_all_pages');
     if ((element != undefined) && (element.checked == true)) {
@@ -172,8 +172,19 @@ function showRowWithItems(path) {
 
 
 function showFilters(resource_path) {
+    hideFilters();
+    service = resource_path.split('.')[1];
+    console.log('Service: ' + service);
+    // Show service filters
+    $('[id="' + resource_path + '.id.filters"]').show();
+    // show region filters
+    $('[id*="regionfilters.' + service + '.regions"]').show();
+
+}
+
+function hideFilters() {
     $('[id*=".id.filters"]').hide();
-    $('[id="' + resource_path + '.id.filters"]').show()
+    $('[id*="regionfilters"]').hide();
 }
 
 //
@@ -439,8 +450,8 @@ function load_metadata() {
     load_aws_config_from_json('last_run', 1);
     load_aws_config_from_json('metadata', 0);
     load_aws_config_from_json('services.id.findings', 1);
-    load_aws_config_from_json('services.id.filters', 0);
-    load_aws_config_from_json('services.id.regions-filters', 0);
+    load_aws_config_from_json('services.id.filters', 0); // service-specific filters
+    load_aws_config_from_json('services.id.regions', 0); // region filters
     show_main_dashboard();
     for (group in aws_info['metadata']) {
       for (service in aws_info['metadata'][group]) {
@@ -477,6 +488,8 @@ function about() {
 //
 function show_main_dashboard() {
     hideAll();
+    // Hide filters
+    hideFilters();
     showRowWithItems('aws_account_id');
     showRowWithItems('last_run');
     $('#section_title-h2').text('');
@@ -768,34 +781,6 @@ var filter_rules = function(group, service) {
     $("[id='" + id + "']").hide();
 }
 
-var generate_ruleset = function() {
-    var ruleset = new Object();
-    ruleset['rules'] = new Array();
-    // Find all the rules
-    var rules = $("*[id^='rule-']");
-    for (var i=0; i < rules.length; i++) {
-        var rule = new Object()
-        rule['level'] = $(rules[i]).find('#level').val();
-        rule['filename'] = $(rules[i]).find('#filename').val();
-        rule['enabled'] = $(rules[i]).find('#enabled').is(':checked');
-        args = $(rules[i]).find("[id^='parameter_']")
-        if (args.length > 0) {
-            tmp = new Object();
-            for (var j=0; j < args.length; j++) {
-                id = $(args[j]).attr('id').replace('parameter_', '');
-                val = $(args[j]).val();
-                tmp[id] = val;
-            }
-            rule['args'] = new Array();
-            for (k in tmp) {
-                rule['args'].push(tmp[k]);
-            }
-        }     
-        ruleset['rules'].push(rule);
-    }
-    download_configuration(ruleset, aws_info['name'], '');
-}
-
 var download_configuration = function(configuration, name, prefix) {
 
     var uriContent = "data:text/json;charset=utf-8," + encodeURIComponent(prefix + JSON.stringify(configuration, null, 4));
@@ -827,4 +812,10 @@ var toggle_element = function(element_id) {
 //    var id = '#' + element_id;
 //    $(id).toggle();
     $('#' + element_id).toggle();
+}
+
+var set_filter_url = function(region) {
+    tmp = location.hash.split('.');
+    tmp[3] = region;
+    location.hash = tmp.join('.');
 }

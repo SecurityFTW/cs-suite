@@ -6,7 +6,7 @@
 # ------------------
 #
 # Copyright 2007-2013, Michael Boelen
-# Copyright 2007-2017, CISOfy
+# Copyright 2007-2018, CISOfy
 #
 # Website  : https://cisofy.com
 # Blog     : http://linux-audit.com
@@ -98,11 +98,6 @@ UPDATE_HELP="
   ${CYAN}update info${NORMAL}
 
   Check version information
-
-
-  ${CYAN}update release${NORMAL}
-
-  Perform update of release
 
 "
 

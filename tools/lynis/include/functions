@@ -6,7 +6,7 @@
 # ------------------
 #
 # Copyright 2007-2013, Michael Boelen
-# Copyright 2007-2017, CISOfy
+# Copyright 2007-2018, CISOfy
 #
 # Website  : https://cisofy.com
 # Blog     : http://linux-audit.com
@@ -68,6 +68,7 @@
 #    IsWorldWritable            Check if a file is world writable
 #    LogText                    Log text strings to logfile, prefixed with date/time
 #    LogTextBreak               Insert a separator in log file
+#    PackageIsInstalled         Test for installed package
 #    ParseNginx                 Parse nginx configuration lines
 #    ParseProfiles              Parse all available profiles
 #    ParseTestValues            Parse a set of values
@@ -511,7 +512,7 @@
             shift
         done
 
-        if [ "${RESULT}" = "" ]; then
+        if [ -z "${RESULT}" ]; then
             RESULTPART=""
         else
             if [ ${CRONJOB} -eq 0 ]; then
@@ -521,7 +522,7 @@
             fi
         fi
 
-        if [ ! "${TEXT}" = "" ]; then
+        if [ ! -z "${TEXT}" ]; then
             SHOW=0
             if [ ${SHOW_WARNINGS_ONLY} -eq 1 ]; then
                 if [ "${RESULT}" = "WARNING" ]; then SHOW=1; fi
@@ -530,8 +531,8 @@
 
             if [ ${SHOW} -eq 1 ]; then
                 # Display:
-                # - counting with -m instead of -c, to support language locale
-                # - wc needs LANG to deal with multi-bytes characters but LANG has been unset in include/consts...
+                # - for full shells, count with -m instead of -c, to support language locale (older busybox does not have -m)
+                # - wc needs LANG to deal with multi-bytes characters but LANG has been unset in include/consts
                 LINESIZE=$(export LC_ALL= ; export LANG="${DISPLAY_LANG}";echo "${TEXT}" | wc -m | tr -d ' ')
                 if [ ${SHOWDEBUG} -eq 1 ]; then DEBUGTEXT=" [${PURPLE}DEBUG${NORMAL}]"; else DEBUGTEXT=""; fi
                 if [ ${INDENT} -gt 0 ]; then SPACES=$((62 - INDENT - LINESIZE)); fi
@@ -699,15 +700,15 @@
         file=$1
         find=""
         if [ ! -z "${DPKGBINARY}" ]; then
-            find=$(${DPKGBINARY} -S ${file} 2> /dev/null | ${AWKBINARY} -F: '{print $1}')
+            find=$(${DPKGBINARY} -S "${file}" 2> /dev/null | ${AWKBINARY} -F: '{print $1}')
         elif [ ! -z "${RPMBINARY}" ]; then
-            find=$(${RPMBINARY} -qf ${file} 2> /dev/null | ${AWKBINARY} -F- '{print $1}')
+            find=$(${RPMBINARY} -qf "${file}" 2> /dev/null | ${AWKBINARY} -F- '{print $1}')
         fi
         if [ ! -z "${find}" ]; then
-            LogText "Result: file ${file} belongs to package (${find})"
+            LogText "Result: file '${file}' belongs to package (${find})"
             exitcode=0
         else
-            LogText "Result: file ${file} does most likely not belong to a package"
+            LogText "Result: file '${file}' does most likely not belong to a package"
         fi
         return ${exitcode}
     }
@@ -726,7 +727,7 @@
         if [ $# -eq 0 ]; then ExitFatal "Missing parameter when calling FileIsEmpty function"; fi
         EMPTY=0
         LogText "Test: checking if file $1 is empty"
-        if [ -z $1 ]; then
+        if [ ! -s "$1" ]; then
             LogText "Result: file $1 is empty"
             EMPTY=1
             return 0
@@ -754,35 +755,35 @@
         LogText "Test: check if we can access ${sFILE} (escaped: ${escaped_file})"
 
         # Check for symlink
-        if [ -L ${escaped_file} ]; then
+        if [ -L "${escaped_file}" ]; then
             ShowSymlinkPath ${escaped_file}
             if [ ! -z "${SYMLINK}" ]; then escaped_file="${SYMLINK}"; fi
         fi
 
         # Only check the file if it isn't a symlink (after previous check)
-        if [ -L ${escaped_file} ]; then
+        if [ -L "${escaped_file}" ]; then
             OTHERPERMS="-"
             LogText "Result: unclear if we can read this file, as this is a symlink"
             ReportException "FileIsReadable" "Can not determine symlink ${sFILE}"
-        elif [ -d ${escaped_file} ]; then
-            OTHERPERMS=$(${LSBINARY} -d -l ${escaped_file} | ${CUTBINARY} -c 8)
-        elif [ -f ${escaped_file} ]; then
-            OTHERPERMS=$(${LSBINARY} -d -l ${escaped_file} | ${CUTBINARY} -c 8)
+        elif [ -d "${escaped_file}" ]; then
+            OTHERPERMS=$(${LSBINARY} -d -l "${escaped_file}" 2> /dev/null | ${CUTBINARY} -c 8)
+        elif [ -f "${escaped_file}" ]; then
+            OTHERPERMS=$(${LSBINARY} -d -l "${escaped_file}" 2> /dev/null | ${CUTBINARY} -c 8)
         else
             OTHERPERMS="-"
         fi
 
         # Also check if we are the actual owner of the file (use -d to get directory itself, if its a directory)
-        FILEOWNER=$(ls -dln ${escaped_file} | ${AWKBINARY} -F" " '{ print $3 }')
+        FILEOWNER=$(ls -dln "${escaped_file}" 2> /dev/null | ${AWKBINARY} -F" " '{ print $3 }')
         if [ "${FILEOWNER}" = "${MYID}" ]; then
             LogText "Result: file is owned by our current user ID (${MYID}), checking if it is readable"
-            if [ -L ${sFILE} ]; then
+            if [ -L "${sFILE}" ]; then
                 LogText "Result: unclear if we can read this file, as this is a symlink"
                 ReportException "FileIsReadable" "Can not determine symlink ${escaped_file}"
-            elif [ -d ${escaped_file} ]; then
-                OTHERPERMS=$(${LSBINARY} -d -l ${escaped_file} | ${CUTBINARY} -c 2)
-            elif [ -f ${escaped_file} ]; then
-                OTHERPERMS=$(${LSBINARY} -l ${escaped_file} | ${CUTBINARY} -c 2)
+            elif [ -d "${escaped_file}" ]; then
+                OTHERPERMS=$(${LSBINARY} -d -l "${escaped_file}" 2> /dev/null | ${CUTBINARY} -c 2)
+            elif [ -f "${escaped_file}" ]; then
+                OTHERPERMS=$(${LSBINARY} -l "${escaped_file}" 2> /dev/null | ${CUTBINARY} -c 2)
             fi
         else
             LogText "Result: file is not owned by current user ID (${MYID}), but UID ${FILEOWNER}"
@@ -804,11 +805,17 @@
     # Name        : GetHostID()
     # Description : Create an unique id for the system
     #
-    # Returns     : Nothing
+    # Returns     : optional value
     # Usage       : GetHostID
     ################################################################################
 
     GetHostID() {
+
+        if [ ! -z "${HOSTID}" -a ! -z "${HOSTID2}" ]; then
+            Debug "Skipping creation of host identifiers, as they are already configured (via profile)"
+            return 1
+        fi
+
         FIND=""
         # Avoid some hashes (empty, only zeros)
         BLACKLISTED_HASHES="6ef1338f520d075957424741d7ed35ab5966ae97 adc83b19e793491b1c6ea0fd8b46cd9f32e592fc"
@@ -864,6 +871,19 @@
                         HOSTID=$(echo ${FIND} | sha1)
                     else
                         ReportException "GetHostID" "No MAC address returned on DragonFly or FreeBSD"
+                    fi
+                ;;
+
+                "HP-UX")
+                    FIND=$(nwmgr -q info -c lan0 2> /dev/null | awk '{ if ($1=="MAC" && $2=="Address") { print $4 }}')
+                    if HasData "${FIND}"; then
+                        if [ ! -z "${OPENSSLBINARY}" ]; then
+                            HOSTID=$(echo ${FIND} | ${OPENSSLBINARY} sha -sha1 | awk '{ print $2 }')
+                        else
+                            ReportException "GetHostID" "No openssl binary available on this HP-UX system"
+                        fi
+                    else
+                        ReportException "GetHostID" "No MAC address found by using nwmgr"
                     fi
                 ;;
 
@@ -1084,13 +1104,14 @@
                 LogText "Hash (hostname): ${HASH_HOSTNAME}"
                 LogText "Hash (ssh or machineid): ${HASH2}"
                 HOSTID2="${HASH2}"
-                Report "hostid2=${HOSTID2}"
             fi
         fi
 
         # Show an exception if no HostID could be created, to ensure each system (and scan) has one
         if [ "${HOSTID}" = "" ]; then
             ReportException "GetHostID" "No unique host identifier could be created."
+        elif [ ! -z "${HOSTID2}" ]; then
+            return 0
         fi
     }
 
@@ -1157,11 +1178,20 @@
 
     IsContainer() {
         FOUND=0
+        # Early on we can't use FileIsReadable yet
         if [ -e /proc/1/cgroup ]; then
-            FIND=$(cat /proc/1/cgroup | grep -i docker)
+            FIND=$(cat ${ROOTDIR}proc/1/cgroup 2> /dev/null | grep -i docker)
             if [ $? -eq 0 ]; then
                 LogText "Result: found Docker in control groups (/proc/1/cgroup), so we are running in Docker container"
                 CONTAINER_TYPE="Docker"; FOUND=1
+                EXITCODE=0
+            fi
+        fi
+        if [ -e /proc/1/environ ]; then
+            FIND=$(grep -qa 'container=lxc' ${ROOTDIR}proc/1/environ 2> /dev/null)
+            if [ $? -eq 0 ]; then
+                LogText "Result: found LXC in environnement (/proc/1/environ), so we are running in LXC container"
+                CONTAINER_TYPE="LXC"; FOUND=1
                 EXITCODE=0
             fi
         fi
@@ -1231,20 +1261,49 @@
     # Description : Check if a process is running
     # Returns     : 0 (process is running), 1 (process not running)
     #               RUNNING (1 = running, 0 = not running) - will be deprecated
+    # Notes       : PSOPTIONS are declared globally, to prevent testing each call
     ################################################################################
 
     IsRunning() {
         if [ $# -eq 0 ]; then ExitFatal "Missing parameter when calling IsRunning function"; fi
+        pgrep_options="-x"
+        search=""
+        while [ $# -ge 1 ]; do
+            case $1 in
+                --full)
+                    pgrep_options="-f" # replace -x with -f
+                ;;
+                *)
+                    search="$1"
+                ;;
+            esac
+            shift  # Go to next parameter
+        done
+
+        if [ -z "${search}" ]; then ExitFatal "Missing process to search for when using IsRunning function"; fi
         RUNNING=0
-        PSOPTIONS=""
-        if [ ${SHELL_IS_BUSYBOX} -eq 0 ]; then PSOPTIONS=" ax"; fi
-        FIND=$(${PSBINARY} ${PSOPTIONS} | egrep "( |/)$1" | grep -v "grep")
-        if [ ! "${FIND}" = "" ]; then
+        if [ ! -z "${PGREPBINARY}" ]; then
+            FIND=$(${PGREPBINARY} ${pgrep_options} "${search}" | ${TRBINARY} '\n' ' ')
+        else
+            if [ -z "${PSOPTIONS}" ]; then
+                PSOPTIONS=" -o args="
+                if [ ${SHELL_IS_BUSYBOX} -eq 0 ]; then
+                    case "${OS}" in
+                        "Linux")
+                            PSOPTIONS=" -o args= -C ${search}"
+                        ;;
+                    esac
+                fi
+            fi
+            FIND=$(${PSBINARY} ${PSOPTIONS} | egrep "( |/)${search}" | grep -v "grep")
+        fi
+
+        if [ ! -z "${FIND}" ]; then
             RUNNING=1
-            LogText "IsRunning: process '$1' found (${FIND})"
+            LogText "IsRunning: process '${search}' found (${FIND})"
             return 0
         else
-            LogText "IsRunning: process '$1' not found"
+            LogText "IsRunning: process '${search}' not found"
             return 1
         fi
     }
@@ -1331,8 +1390,21 @@
         ISVIRTUALMACHINE=2; VMTYPE="unknown"; VMFULLTYPE="Unknown"
         SHORT=""
 
+        # lxc environ detection
+        if [ -z "${SHORT}" ]; then
+            if [ -f /proc/1/environ ]; then
+                FIND=$(grep -qa 'container=lxc' /proc/1/environ 2> /dev/null)
+                if [ $? -eq 0 ]; then
+                    SHORT=lxc
+                    LogText "Result: found ${SHORT}"
+                fi
+            fi
+        else
+            LogText "Result: skipped lxc environ detection test, as we already found machine type"
+        fi
+
         # facter
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             if [ -x /usr/bin/facter ] || [ -x /usr/local/bin/facter ]; then
                 case "$(facter is_virtual)" in
                 "true")
@@ -1351,11 +1423,11 @@
         fi
 
         # systemd
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             if [ -x /usr/bin/systemd-detect-virt ]; then
                 LogText "Test: trying to guess virtualization technology with systemd-detect-virt"
                 FIND=$(/usr/bin/systemd-detect-virt)
-                if [ ! "${FIND}" = "" ]; then
+                if [ ! -z "${FIND}" ]; then
                     LogText "Result: found ${FIND}"
                     SHORT="${FIND}"
                 fi
@@ -1368,11 +1440,11 @@
 
         # lscpu
         # Values: VMware
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             if [ -x /usr/bin/lscpu ]; then
                 LogText "Test: trying to guess virtualization with lscpu"
-                FIND=$(lscpu | grep "^Hypervisor Vendor" | awk -F: '{ print $2 }' | sed 's/ //g')
-                if [ ! "${FIND}" = "" ]; then
+                FIND=$(lscpu | grep -i "^Hypervisor Vendor" | awk -F: '{ print $2 }' | sed 's/ //g')
+                if [ ! -z "${FIND}" ]; then
                     LogText "Result: found ${FIND}"
                     SHORT="${FIND}"
                 else
@@ -1387,7 +1459,7 @@
 
         # dmidecode
         # Values: VMware Virtual Platform / VirtualBox
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             if [ -x /usr/bin/dmidecode ]; then DMIDECODE_BINARY="/usr/bin/dmidecode"
             elif [ -x /usr/sbin/dmidecode ]; then DMIDECODE_BINARY="/usr/sbin/dmidecode"
             else
@@ -1396,7 +1468,7 @@
             if [ ! "${DMIDECODE_BINARY}" = "" -a ${PRIVILEGED} -eq 1 ]; then
                 LogText "Test: trying to guess virtualization with dmidecode"
                 FIND=$(/usr/sbin/dmidecode -s system-product-name | awk '{ print $1 }')
-                if [ ! "${FIND}" = "" ]; then
+                if [ ! -z "${FIND}" ]; then
                     LogText "Result: found ${FIND}"
                     SHORT="${FIND}"
                 else
@@ -1413,28 +1485,27 @@
         # < needs snippet >
 
         # Try common guest processes
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             LogText "Test: trying to guess virtual machine type by running processes"
 
             # VMware
-                IsRunning vmware-guestd
-                if [ ${RUNNING} -eq 1 ]; then SHORT="vmware"; fi
-                IsRunning vmtoolsd
-                if [ ${RUNNING} -eq 1 ]; then SHORT="vmware"; fi
+            if IsRunning vmware-guestd; then SHORT="vmware"
+            elif IsRunning vmtoolsd; then SHORT="vmware"
+            fi
 
             # VirtualBox based on guest services
-                IsRunning vboxguest-service
-                if [ ${RUNNING} -eq 1 ]; then SHORT="virtualbox"; fi
-                IsRunning VBoxClient
-                if [ ${RUNNING} -eq 1 ]; then SHORT="virtualbox"; fi
+            if IsRunning vboxguest-service; then SHORT="virtualbox"
+            elif IsRunning VBoxClient; then SHORT="virtualbox"
+            elif IsRunning VBoxService; then SHORT="virtualbox"
+            fi
         else
             LogText "Result: skipped processes test, as we already found platform"
         fi
 
         # Amazon EC2
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             LogText "Test: checking specific files for Amazon"
-            if [ -f /etc/ec2_version -a ! -z /etc/ec2_version ]; then
+            if [ -f /etc/ec2_version -a -s /etc/ec2_version ]; then
                 SHORT="amazon-ec2"
             else
                 LogText "Result: system not hosted on Amazon"
@@ -1444,7 +1515,7 @@
         fi
 
         # sysctl values
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             LogText "Test: trying to guess virtual machine type by sysctl keys"
 
             # FreeBSD: hw.hv_vendor (remains empty for VirtualBox)
@@ -1459,7 +1530,7 @@
         fi
 
         # lshw
-        if [ "${SHORT}" = "" ]; then
+        if [ -z "${SHORT}" ]; then
             if [ ${PRIVILEGED} -eq 1 ]; then
                 if [ -x /usr/bin/lshw ]; then
                     LogText "Test: trying to guess virtualization with lshw"
@@ -1481,7 +1552,7 @@
         # Check if we caught some string along all tests
         if [ ! "${SHORT}" = "" ]; then
             # Lowercase and see if we found a match
-            SHORT=$(echo ${SHORT} | awk '{ print $1 }' | tr [[:upper:]] [[:lower:]])
+            SHORT=$(echo ${SHORT} | awk '{ print $1 }' | tr '[:upper:]' '[:lower:]')
 
                 case ${SHORT} in
                     amazon-ec2)         ISVIRTUALMACHINE=1; VMTYPE="amazon-ec2";      VMFULLTYPE="Amazon AWS EC2 Instance"                 ;;
@@ -1621,6 +1692,40 @@
             CDATE=$(date "+%Y-%m-%d %H:%M:%S")
             echo "${CDATE} ===---------------------------------------------------------------===" >> ${LOGFILE}
         fi
+    }
+
+
+    ################################################################################
+    # Name        : PackageIsInstalled()
+    # Description : Add a separator to log file between sections, tests etc
+    # Returns     : exit code
+    # Notes       : this function is not used yet, but created in advance to allow
+    #               the addition of support for all operating systems
+    ################################################################################
+
+    PackageIsInstalled() {
+        exit_code=255
+
+        if [ $# -eq 1 ]; then
+            package="$1"
+        else
+            Fatal "Incorrect usage of PackageIsInstalled function"
+        fi
+
+        if [ ! -z "${RPMBINARY}" ]; then
+            output=$(${RPMBINARY} --quiet -q ${package} 2> /dev/null)
+            exit_code=$?
+        elif ! -z "${DPKGBINARY}" ]; then
+            output=$(${DPKGBINARY} -l ${package} 2> /dev/null)
+            exit_code=$?
+        elif [ ! -z "${ZYPPERBINARY}" ]; then
+            output=$(${ZYPPERBINARY} --quiet --non-interactive search --installed -i ${PACKAGE} 2> /dev/null | grep "^i")
+            if [ ! -z "${output}" ]; then exit_code=0; else exit_code=1; fi
+        else
+            ReportException "PackageIsInstalled:01"
+        fi
+
+        return ${exit_code}
     }
 
 
@@ -2080,11 +2185,15 @@
         if [ ${SKIPTEST} -eq 0 -a "${TEST_WEIGHT}" = "H" -a "${SCAN_TEST_HEAVY}" = "NO" ]; then SKIPTEST=1; SKIPREASON="Test to system intensive for scan mode (H)"; fi
         if [ ${SKIPTEST} -eq 0 -a "${TEST_WEIGHT}" = "M" -a "${SCAN_TEST_MEDIUM}" = "NO" ]; then SKIPTEST=1; SKIPREASON="Test to system intensive for scan mode (M)"; fi
 
-        # Skip test if OS is different than requested
-        if [ ${SKIPTEST} -eq 0 -a ! -z "${TEST_NEED_OS}" -a ! "${OS}" = "${TEST_NEED_OS}" ]; then
-            SKIPTEST=1; SKIPREASON="Incorrect guest OS (${TEST_NEED_OS} only)"
-            if [ ${LOG_INCORRECT_OS} -eq 0 ]; then
-                SKIPLOGTEST=1
+        # Test if our OS is the same as the requested OS (can be multiple values)
+        if [ ${SKIPTEST} -eq 0 -a ! -z "${TEST_NEED_OS}" ]; then
+            HASMATCH=0
+            for I in ${TEST_NEED_OS}; do
+                if [ "${I}" = "${OS}" ]; then HASMATCH=1; fi
+            done
+            if [ ${HASMATCH} -eq 0 ]; then
+                SKIPTEST=1; SKIPREASON="Incorrect guest OS (${TEST_NEED_OS} only)"
+                if [ ${LOG_INCORRECT_OS} -eq 0 ]; then SKIPLOGTEST=1; fi
             fi
         fi
 
@@ -2097,7 +2206,7 @@
         if [ ${SKIPTEST} -eq 0 -a ! -z "${TEST_NEED_PLATFORM}" -a ! "${HARDWARE}" = "${TEST_NEED_PLATFORM}" ]; then SKIPTEST=1; SKIPREASON="Incorrect hardware platform"; fi
 
         # Not all prerequisites met, like missing tool
-        if [ ${SKIPTEST} -eq 0 -a "${PREQS_MET}" = "NO" ]; then SKIPTEST=1; if [ -z "${SKIPREASON}" ]; then SKIPREASON="Prerequisities not met (ie missing tool, other type of Linux distribution)"; fi; fi
+        if [ ${SKIPTEST} -eq 0 -a "${PREQS_MET}" = "NO" ]; then SKIPTEST=1; if [ -z "${SKIPREASON}" ]; then SKIPREASON="Prerequisites not met (ie missing tool, other type of Linux distribution)"; fi; fi
 
         # Skip if a test is root only and we are running a non-privileged test
         if [ ${SKIPTEST} -eq 0 -a ${ROOT_ONLY} -eq 1 -a ! ${MYID} = "0" ]; then
@@ -2738,9 +2847,9 @@
             STRING=""
             RETVAL=1
             # Check if this test is on the list to skip
-            for I in ${SKIP_TESTS}; do
+            for item in ${SKIP_TESTS}; do
                 STRING=$(echo $1 | tr '[:lower:]' '[:upper:]')
-                if [ "${I}" = "${STRING}" ]; then RETVAL=0; LogText "Atomic test ($1) skipped by configuration (skip-test)"; fi
+                if [ "${item}" = "${STRING}" ]; then RETVAL=0; LogText "Atomic test ($1) skipped by configuration (skip-test)"; fi
             done
         else
             ReportException "SkipAtomicTest()" "Function called without right number of arguments (1)"
@@ -2942,18 +3051,16 @@
         else
             LogText "${FUNCNAME}: checking value for application ${APP}"
             LogText "${FUNCNAME}: ${OPTION} is set to ${1}"
-
-
             LogText "${FUNCNAME}: check if ${1} is equal to ${2}"
 
-            if [ "$1" == "$2" ]; then
+            if [ "$1" = "$2" ]; then
                 LogText "${FUNCNAME}: ${1} is equal to ${2}"
                 RETVAL=0
             fi
 
             if ! [ -z ${3+x} ]; then
                 LogText "${FUNCNAME}: ${1} is equal to ${3}"
-                if [ "$2" == "$3" ]; then
+                if [ "$2" = "$3" ]; then
                     LogText "${FUNCNAME}: ${OPTION} is equal to ${3}"
                     RETVAL=1
                 fi
@@ -3118,4 +3225,4 @@
 
 #================================================================================
 # Lynis is part of Lynis Enterprise and released under GPLv3 license
-# Copyright 2007-2017 - Michael Boelen, CISOfy - https://cisofy.com
+# Copyright 2007-2018 - Michael Boelen, CISOfy - https://cisofy.com

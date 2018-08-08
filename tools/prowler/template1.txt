@@ -37,6 +37,8 @@ body {
     background-color: #33dd99;
     padding: 6px 16px;
     color: #4b4b4b;
+    overflow-wrap: break-word;
+    line-height: 1.5;   
     margin-bottom: 10px;
     border-radius: 4px;
 

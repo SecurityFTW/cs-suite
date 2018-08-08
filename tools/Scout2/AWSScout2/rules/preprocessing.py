@@ -139,6 +139,7 @@ def add_security_group_name_to_ec2_grants_callback(ec2_config, current_config, p
 def process_cloudtrail_trails(cloudtrail_config):
     printInfo('Processing CloudTrail config...')
     global_events_logging = []
+    data_logging_trails_count = 0
     for region in cloudtrail_config['regions']:
         for trail_id in cloudtrail_config['regions'][region]['trails']:
             trail = cloudtrail_config['regions'][region]['trails'][trail_id]
@@ -147,6 +148,11 @@ def process_cloudtrail_trails(cloudtrail_config):
                 continue
             if trail['IncludeGlobalServiceEvents'] == True and trail['IsLogging'] == True:
                 global_events_logging.append((region, trail_id,))
+            # Any wildcard logging?
+            if trail.get('wildcard_data_logging', False):
+                data_logging_trails_count += 1
+
+    cloudtrail_config['data_logging_trails_count'] = data_logging_trails_count
     cloudtrail_config['IncludeGlobalServiceEvents'] = False if (len(global_events_logging) == 0) else True
     cloudtrail_config['DuplicatedGlobalServiceEvents'] = True if (len(global_events_logging) > 1) else False
 
@@ -186,6 +192,11 @@ def list_ec2_network_attack_surface_callback(aws_config, current_config, path, c
     if 'Association' in current_config and current_config['Association']:
         public_ip = current_config['Association']['PublicIp']
         security_group_to_attack_surface(aws_config, aws_config['services']['ec2']['external_attack_surface'], public_ip, current_path, [g['GroupId'] for g in current_config['Groups']], [])
+    # IPv6
+    if 'Ipv6Addresses' in current_config and len(current_config['Ipv6Addresses']) > 0:
+        for ipv6 in current_config['Ipv6Addresses']:
+            ip = ipv6['Ipv6Address']
+            security_group_to_attack_surface(aws_config, aws_config['services']['ec2']['external_attack_surface'], ip, current_path, [g['GroupId'] for g in current_config['Groups']], [])
 
 
 

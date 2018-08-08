@@ -6,7 +6,7 @@
 # ------------------
 #
 # Copyright 2007-2013, Michael Boelen
-# Copyright 2007-2017, CISOfy
+# Copyright 2007-2018, CISOfy
 #
 # Website  : https://cisofy.com
 # Blog     : http://linux-audit.com
@@ -275,6 +275,22 @@
         done
         LogText "Result: found ${COUNT} repositories"
     fi
+#
+#################################################################################
+#
+    # TODO
+
+    ## Test        : PKGS-7318
+    ## Description : APT configuration
+    #if [ -x ${ROOTDIR}usr/bin/apt-config ]; then PREQS_MET="YES"; else PREQS_MET="NO"; fi
+    #Register --test-no PKGS-7318 --preqs-met ${PREQS_MET} --weight L --network NO --category security --description "APT configuration"
+    #if [ ${SKIPTEST} -eq 0 ]; then
+    #    LogText "Test: check APT configuration"
+    #    if ! SkipAtomicTest ${TEST_NO}:atomicname; then
+    #    # Acquire::AllowInsecureRepositories should be 0 (could be 1)
+    #    # Acquire::AllowDowngradeToInsecureRepositories should be 0
+    #    # Binary::apt::Acquire::AllowInsecureRepositories should be 0
+    #fi
 #
 #################################################################################
 #
@@ -617,7 +633,7 @@
     # Test        : PKGS-7370
     # Description : Checking debsums installation status and presence in cron job
     # Note        : Run this only when it is a DPKG based system
-    if [ ! -z "${DPKGBINARY}" -a "${LINUX_VERSION}" = "Debian" ]; then PREQS_MET="YES"; else PREQS_MET="NO"; fi
+    if [ ! -z "${DPKGBINARY}" ]; then PREQS_MET="YES"; else PREQS_MET="NO"; fi
     Register --test-no "PKGS-7370" --preqs-met ${PREQS_MET} --weight L --network NO --category security --description "Checking for debsums utility"
     if [ ${SKIPTEST} -eq 0 ]; then
         if [ ! -z "${DEBSUMSBINARY}" ]; then
@@ -677,7 +693,7 @@
         if [ -x ${ROOTDIR}usr/sbin/pkg_admin ]; then
             PACKAGE_AUDIT_TOOL_FOUND=1
             PACKAGE_AUDIT_TOOL="pkg_admin audit"
-            if [ -f ${ROOTDIR}var/db/pkg/pkgs-vulnerabilities ]; then
+            if [ -f ${ROOTDIR}var/db/pkg/pkg-vulnerabilities ]; then
                 FIND=$(${ROOTDIR}usr/sbin/pkg_admin audit)
                 if [ -z "${FIND}" ]; then
                     LogText "Result: pkg_admin audit results are clean"
@@ -810,11 +826,12 @@
     if [ ! -z "${YUMBINARY}" -a -z "${DNFBINARY}" ]; then PREQS_MET="YES"; else PREQS_MET="NO"; fi
     Register --test-no PKGS-7384 --preqs-met ${PREQS_MET} --os Linux --weight L --network NO --category security --description "Check for YUM utils package"
     if [ ${SKIPTEST} -eq 0 ]; then
-        if [ -x ${ROOTDIR}usr/bin/package-cleanup ]; then
-            LogText "Result: found YUM utils package (${ROOTDIR}usr/bin/package-cleanup)"
+        # package-cleanup tool can be found in different locations
+        if [ -x ${ROOTDIR}bin/package-cleanup -o -x ${ROOTDIR}usr/bin/package-cleanup ]; then
+            LogText "Result: found YUM utils package (package-cleanup)"
             # Check for duplicates
             LogText "Test: Checking for duplicate packages"
-            FIND=$(${ROOTDIR}usr/bin/package-cleanup -q --dupes > /dev/null; echo $?)
+            FIND=$(package-cleanup -q --dupes > /dev/null; echo $?)
             if [ "${FIND}" = "0" ]; then
                 LogText "Result: No duplicate packages found"
                 Display --indent 2 --text "- Checking package database duplicates" --result "${STATUS_OK}" --color GREEN
@@ -827,7 +844,7 @@
 
             # Check for package database problems
             LogText "Test: Checking for database problems"
-            FIND=$(${ROOTDIR}usr/bin/package-cleanup --problems > /dev/null; echo $?)
+            FIND=$(package-cleanup --problems > /dev/null; echo $?)
             if [ "${FIND}" = "0" ]; then
                 LogText "Result: No package database problems found"
                 Display --indent 2 --text "- Checking package database for problems" --result "${STATUS_OK}" --color GREEN
@@ -931,7 +948,7 @@
     if [ ${SKIPTEST} -eq 0 ]; then
         if [ ! -z "${PYTHONBINARY}" ]; then
             LogText "Test: checking enabled repositories"
-            REPOS=$(${PYTHONBINARY} -c 'import yum ; yb = yum.YumBase() ; print [(r.id + "=" + str(r.gpgcheck)) for r in yb.repos.listEnabled()]' | ${GREPBINARY} "^\[" | ${TRBINARY} -d '[] ' | ${TRBINARY} -d "'" | ${SEDBINARY} 's/,/ /g')
+            REPOS=$(${PYTHONBINARY} -c 'import yum ; yb = yum.YumBase() ; yb.conf ; print [(r.id + "=" + str(r.gpgcheck)) for r in yb.repos.listEnabled()]' | ${GREPBINARY} "^\[" | ${TRBINARY} -d '[] ' | ${TRBINARY} -d "'" | ${SEDBINARY} 's/,/ /g')
             if [ -z "${REPOS}" ]; then LogText "Result: found no repositories"; fi
             for I in ${REPOS}; do
                 REPO=$(echo ${I} | ${AWKBINARY} -F= '{print $1}')
