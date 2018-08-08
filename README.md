@@ -8,6 +8,7 @@
 * gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
 * AWS Audit - AWS ReadOnly Keys
 * GCP Audit - gcloud setup
+* Azure Audit - Azure user read-only access
 	
 ## Installation
 
@@ -24,6 +25,7 @@ Note - Generate a set of ReadOnly AWS keyswhich the tool will ask to finish the 
 ```bash
 To run AWS Audit - python cs.py -env aws
 To run GCP Audit - python cs.py -env gcp -pId <project_name>
+To run Azure Audit - python cs.py -env azure
 ```
 - The final report will be available in `reports` directory
 
