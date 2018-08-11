@@ -19,7 +19,7 @@ rsa==3.4.2
 s3transfer==0.1.10
 termcolor==1.1.0
 urllib3==1.22
-opinel>=3.3.0,<4.0.0
+opinel>=3.3.4,<4.0.0
 tinydb==3.2.2
 google_api_python_client==1.6.1
 jinja2==2.9.5
