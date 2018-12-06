@@ -4,6 +4,7 @@ from subprocess import STDOUT
 import time
 import webbrowser
 import os
+import glob
 
 subprocess.call(['az', 'login'])
 account_name = subprocess.check_output(['az account list --all --query [*].[name] --output tsv'], shell=True).strip().replace(" ", "")
@@ -42,6 +43,14 @@ def json_to_html(file, new_file):
         with open('./tools/prowler/template2.txt', 'r') as k:
              for line in k:
                  f.write(line)
+
+def merge_json():
+    with open("reports/AZURE/%s/%s/final_report/final.json" %(account_name, timestmp), "w") as f:
+        for file in glob.glob("reports/AZURE/%s/%s/*.json" % (account_name, timestmp)):
+            with open(file, "r") as infile:
+                for line in infile:
+                    f.write(line)
+
 
 def no_guest_user():
     """ The response is empty,need to dig in further """ 
@@ -1445,6 +1454,77 @@ def sql_db_threat_retention():
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
         f.write("\n")
+        
+def persistent_json(json_file):
+
+    checks = []
+    with open(json_file, 'r') as f:
+        for line in f:
+            j = json.loads(line)
+            checks.append(j['check'])
+    checks = set(checks)
+    dict = {}
+    with open('reports/AZURE/%s/%s/final_diff.json' % (account_name, timestmp), 'w') as g:
+        for check in checks:
+            dict = {}
+            data = []
+            with open(json_file , 'r') as f:
+                for line in f:
+                    j = json.loads(line)
+                    if j['check'] == check:
+                        dict['check'] = j['check']
+                        j.pop('check')
+                        data.append(j)
+                dict['data'] = data
+                g.write("%s\n" % (json.dumps(dict)))
+
+
+def persis(j1,j2):
+    f=open("./reports/AZURE/%s/%s/diff.json" %(account_name, timestmp), "a+")
+    for data1 in j1['data']:
+        for data2 in j2['data']:
+            if data1==data2:
+                pers = json.dumps(data1)
+                pers = json.loads(pers)
+                if pers['type'] == 'WARNING':
+                    pers['check'] = j1['check']
+                    f.write("%s\n" % json.dumps(pers))
+    persistent_json("./reports/AZURE/%s/%s/diff.json" %(account_name, timestmp))
+
+
+def persistent(latest, last):
+    with open("reports/AZURE/%s/%s/diff.json" %(account_name, timestmp), "a+") as h:
+        with open(latest, 'r') as f:
+            for line1 in f:
+                data1 = json.loads(line1)
+                for i in data1['data']:
+                    with open(last, 'r') as g:
+                        for line2 in g:
+                            data2 = json.loads(line2)
+                            for k in data2['data']:
+                                if data1['check'] == data2['check']:
+                                    if i==k:
+                                        if i['type'] == "WARNING":
+                                            i['check'] = data1['check']
+                                            h.write("%s\n" % json.dumps(i))
+                                            
+    persistent_json("./reports/AZURE/%s/%s/diff.json" %(account_name, timestmp)) 
+
+
+def persistent_files():
+    dirs = os.listdir("./reports/AZURE/%s/" % (account_name))
+    if len(dirs) == 1:
+        print "This is the first audit run for the account, diff will be shown in the next run"
+        with open("./reports/AZURE/%s/%s/diff.html" %(account_name, timestmp), 'w') as f:
+            f.write("This is the first audit run for the account, diff will be shown in the next run")
+    else:
+        last_dir = subprocess.check_output(["ls -td -- */ | head -n 2 | cut -d'/' -f1 | sed -n 2p"], cwd='./reports/AZURE/%s' %(account_name), shell=True).strip()
+        latest = "./reports/AZURE/%s/%s/final_report/final.json" %(account_name, timestmp)
+        last = "./reports/AZURE/%s/%s/final_report/final.json" %(account_name, last_dir)
+        persistent(latest, last)
+        json_to_html('./reports/AZURE/%s/%s/final_diff.json' % (account_name, timestmp),
+                     './reports/AZURE/%s/%s/diff.html' % (account_name, timestmp))
+
 
 def azure_audit():
     subprocess.call(['mkdir', '-p', 'reports/AZURE/%s/%s/final_report' % (account_name, timestmp)])
@@ -1514,6 +1594,8 @@ def azure_audit():
                  'reports/AZURE/%s/%s/final_report/vault.html' % (account_name, timestmp))
     json_to_html('./reports/AZURE/%s/%s/sql_db.json' % (account_name, timestmp),
                  'reports/AZURE/%s/%s/final_report/sql_db.html' % (account_name, timestmp))
+    merge_json()
+    persistent_files()
     subprocess.check_output(
         ['cp -R ./tools/template/* ./reports/AZURE/%s/%s/final_report/' % (account_name, timestmp)], shell=True)
     subprocess.check_output(['rm ./reports/AZURE/%s/%s/final_report/report.html' %(account_name, timestmp)], shell=True)

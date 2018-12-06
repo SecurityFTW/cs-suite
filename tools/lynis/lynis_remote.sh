@@ -38,7 +38,7 @@ elif [[ -z "$6" && -z "$7" ]];then
    if [ $status -eq 0 ];then
        printf "${GREEN}Lynis file copied over the server${NC}\n"
        printf "${YELLOW}Attempting to SSH the server..... \n ssh $5@$2  ${NC}\n"
-       audit=`ssh -o "StrictHostKeyChecking no" $5@$2 "mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && ./lynis audit system 2>/dev/null"`
+       audit=`ssh -o "StrictHostKeyChecking no" $5@$2 "mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && chmod 600 plugins/* && ./lynis audit system 2>/dev/null"`
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
@@ -62,7 +62,7 @@ elif [[ -z "$5" && -z "$7" ]];then
    if [ $status -eq 0 ];then
        printf "${GREEN}Lynis file copied over the server${NC}\n"
        printf "${YELLOW}Attempting to SSH the server..... \n ssh -i $6 ec2-user@$2  ${NC}\n"
-       audit=`ssh -i $6 -o 'StrictHostKeyChecking no' ec2-user@$2 'mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && ./lynis audit system 2>/dev/null'`
+       audit=`ssh -i $6 -o 'StrictHostKeyChecking no' ec2-user@$2 'mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && chmod 600 plugins/* && ./lynis audit system 2>/dev/null'`
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
@@ -110,7 +110,7 @@ elif [ -z "$6" ];then
    if [ $status -eq 0 ];then
        printf "${GREEN}Lynis file copied over the server${NC}\n"
        printf "${YELLOW}Attempting to SSH the server..... \n sshpass -p password ssh $5@$2 ${NC}\n"
-       audit=`sshpass -p $7 ssh -o 'StrictHostKeyChecking no' $5@$2 'mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && ./lynis audit system 2>/dev/null'`
+       audit=`sshpass -p $7 ssh -o 'StrictHostKeyChecking no' $5@$2 'mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && chmod 600 plugins/* && ./lynis audit system 2>/dev/null'`
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
@@ -134,7 +134,7 @@ elif [ -z "$7" ];then
    if [ $status -eq 0 ];then
        printf "${GREEN}Lynis file copied over the server${NC}\n"
        printf "${YELLOW}Attempting to SSH the server..... \n ssh -i $6 $5@$2  ${NC}\n"
-       audit=`ssh -i $6 -o 'StrictHostKeyChecking no' $5@$2 'mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && ./lynis audit system 2>/dev/null'`
+       audit=`ssh -i $6 -o 'StrictHostKeyChecking no' $5@$2 'mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && chmod 600 plugins/* && ./lynis audit system 2>/dev/null'`
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
@@ -158,7 +158,7 @@ elif [ -z "$5" ];then
    if [ $status -eq 0 ];then
        printf "${GREEN}Lynis file copied over the server${NC}\n"
        printf "${YELLOW}Attempting to SSH the server..... \n sshpass -p password ssh -i $6 ec2-user@$2  ${NC}\n"
-       audit=`sshpass -p password ssh -i $6 -o "StrictHostKeyChecking no" ec2-user@$2 "mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && ./lynis audit system 2>/dev/null"`
+       audit=`sshpass -p password ssh -i $6 -o "StrictHostKeyChecking no" ec2-user@$2 "mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* &&  chmod 600 plugins/* && ./lynis audit system 2>/dev/null"`
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"
@@ -181,7 +181,7 @@ else
    if [ $status -eq 0 ];then
        printf "${GREEN}Lynis file copied over the server${NC}\n"
        printf "${YELLOW}Attempting to SSH the server..... \n sshpass -p password ssh -i $6 $5@$2  ${NC}\n"
-       audit=`sshpass -p password ssh -i $6 -o "StrictHostKeyChecking no" $5@$2 "mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && ./lynis audit system 2>/dev/null"`
+       audit=`sshpass -p password ssh -i $6 -o "StrictHostKeyChecking no" $5@$2 "mkdir -p ~/tmp-lynis && cd ~/tmp-lynis && tar xzf ../tmp-lynis-remote.tgz && rm ../tmp-lynis-remote.tgz && cd lynis && chmod 640 include/* && chmod 600 plugins/* && ./lynis audit system 2>/dev/null"`
        status=$?
        if [ $status -eq 0 ];then
            printf "${GREEN}Lynis Audit Done${NC}\n"

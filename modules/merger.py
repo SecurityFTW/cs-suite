@@ -199,11 +199,75 @@ def merge_json():
     with open('./tools/prowler/final_json', 'r') as k:
         for line in k:
             j2 = json.loads(line)
-
-    j1['report'].append(j2['report'])
-    with open('reports/AWS/aws_audit/%s/%s/delta/final_json' % (account_name, timestmp), 'w') as f:
+    for js in j2['report']:
+        j1['report'].append(js)
+    with open('reports/AWS/aws_audit/%s/%s/final_report/final_json' % (account_name, timestmp), 'w') as f:
         f.write(json.dumps(j1))
     os.remove('./tools/prowler/final_json')
+
+def persistent_json(json_file):
+
+    checks = []
+    with open(json_file, 'r') as f:
+        for line in f:
+            j = json.loads(line)
+            checks.append(j['check'])
+    checks = set(checks)
+    dict = {}
+    with open('reports/AWS/aws_audit/%s/%s/delta/final_diff.json' % (account_name, timestmp), 'w') as g:
+        for check in checks:
+            dict = {}
+            data = []
+            with open(json_file , 'r') as f:
+                for line in f:
+                    j = json.loads(line)
+                    if j['check'] == check:
+                        dict['check'] = j['check']
+                        j.pop('check')
+                        data.append(j)
+                dict['data'] = data
+                g.write("%s\n" % (json.dumps(dict)))
+
+
+def persis(j1,j2):
+    f=open("./reports/AWS/aws_audit/%s/%s/delta/diff.json" %(account_name, timestmp), "a+")
+    for data1 in j1['data']:
+        for data2 in j2['data']:
+            if data1==data2:
+                pers = json.dumps(data1)
+                pers = json.loads(pers)
+                if pers['type'] == 'WARNING':
+                    pers['check'] = j1['check']
+                    f.write("%s\n" % json.dumps(pers))
+                    
+
+def persistent(latest, last):
+    with open(latest) as data_file:
+        data1 = json.load(data_file)
+    with open(last) as data_file:
+        data2 =  json.load(data_file)
+
+    for d1 in data1['report']:
+        for d2 in data2['report']:
+            if d2['check'] == d1['check']:
+                persis(d1,d2)
+    persistent_json("./reports/AWS/aws_audit/%s/%s/delta/diff.json" %(account_name, timestmp))
+
+
+
+def persistent_files():
+    dirs = os.listdir("./reports/AWS/aws_audit/%s/" % (account_name))
+    if len(dirs) == 1:
+        print "This is the first audit run for the account, diff will be shown in the next run"
+        with open('./reports/AWS/aws_audit/%s/%s/delta/diff.html' % (account_name, timestmp), 'w') as f:
+            f.write("This is the first audit for the account, diff will be shown in the next run")
+    else:
+        last_dir = subprocess.check_output(["ls -td -- */ | head -n 2 | cut -d'/' -f1 | sed -n 2p"], cwd='./reports/AWS/aws_audit/%s' %(account_name), shell=True).strip()
+        latest = "./reports/AWS/aws_audit/%s/%s/final_report/final_json" %(account_name, timestmp)
+        last = "./reports/AWS/aws_audit/%s/%s/final_report/final_json" %(account_name, last_dir)
+        persistent(latest, last)
+        json_to_html('./reports/AWS/aws_audit/%s/%s/delta/final_diff.json' % (account_name, timestmp),
+                     './reports/AWS/aws_audit/%s/%s/delta/diff.html' % (account_name, timestmp))
 
 
 def merge():
@@ -220,6 +284,7 @@ def merge():
     json_to_html('./reports/AWS/aws_audit/%s/%s/delta/configs.json' % (account_name, timestmp),
                  './reports/AWS/aws_audit/%s/%s/delta/configs.html' % (account_name, timestmp))
     merge_json()
+    persistent_files()
     subprocess.check_output(
         ['cp -R ./tools/template/* ./reports/AWS/aws_audit/%s/%s/final_report/' % (account_name, timestmp)], shell=True)
     subprocess.check_output(['rm ./reports/AWS/aws_audit/%s/%s/final_report/report_azure.html' % (account_name, timestmp)], shell=True)
