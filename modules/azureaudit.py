@@ -7,7 +7,7 @@ import os
 import glob
 
 subprocess.call(['az', 'login'])
-account_name = subprocess.check_output(['az account list --all --query [*].[name] --output tsv'], shell=True).strip().replace(' ', '').replace('\n', '_')
+account_name = subprocess.check_output(['az account list --all --query [*].[name,isDefault] --output tsv | grep True | cut -f1'], shell=True).strip()
 timestmp = time.strftime("%Y%m%d-%H%M%S")
 
 def json_to_html(file, new_file):
