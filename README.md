@@ -18,9 +18,32 @@ cd cs-suite/
 sudo python setup.py
 ```
 
-Note - Generate a set of ReadOnly AWS keyswhich the tool will ask to finish the installation process. For GCP, setup google cloud SDK.
+### Virtual Environment Installation
+(in order to avoid missing with the already installed python libraries)
+   
+ - install [virtualenv](https://virtualenv.pypa.io/en/latest/) `pip install virtualenv`
+ - create a python 2.7 local enviroment `virtualenv -p python2.7 venv`  
+ - activate the virtual enviroment `source venv/bin/activate` 
+ - install project dependencies `pip install -r requirements.txt`
+ - run the tool via `python cs.py -h`
 
-### Running cs-suite
+### AWS Configuration
+- In AWS create a IAM user with at least the following policy `arn:aws:iam::aws:policy/ReadOnlyAccess` 
+- In your local [install aws cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) `brew install awsscli` _for OSX_  
+- Configure AWS cli `aws configure`
+
+### GCP Configuration
+- create a [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) in GCP
+- create a [service account](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys), download its key JSON and place it on the root of this project (example `cs-suite/keyfile.json`)
+- Install [google cloud sdk](https://cloud.google.com/sdk/install#installation_options)
+- configure google clound sdk `gcloud init`  
+
+### Azure Comfiguration
+
+Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the installation process. For GCP, setup google cloud SDK.
+
+
+## Running cs-suite
 
 ```bash
 To run AWS Audit - python cs.py -env aws
@@ -36,6 +59,7 @@ To run Azure Audit - python cs.py -env azure
 - The final GCP Audit report looks like below:
 
 ![GCP Audit report](GCP_Audit_Report.png)
+
 
 ## Docker Setup
 
@@ -62,34 +86,11 @@ aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 ***Note: This tool requires `arn:aws:iam::aws:policy/ReadOnlyAccess` IAM policy***
 
-- Then run the follwing docker command to start
-
-```bash
-docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-suite
-```
-### For AWS
+- Then run the follwing docker command to start (passing your specific enviroment)
 
 ```bash
 docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-suite -env aws
 ```
-
-
-### Virtual Environment installation
-(So you don't mess with the already installed python libraries)
-   
- - `pip install virtualenvwrapper`
- - add it to the respective rc file of your shell (bashrc/zshrc) (for fish shell users check [virtualfish](https://github.com/adambrenecki/virtualfish))
- - `echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc`
- - source the file 
-    `source ~/.bashrc`
- - `cd cs-suite/` 
- -  `mkvirtualenv cssuite`
- -  `workon cssuite`
- - `pip install -r requirements-virtual.txt`
- - `aws configure`  
-
-Once installation is done, the tool will ask you for the AWS keys and region. These two are mandatory for the tool to work.
-
 
 ## Documentation
 [https://securityftw.github.io](https://securityftw.github.io)
