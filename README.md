@@ -1,11 +1,9 @@
 # Cloud Security Suite (cs-suite) - Version 3.0
 
 ## Pre-requisites for Manual setup
-* OS - MacOS or Linux
-* Python 2.7
+* python 2.7
 * pip
 * git
-* jq
 * gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
 * AWS Audit - AWS ReadOnly Keys
 * GCP Audit - gcloud setup
@@ -30,19 +28,37 @@ sudo python setup.py
 
 ### AWS Configuration
 - In AWS create a IAM user with at least the following policy `arn:aws:iam::aws:policy/ReadOnlyAccess` 
-- In your local [install aws cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) `brew install awsscli` _for OSX_  
+- In your local [install aws cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) `brew install awscli` _for OSX_  
 - Configure AWS cli `aws configure`
 
 ### GCP Configuration
 - create a [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) in GCP
+- enable the [Cloud resource manager API](https://console.cloud.google.com/apis/api/cloudresourcemanager.googleapis.com/overview)
 - create a [service account](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys), download its key JSON and place it on the root of this project (example `cs-suite/keyfile.json`)
+- set GOOGLE\_APPLICATION\_CREDENTIALS enviromental variable to you keyfile.json path `export GOOGLE_APPLICATION_CREDENTIALS=/Users/jhernandez/workspace/cs-suite/keyfile.json`
 - Install [google cloud sdk](https://cloud.google.com/sdk/install#installation_options)
 - configure google clound sdk `gcloud init`  
 
-### Azure Comfiguration
+### Azure Configuration
 
-Note - Generate a set of ReadOnly AWS keys which the tool will ask to finish the installation process. For GCP, setup google cloud SDK.
-
+- signup and have logged in already to [azure.microsoft.com](https://azure.microsoft.com)
+- install azure CLI `brew install az`
+- authenticate the azure cli `az login`, you should see your subscription type if it was successful, simiarly to: ```
+[
+  {
+    "cloudName": "AzureCloud",
+    "id": "xxxxx-5595-4da5-bc27-xxxeeee",
+    "isDefault": true,
+    "name": "Free Trial",
+    "state": "Enabled",
+    "tenantId": "xxxxx-18e9-41a4-961b-xxxxx",
+    "user": {
+      "name": "customer@email.com",
+      "type": "user"
+    }
+  }
+]
+```
 
 ## Running cs-suite
 
