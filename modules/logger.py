@@ -33,5 +33,5 @@ def setup_logging(LOG_PATH,LOG_LEVEL):
     return logger
 
 def get():
-    logger = logging.getLogger('autotunely')
+    logger = logging.getLogger('cs-audit')
     return logger

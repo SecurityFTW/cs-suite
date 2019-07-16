@@ -1,8 +1,9 @@
- #! /usr/bin/env python
+ #!/usr/bin/env python
 from __future__ import print_function
 from getpass import getpass
 import argparse
 from modules import logger
+import rm
          
 def main():
     """ main function """
@@ -14,15 +15,20 @@ def main():
     parser.add_argument('-env', '--environment', help='The cloud on which the test-suite is to be run', choices=['aws', 'gcp', 'azure'], required=True)
     parser.add_argument('-pId', '--project_name', help='Project Name for which GCP Audit needs to be run')
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
+    parser.add_argument("-w", "--wipe", required=False, default=True, action='store_true',
+                        help="rm -rf reports/ folder before executing an audit")
+
     args = parser.parse_args()
 
     # set up logging
     log = logger.setup_logging(args.output, "INFO")
 
-    #test = {"test": 1, "field": "foru"}
-    #log.info("starting cloud security suite", extra=test)
+    log.info("starting cloud security suite v1.0")
 
-    log.info("starting cloud security suite")
+    if args.wipe:
+        log.info("wiping reports/ folder before running")
+        rm.rm("reports/")
+
 
     if args.password:
         password = getpass()
@@ -38,8 +44,6 @@ def main():
             gcpaudit.gcp_audit(args.project_name)
             log.info("completed gcp audit")
             exit(0)
-
-                
 
     elif args.environment == 'aws':
         from modules import awsaudit

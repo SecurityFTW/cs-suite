@@ -6,7 +6,7 @@ import subprocess
 import awsaudit
 from modules import logger
 
-log = logger.setup_logging("cs-audit.log", "INFO")
+log = logger.get()
 
 account_name = awsaudit.account_name
 timestmp = awsaudit.timestmp
@@ -110,8 +110,6 @@ def json_to_final_json():
     with open('reports/AWS/aws_audit/%s/%s/delta/final_json' % (account_name, timestmp), 'w') as f:
          f.write(json.dumps(script_json))
 
-    log.info("aws final report", extra=script_json)
-
 
     for i in script_json['report']:
         if i['check'] in ['CDN_AUDIT', 'CERT_AUDIT', 'DNS_AUDIT', 'ELB_AUDIT']:
@@ -142,8 +140,9 @@ def json_to_html_prowler():
                   f.write(line)
         with open('./tools/prowler/final_json', 'r') as json_data:
              final = json.load(json_data)
-             log.info("aws prowler report", extra=final)
+
              for i in final['report']:
+                  log.info("aws prowler report", extra=i)
                   f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
                   f.write('<div class="thumbnail">\n')
 		  f.write('<div class="caption">\n')

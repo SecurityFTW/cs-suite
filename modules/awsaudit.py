@@ -10,7 +10,6 @@ from multiprocessing import Pool
 import boto3
 
 
-
 def get_account_alias():
     account_details = subprocess.check_output(['aws iam list-account-aliases'], shell=True)
     account_details = json.loads(str(account_details))
