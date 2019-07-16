@@ -26,7 +26,7 @@
                printf "default,$account,$aws_region,null,PASS,Scored,null,DNS_AUDIT,Domain $domain does auto renew\n"
            fi
            cur_secs=`date "+%s"`
-           exp_secs=`aws route53domains get-domain-detail --region $aws_region --domain-name $domain --query "ExpirationDate" --output text 2> /dev/null`
+           exp_secs=`aws route53domains get-domain-detail --region $aws_region --domain-name $domain --query "ExpirationDate" --output text 2> /dev/null | awk -F . '{print $1}'`
            if [ "$exp_secs" -lt "$cur_secs" ]; then
                printf "default,$account,$aws_region,null,WARNING,Scored,null,DNS_AUDIT,Warning:   Domain $domain registration has expired\n" 
            else
