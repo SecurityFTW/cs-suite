@@ -4,6 +4,9 @@ import os
 import webbrowser
 import subprocess
 import awsaudit
+from modules import logger
+
+log = logger.setup_logging("cs-audit.log", "INFO")
 
 account_name = awsaudit.account_name
 timestmp = awsaudit.timestmp
@@ -106,23 +109,31 @@ def json_to_final_json():
         script_json['report'] = report
     with open('reports/AWS/aws_audit/%s/%s/delta/final_json' % (account_name, timestmp), 'w') as f:
          f.write(json.dumps(script_json))
+
+    log.info("aws final report", extra=script_json)
+
+
     for i in script_json['report']:
         if i['check'] in ['CDN_AUDIT', 'CERT_AUDIT', 'DNS_AUDIT', 'ELB_AUDIT']:
             with open('reports/AWS/aws_audit/%s/%s/delta/webnet.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
+            log.info("aws final report - webnet", extra=i)
         elif i['check'] in ['ELASTIC_CACHE_AUDIT', 'ELASTIC_SEARCH_AUDIT', 'RDS_AUDIT', 'REDSHIFT_AUDIT']:
             with open('reports/AWS/aws_audit/%s/%s/delta/datastores.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
+            log.info("aws final report - datastores", extra=i)
         elif i['check'] in ['CLOUD_FORMATION_AUDIT', 'SES_AUDIT', 'SNS_AUDIT']:
             with open('reports/AWS/aws_audit/%s/%s/delta/notification.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
+            log.info("aws final report - notification", extra=i)
         else:
             with open('reports/AWS/aws_audit/%s/%s/delta/configs.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
+            log.info("aws final report - configs", extra=i)
 
 def json_to_html_prowler():
     with open('./reports/AWS/aws_audit/%s/%s/delta/prowler_report.html' % (account_name, timestmp), 'w') as f:
@@ -131,6 +142,7 @@ def json_to_html_prowler():
                   f.write(line)
         with open('./tools/prowler/final_json', 'r') as json_data:
              final = json.load(json_data)
+             log.info("aws prowler report", extra=final)
              for i in final['report']:
                   f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
                   f.write('<div class="thumbnail">\n')
