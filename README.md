@@ -34,18 +34,12 @@ optional arguments:
 * AWS Audit - AWS ReadOnly Keys
 * GCP Audit - gcloud setup
 * Azure Audit - Azure user read-only access
-	
+
 ## Installation
-
-```bash
-git clone https://github.com/SecurityFTW/cs-suite.git
-cd cs-suite/
-sudo python setup.py
-```
-
-### Virtual Environment Installation
 (in order to avoid missing with the already installed python libraries)
-   
+
+ - get project `git clone https://github.com/SecurityFTW/cs-suite.git &&
+cd cs-suite/`   
  - install [virtualenv](https://virtualenv.pypa.io/en/latest/) `pip install virtualenv`
  - create a python 2.7 local enviroment `virtualenv -p python2.7 venv`  
  - activate the virtual enviroment `source venv/bin/activate` 
