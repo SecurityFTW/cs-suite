@@ -3,7 +3,7 @@
 ## Usage
 ```
 usage: cs.py [-h] [-aip AUDIT_IP] [-u USER_NAME] [-pem PEM_FILE] [-p] -env
-             {aws,gcp,azure} [-pId PROJECT_NAME]
+             {aws,gcp,azure} [-pId PROJECT_NAME] [-o OUTPUT] [-w]
 
 this is to get IP address for lynis audit only
 
@@ -23,6 +23,11 @@ optional arguments:
                         The cloud on which the test-suite is to be run
   -pId PROJECT_NAME, --project_name PROJECT_NAME
                         Project Name for which GCP Audit needs to be run
+  -o OUTPUT, --output OUTPUT
+                        writes a log in JSON of an audit, ideal for
+                        consumptions into SIEMS like ELK and Splunk. Defaults
+                        to cs-audit.log
+  -w, --wipe            rm -rf reports/ folder before executing an audit
 ```
 ## Requirements
 * Operating System **OSX** or **Linux** only
