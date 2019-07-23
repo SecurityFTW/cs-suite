@@ -44,7 +44,7 @@ cd cs-suite/`
  - create a python 2.7 local enviroment `virtualenv -p python2.7 venv`  
  - activate the virtual enviroment `source venv/bin/activate` 
  - install project dependencies `pip install -r requirements.txt`
- - run the tool via `python cs.py -h`
+ - run the tool via `python cs.py --help`
 
 ### AWS Configuration
 - In AWS create a IAM user with at least the following policy `arn:aws:iam::aws:policy/ReadOnlyAccess` 
@@ -55,7 +55,7 @@ cd cs-suite/`
 - create a [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) in GCP
 - enable the [Cloud resource manager API](https://console.cloud.google.com/apis/api/cloudresourcemanager.googleapis.com/overview)
 - create a [service account](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys), download its key JSON and place it on the root of this project (example `cs-suite/keyfile.json`)
-- set GOOGLE\_APPLICATION\_CREDENTIALS enviromental variable to you keyfile.json path `export GOOGLE_APPLICATION_CREDENTIALS=/home/username/workspace/cs-suite/keyfile.json`
+- set GOOGLE\_APPLICATION\_CREDENTIALS enviromental variable to you keyfile.json path `export GOOGLE_APPLICATION_CREDENTIALS=~/cs-suite/keyfile.json`
 - Install [google cloud sdk](https://cloud.google.com/sdk/install#installation_options)
 - configure google clound sdk `gcloud init`  
 
