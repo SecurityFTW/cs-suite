@@ -1,9 +1,35 @@
 # Cloud Security Suite (cs-suite) - Version 3.0
 
-## Pre-requisites for Manual setup
+## Usage
+```
+usage: cs.py [-h] [-aip AUDIT_IP] [-u USER_NAME] [-pem PEM_FILE] [-p] -env
+             {aws,gcp,azure} [-pId PROJECT_NAME]
+
+this is to get IP address for lynis audit only
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -aip AUDIT_IP, --audit_ip AUDIT_IP
+                        The IP for which lynis Audit needs to be done .... by
+                        default tries root/Administrator if username not
+                        provided
+  -u USER_NAME, --user_name USER_NAME
+                        The username of the user to be logged in,for a
+                        specific user
+  -pem PEM_FILE, --pem_file PEM_FILE
+                        The pem file to access to AWS instance
+  -p, --password        hidden password prompt
+  -env {aws,gcp,azure}, --environment {aws,gcp,azure}
+                        The cloud on which the test-suite is to be run
+  -pId PROJECT_NAME, --project_name PROJECT_NAME
+                        Project Name for which GCP Audit needs to be run
+```
+## Requirements
+* Operating System **OSX** or **Linux** only
 * python 2.7
 * pip
 * git
+* jq
 * gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
 * AWS Audit - AWS ReadOnly Keys
 * GCP Audit - gcloud setup
@@ -35,7 +61,7 @@ sudo python setup.py
 - create a [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) in GCP
 - enable the [Cloud resource manager API](https://console.cloud.google.com/apis/api/cloudresourcemanager.googleapis.com/overview)
 - create a [service account](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys), download its key JSON and place it on the root of this project (example `cs-suite/keyfile.json`)
-- set GOOGLE\_APPLICATION\_CREDENTIALS enviromental variable to you keyfile.json path `export GOOGLE_APPLICATION_CREDENTIALS=/Users/jhernandez/workspace/cs-suite/keyfile.json`
+- set GOOGLE\_APPLICATION\_CREDENTIALS enviromental variable to you keyfile.json path `export GOOGLE_APPLICATION_CREDENTIALS=/home/username/workspace/cs-suite/keyfile.json`
 - Install [google cloud sdk](https://cloud.google.com/sdk/install#installation_options)
 - configure google clound sdk `gcloud init`  
 
