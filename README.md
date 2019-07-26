@@ -1,30 +1,55 @@
 # Cloud Security Suite (cs-suite) - Version 3.0
 
-## Pre-requisites for Manual setup
+## Usage
+```
+usage: cs.py [-h] [-aip AUDIT_IP] [-u USER_NAME] [-pem PEM_FILE] [-p] -env
+             {aws,gcp,azure} [-pId PROJECT_NAME] [-o OUTPUT] [-w]
+
+this is to get IP address for lynis audit only
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -aip AUDIT_IP, --audit_ip AUDIT_IP
+                        The IP for which lynis Audit needs to be done .... by
+                        default tries root/Administrator if username not
+                        provided
+  -u USER_NAME, --user_name USER_NAME
+                        The username of the user to be logged in,for a
+                        specific user
+  -pem PEM_FILE, --pem_file PEM_FILE
+                        The pem file to access to AWS instance
+  -p, --password        hidden password prompt
+  -env {aws,gcp,azure}, --environment {aws,gcp,azure}
+                        The cloud on which the test-suite is to be run
+  -pId PROJECT_NAME, --project_name PROJECT_NAME
+                        Project Name for which GCP Audit needs to be run
+  -o OUTPUT, --output OUTPUT
+                        writes a log in JSON of an audit, ideal for
+                        consumptions into SIEMS like ELK and Splunk. Defaults
+                        to cs-audit.log
+  -w, --wipe            rm -rf reports/ folder before executing an audit
+```
+## Requirements
+* Operating System **OSX** or **Linux** only
 * python 2.7
 * pip
 * git
+* jq
 * gcc (for sshpass installation (OS Audit). Not a mandatory pre-requisite)
 * AWS Audit - AWS ReadOnly Keys
 * GCP Audit - gcloud setup
 * Azure Audit - Azure user read-only access
-	
+
 ## Installation
-
-```bash
-git clone https://github.com/SecurityFTW/cs-suite.git
-cd cs-suite/
-sudo python setup.py
-```
-
-### Virtual Environment Installation
 (in order to avoid missing with the already installed python libraries)
-   
+
+ - get project `git clone https://github.com/SecurityFTW/cs-suite.git &&
+cd cs-suite/`   
  - install [virtualenv](https://virtualenv.pypa.io/en/latest/) `pip install virtualenv`
  - create a python 2.7 local enviroment `virtualenv -p python2.7 venv`  
  - activate the virtual enviroment `source venv/bin/activate` 
  - install project dependencies `pip install -r requirements.txt`
- - run the tool via `python cs.py -h`
+ - run the tool via `python cs.py --help`
 
 ### AWS Configuration
 - In AWS create a IAM user with at least the following policy `arn:aws:iam::aws:policy/ReadOnlyAccess` 
@@ -34,8 +59,7 @@ sudo python setup.py
 ### GCP Configuration
 - create a [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) in GCP
 - enable the [Cloud resource manager API](https://console.cloud.google.com/apis/api/cloudresourcemanager.googleapis.com/overview)
-- create a [service account](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys), download its key JSON and place it on the root of this project (example `cs-suite/keyfile.json`)
-- set GOOGLE\_APPLICATION\_CREDENTIALS enviromental variable to you keyfile.json path `export GOOGLE_APPLICATION_CREDENTIALS=/Users/jhernandez/workspace/cs-suite/keyfile.json`
+- create a [service account](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys), download its key JSON and place it under `cs-suite/tools/G-Scout/keyfile.json`)
 - Install [google cloud sdk](https://cloud.google.com/sdk/install#installation_options)
 - configure google clound sdk `gcloud init`  
 
@@ -43,7 +67,10 @@ sudo python setup.py
 
 - signup and have logged in already to [azure.microsoft.com](https://azure.microsoft.com)
 - install azure CLI `brew install az`
-- authenticate the azure cli `az login`, you should see your subscription type if it was successful, simiarly to: ```
+- authenticate the azure cli `az login`, you should see your subscription type if it was successful, simiarly to the response below:
+
+
+```
 [
   {
     "cloudName": "AzureCloud",
@@ -62,11 +89,12 @@ sudo python setup.py
 
 ## Running cs-suite
 
-```bash
+```
 To run AWS Audit - python cs.py -env aws
 To run GCP Audit - python cs.py -env gcp -pId <project_name>
 To run Azure Audit - python cs.py -env azure
 ```
+
 - The final report will be available in `reports` directory
 
 - The final AWS Audit report looks like below:
@@ -84,28 +112,28 @@ To run Azure Audit - python cs.py -env azure
 
 - The `config` file looks like below
 
-```bash
+```
 $ cat aws/config
 
 [default]
 output = json
 region = us-east-1
-
 ```
 - The `credentials` file looks like below
 
-```bash
+```
 $ cat aws/credentials
 
 [default]
 aws_access_key_id = XXXXXXXXXXXXXXX
 aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXX
 ```
+
 ***Note: This tool requires `arn:aws:iam::aws:policy/ReadOnlyAccess` IAM policy***
 
 - Then run the follwing docker command to start (passing your specific enviroment)
 
-```bash
+```
 docker run -v `pwd`/aws:/root/.aws -v `pwd`/reports:/app/reports securityftw/cs-suite -env aws
 ```
 

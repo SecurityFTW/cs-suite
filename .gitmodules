@@ -1,0 +1,3 @@
+[submodule "tools/G-Scout"]
+	path = tools/G-Scout
+	url = https://github.com/nccgroup/G-Scout.git

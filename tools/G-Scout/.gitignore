@@ -1,8 +1,0 @@
-*.pyc
-*.json
-get-all-external-ips.py
-get-all-firewalls.py
-cross_project_findings.py
-creds.data
-log.txt
-Report Output/
