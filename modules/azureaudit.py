@@ -10,7 +10,7 @@ from modules import logger
 log = logger.get()
 
 subprocess.call(['az', 'login'])
-account_name = subprocess.check_output(['az account list --all --query [*].[name] --output tsv'], shell=True).strip().replace(" ", "")
+account_name = subprocess.check_output(['az account list --all --query [*].[name,isDefault] --output tsv | grep True | cut -f1'], shell=True).strip()
 timestmp = time.strftime("%Y%m%d-%H%M%S")
 
 def json_to_html(file, new_file):
@@ -56,7 +56,7 @@ def merge_json():
 
 
 def no_guest_user():
-    """ The response is empty,need to dig in further """ 
+    """ The response is empty,need to dig in further """
     guest_user_list = subprocess.check_output(['az ad user list --query "[?additionalProperties.userType==\'Guest\']"'], shell=True)
     result = {}
     result['check'] = 'NO_GUEST_USER'
@@ -1519,7 +1519,7 @@ def sql_db_threat_retention():
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
         f.write("\n")
-        
+
 def persistent_json(json_file):
 
     checks = []
@@ -1572,8 +1572,8 @@ def persistent(latest, last):
                                         if i['type'] == "WARNING":
                                             i['check'] = data1['check']
                                             h.write("%s\n" % json.dumps(i))
-                                            
-    persistent_json("./reports/AZURE/%s/%s/diff.json" %(account_name, timestmp)) 
+
+    persistent_json("./reports/AZURE/%s/%s/diff.json" %(account_name, timestmp))
 
 
 def persistent_files():
@@ -1586,6 +1586,7 @@ def persistent_files():
         last_dir = subprocess.check_output(["ls -td -- */ | head -n 2 | cut -d'/' -f1 | sed -n 2p"], cwd='./reports/AZURE/%s' %(account_name), shell=True).strip()
         latest = "./reports/AZURE/%s/%s/final_report/final.json" %(account_name, timestmp)
         last = "./reports/AZURE/%s/%s/final_report/final.json" %(account_name, last_dir)
+
         persistent(latest, last)
         json_to_html('./reports/AZURE/%s/%s/final_diff.json' % (account_name, timestmp),
                      './reports/AZURE/%s/%s/diff.html' % (account_name, timestmp))
