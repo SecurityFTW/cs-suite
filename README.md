@@ -43,7 +43,7 @@ optional arguments:
 ## Installation
 (in order to avoid missing with the already installed python libraries)
 
- - get project `git clone https://github.com/SecurityFTW/cs-suite.git &&
+ - get project `git clone --recursive https://github.com/SecurityFTW/cs-suite.git &&
 cd cs-suite/`   
  - install [virtualenv](https://virtualenv.pypa.io/en/latest/) `pip install virtualenv`
  - create a python 2.7 local enviroment `virtualenv -p python2.7 venv`  
