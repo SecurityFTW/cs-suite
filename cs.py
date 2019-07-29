@@ -13,7 +13,7 @@ def main():
     parser.add_argument('-pem', '--pem_file', help='The pem file to access to AWS instance')
     parser.add_argument('-p', '--password', action='store_true', dest='password', help='hidden password prompt')
     parser.add_argument('-env', '--environment', help='The cloud on which the test-suite is to be run', choices=['aws', 'gcp', 'azure'], required=True)
-    parser.add_argument('-pId', '--project_name', help='Project Name for which GCP Audit needs to be run')
+    parser.add_argument('-pId', '--project_id', help='Project ID for which GCP Audit needs to be run. Can be retrivied using `gcloud projects list`')
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=True, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
@@ -35,13 +35,13 @@ def main():
 
     if args.environment == 'gcp':
         from modules import gcpaudit
-        if not args.project_name:
-            print ("Please pass project name for the GCP Audit")
+        if not args.project_id:
+            print ("Please pass project ID for the GCP Audit")
             print ("Exiting !!!")
             exit(0)
         else:
             log.info("running gcp audit")
-            gcpaudit.gcp_audit(args.project_name)
+            gcpaudit.gcp_audit(args.project_id)
             log.info("completed gcp audit")
             exit(0)
 

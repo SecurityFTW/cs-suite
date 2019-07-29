@@ -11,6 +11,7 @@ google-api-python-client==1.6.1
 httplib2==0.13.0
 iampoliciesgonewild==1.0.6.2
 idna==2.6
+ipaddress==1.0.22
 IPy==0.83
 Jinja2==2.9.5
 jmespath==0.9.3
@@ -32,7 +33,7 @@ rsa==3.4.2
 s3transfer==0.1.10
 six==1.12.0
 termcolor==1.1.0
-tinydb==3.2.2
+tinydb==3.6.0
 uritemplate==3.0.0
 urllib3==1.22
 values==2019.4.13
