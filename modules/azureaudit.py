@@ -79,14 +79,17 @@ def automatic_provising_agent():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'management'
     if agent_provising == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Automatic provisioning of monitoring agent is OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Automatic provisioning of monitoring agent is ON'
-    log.info("azure report", extra=j_res)
     data.append(j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -104,13 +107,16 @@ def system_update():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'management'
     if system_update == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'System updates are turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'System updates are turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -128,13 +134,16 @@ def security_configuration():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'security'
     if sec_config == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Security Configurations are turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security Configurations are turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -152,13 +161,16 @@ def endpoint_protection():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'security'
     if end_protect == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Endpoint Protection are turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Endpoint Protection are turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -176,13 +188,16 @@ def disk_encryption():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'storage'
     if encrypt_disk == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Disk Encryption is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Disk Encryption is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -200,13 +215,16 @@ def network_security():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'security'
     if nsg == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Network security groups is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Network security groups is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -224,13 +242,16 @@ def web_app_firewall():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'security'
     if waf == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Web application firewall is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Web application firewall is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -248,13 +269,16 @@ def next_gen_firewall():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'security'
     if ngfw == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Next generation firewall is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Next generation firewall is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -272,13 +296,16 @@ def vuln_assessment():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'security'
     if va == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Vulnerability assessment firewall is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Vulnerability assessment firewall is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -296,13 +323,16 @@ def storage_encyption():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'storage'
     if encrypt_disk == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Storage encryption is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Storage encryption is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -320,13 +350,16 @@ def jit_network_access():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'network'
     if jit_net_access == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Just in Time Network Access is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Just in Time Network Access is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -344,13 +377,16 @@ def adaptive_application_control():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'security'
     if app_control == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Adaptive Application Control is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Adaptive Application Control is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -368,13 +404,16 @@ def sql_auditing():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'database'
     if sql_detect == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'SQL AUDITING AND THREAT DETECTION is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'SQL AUDITING AND THREAT DETECTION is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -392,13 +431,16 @@ def sql_encryption():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'database'
     if encrypt_sql == "Off":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'SQL encryption is turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'SQL encryption is turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -416,13 +458,16 @@ def security_email_set():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'management'
     if email_config == "[]":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Security Contact Email is NOT SET'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security Contact Email is SET'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -440,13 +485,16 @@ def security_contact_phone():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'management'
     if phone_config == "":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Security Phone Contact  is NOT SET'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security Phone Contact  is SET'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -464,13 +512,16 @@ def email_for_alert():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'management'
     if alert_email == "false":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Security email alerts are turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security email alerts are turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -488,13 +539,16 @@ def email_for_subs_owners():
     j_res['level'] = 'INFO'
     j_res['region'] = 'null'
     j_res['score'] = 'Scored'
+    j_res['category'] = 'management'
     if email_owner == "false":
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Security email alerts to subscription owners are turned OFF'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security email alerts to subscription owners are turned ON'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -513,6 +567,7 @@ def secure_transfer():
         j_res['check_no'] = '3.1'
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
+        j_res['category'] = 'storage'
         j_res['region'] = words[2]
         if words[1] == 'False':
             j_res['type'] = 'WARNING'
@@ -521,7 +576,10 @@ def secure_transfer():
             j_res['type'] = 'PASS'
             j_res['value'] = 'The storage account %s does have HTTPS only traffic enabled' % words[0]
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
+        data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/storage_account.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -539,6 +597,7 @@ def storage_service_encryption():
         j_res['check_no'] = '3.2'
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
+        j_res['category'] = 'storage'
         j_res['region'] = words[2]
         if words[1] == 'False':
             j_res['type'] = 'WARNING'
@@ -547,7 +606,9 @@ def storage_service_encryption():
             j_res['type'] = 'PASS'
             j_res['value'] = 'The storage account %s does have its associated BLOB service encryption enabled' % words[0]
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/storage_account.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -577,6 +638,7 @@ def encrption_file_service():
         j_res['check_no'] = '3.6'
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
+        j_res['category'] = 'storage'
         j_res['region'] = words[2]
         if words[1] == 'False':
             j_res['type'] = 'WARNING'
@@ -584,7 +646,9 @@ def encrption_file_service():
         else:
             j_res['type'] = 'PASS'
             j_res['value'] = 'The storage account %s does have its associated FILE service encryption enabled' % words[0]
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/storage_account.json' %(account_name, timestmp), 'a+') as f:
@@ -603,13 +667,16 @@ def log_profile():
     j_res['level'] = 'INFO'
     j_res['score'] = 'Scored'
     j_res['region'] ='null'
+    j_res['category'] = 'management'
     if check_profile == '[]':
         j_res['type'] = 'WARNING'
         j_res['value'] = 'There is currently no LOG PROFILE enabled'
     else:
         j_res['type'] = 'PASS'
         j_res['value'] = 'There is LOG PROFILE which exists'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -627,6 +694,7 @@ def log_retention():
     j_res['level'] = 'INFO'
     j_res['score'] = 'Scored'
     j_res['region'] ='null'
+    j_res['category'] = 'management'
     if retention_policy in ['false', '']:
         j_res['type'] = 'WARNING'
         j_res['value'] = 'There is currently no RETENTION policy applied to the LOG PROFILE'
@@ -638,7 +706,9 @@ def log_retention():
         else:
             j_res['type'] = 'PASS'
             j_res['value'] = 'The  LOG RETENTION policy is good'
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -658,6 +728,7 @@ def alert_for_create_policy():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Authorization/policyAssignments/write"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Create Policy Assignment event" % resource_group
@@ -666,7 +737,9 @@ def alert_for_create_policy():
             j_res['value'] = "The resource group %s has an alert for Create Policy Assignment event" % resource_group
             j_res['type'] = 'PASS'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -685,6 +758,7 @@ def alert_group_create_network():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Network/networkSecurityGroups/write"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Create or Update Network Security GROUP" % resource_group
@@ -692,7 +766,9 @@ def alert_group_create_network():
         else:
             j_res['value'] = "The resource group %s has an alert for Create or Update Network Security GROUP" % resource_group
             j_res['type'] = 'PASS'
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -712,6 +788,7 @@ def alert_group_network_delete():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Network/networkSecurityGroups/delete"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Delete Network Security GROUP" % resource_group
@@ -720,7 +797,9 @@ def alert_group_network_delete():
             j_res['value'] = "The resource group %s has an alert for Delete Network Security GROUP" % resource_group
             j_res['type'] = 'PASS'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -739,6 +818,7 @@ def alert_rule_network_create():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Network/securityRules/write"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Create or Update Network Security GROUP RULE" % resource_group
@@ -746,7 +826,9 @@ def alert_rule_network_create():
         else:
             j_res['value'] = "The resource group %s has an alert for Create or Update Security GROUP RULE" % resource_group
             j_res['type'] = 'PASS'
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -766,6 +848,7 @@ def alert_rule_network_delete():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Network/networkSecurityGroups/delete"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Delete Network Security GROUP RULE" % resource_group
@@ -773,7 +856,9 @@ def alert_rule_network_delete():
         else:
             j_res['value'] = "The resource group %s has an alert for Delete Network Security GROUP RULE" % resource_group
             j_res['type'] = 'PASS'
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -794,6 +879,7 @@ def alert_create_security():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Security/securitySolutions/write"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Create/Update Security Solution" % resource_group
@@ -802,7 +888,9 @@ def alert_create_security():
             j_res['value'] = "The resource group %s has an alert for Create/Update Security Solution" % resource_group
             j_res['type'] = 'PASS'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -820,6 +908,7 @@ def alert_delete_security():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Security/securitySolutions/delete"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for DELETE Security Solution" % resource_group
@@ -827,7 +916,9 @@ def alert_delete_security():
         else:
             j_res['value'] = "The resource group %s has an alert for DELETE Security Solution" % resource_group
             j_res['type'] = 'PASS'
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -846,6 +937,7 @@ def alert_create_sql_rule():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Sql/servers/firewallRules/write"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Create or Update SQL Server Firewall Rule events " % resource_group
@@ -854,7 +946,9 @@ def alert_create_sql_rule():
             j_res['value'] = "The resource group %s has an alert for Create or Update SQL Server Firewall Rule events" % resource_group
             j_res['type'] = 'PASS'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -872,6 +966,7 @@ def alert_delete_sql_rule():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Sql/servers/firewallRules/delete"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for Delete SQL Server Firewall Rule events " % resource_group
@@ -880,7 +975,9 @@ def alert_delete_sql_rule():
             j_res['value'] = "The resource group %s has an alert for Delete SQL Server Firewall Rule events" % resource_group
             j_res['type'] = 'PASS'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -898,6 +995,7 @@ def alert_update_security_policy():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'management'
         check = subprocess.check_output(['az monitor activity-log alert list --resource-group %s --query [*].condition | jq \'.|.[].allOf[] | select(.equals | contains("Microsoft.Security/policies/write"))\'' % resource_group ], shell=True).strip()
         if check == "":
             j_res['value'] = "The resource group %s has NO alert for changes in Security Policy events " % resource_group
@@ -906,7 +1004,9 @@ def alert_update_security_policy():
             j_res['value'] = "The resource group %s has an alert for changes in Security Policy events" % resource_group
             j_res['type'] = 'PASS'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -928,18 +1028,24 @@ def rdp_public():
             j_res['level'] = 'INFO'
             j_res['score'] = 'Scored'
             j_res['region'] = 'null'
+            j_res['category'] = 'network'
             if port == "3389" and access_type == "Allow" and direction == "Inbound" and source in ['*', '0.0.0.0', 'internet', 'any', '<nw>/0', '/0',] :
                 j_res['value'] = "Please check %s network group for RDP public access" % network_group
                 j_res['type'] = 'WARNING'
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
                 flag = 1
                 break
         if flag == 0:
             j_res['value'] = "The network group %s does not allow public RDP access" % network_group
             j_res['type'] = 'PASS'
+            j_res['category'] = 'network'
             data.append(j_res)
-            log.info("azure report", extra=j_res)
+            log_data = dict()
+            log_data["data"] = j_res["value"]
+            log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/network.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -971,8 +1077,11 @@ def ssh_public():
         if flag == 0:
             j_res['value'] = "The network group %s does not allow public SSH access" % network_group
             j_res['type'] = 'PASS'
+            j_res['category'] = 'network'
+            log_data = dict()
+            log_data["data"] = j_res["value"]
+            log.info("azure report", extra=log_data)
             data.append(j_res)
-            log.info("azure report", extra=j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/network.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -989,6 +1098,7 @@ def network_watcher():
     j_res['level'] = 'INFO'
     j_res['score'] = 'Scored'
     j_res['region'] = 'null'
+    j_res['category'] = 'network'
     if check == '[]':
         j_res['type'] = 'WARNING'
         j_res['value'] = 'Network Watcher is not enabled for your account'
@@ -996,7 +1106,9 @@ def network_watcher():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Network Watcher is enabled for your account'
     data.append(j_res)
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/network.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1016,6 +1128,7 @@ def vm_agent():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'compute'
         if check == '':
             j_res['type'] = 'WARNING'
             j_res['value'] = 'The VM %s does not have virtual agent enabled' %(name)
@@ -1025,7 +1138,9 @@ def vm_agent():
                 j_res['type'] = 'PASS'
                 j_res['value'] = 'The VM %s does have virtual agent enabled' % (name)
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1045,6 +1160,7 @@ def vm_os_disk():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'compute'
         if check == "WARNING: Azure Disk Encryption is not enabled":
             j_res['type'] = 'WARNING'
             j_res['value'] = 'The VM %s does not have OS DISK ENCRYPTION enabled' %(name)
@@ -1052,7 +1168,9 @@ def vm_os_disk():
             j_res['type'] = 'PASS'
             j_res['value'] = 'The VM %s does have OS DISK ENCRYPTION enabled' %(name)
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1072,6 +1190,7 @@ def vm_data_disk():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'compute'
         if check == "WARNING: Azure Disk Encryption is not enabled":
             j_res['type'] = 'WARNING'
             j_res['value'] = 'The VM %s does not have DATA DISK ENCRYPTION enabled' %(name)
@@ -1079,7 +1198,9 @@ def vm_data_disk():
             j_res['type'] = 'PASS'
             j_res['value'] = 'The VM %s does have DATA DISK ENCRYPTION enabled' %(name)
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1098,6 +1219,7 @@ def approved_extension():
     j_res['level'] = 'INFO'
     j_res['score'] = 'Not Scored'
     j_res['region'] = 'null'
+    j_res['category'] = 'compute'
     for line in lines.splitlines():
         resource_group, name = line.split()
         check = subprocess.check_output(['az vm extension list --resource-group %s  --vm-name %s --query [*].name --output tsv' % (resource_group,  name)], shell=True).strip()
@@ -1110,7 +1232,9 @@ def approved_extension():
         j_res['type'] = "WARNING"
         j_res['value'] = 'Please manually check for approval for these extensions %s' % list(set(extensions))
     data.append(j_res)
-    log.info("azure report", extra=j_res)
+    log_data = dict()
+    log_data["data"] = j_res["value"]
+    log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1130,6 +1254,10 @@ def vault_key():
         j_res['level'] = 'INFO'
         j_res['score'] = 'Scored'
         j_res['region'] = 'null'
+        j_res['category'] = 'security'
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for vault in check_vault_exists.splitlines():
             expiry =  subprocess.check_output(['az keyvault key list --vault-name %s --query [*].[kid,attributes.expires] --output tsv' %(vault) ], shell=True).strip()
@@ -1140,6 +1268,7 @@ def vault_key():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'security'
 
                 if date == 'None':
                     j_res['type'] = 'WARNING'
@@ -1151,7 +1280,9 @@ def vault_key():
                     j_res['type'] = 'WARNING'
                     j_res['value'] = 'Access Denied could not check for expiration in vault %s' %(expiry)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vault.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1172,6 +1303,10 @@ def vault_secret():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'VAULT NOT SET UP FOR THE ACCOUNT'
+        j_res['category'] = 'security'
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for vault in check_vault_exists.splitlines():
             expiry =  subprocess.check_output(['az keyvault secret list --vault-name %s --query [*].[id,attributes.expires] --output tsv' %(vault) ], shell=True).strip()
@@ -1182,6 +1317,7 @@ def vault_secret():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'security'
 
                 if date == 'None':
                     j_res['type'] = 'WARNING'
@@ -1194,7 +1330,9 @@ def vault_secret():
                     j_res['value'] = 'Access Denied could not check for expiration in vault %s' %(expiry)
 
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vault.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1214,8 +1352,11 @@ def sql_db_audit():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1234,7 +1375,9 @@ def sql_db_audit():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s does have AUDIT Policy enabled' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1254,8 +1397,11 @@ def sql_db_threat():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1266,6 +1412,7 @@ def sql_db_threat():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'database'
                 threat_policy = subprocess.check_output(['az sql db threat-policy show --resource-group %s --server %s --name %s --query \'state\' --output tsv' %(resource_group,name,database)], shell=True).strip()
                 if threat_policy == "Disabled":
                     j_res['type'] = 'WARNING'
@@ -1274,7 +1421,9 @@ def sql_db_threat():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s does have Threat Detection enabled' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1294,8 +1443,11 @@ def sql_db_disabled_alert():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1306,6 +1458,7 @@ def sql_db_disabled_alert():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'database'
                 threat_policy = subprocess.check_output(['az sql db threat-policy show --resource-group %s --server %s --name %s --query \'disabledAlerts\' --output tsv' %(resource_group,name,database)], shell=True).strip()
                 if threat_policy != "":
                     j_res['type'] = 'WARNING'
@@ -1314,7 +1467,9 @@ def sql_db_disabled_alert():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s does not have alerts disabled' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1334,8 +1489,11 @@ def sql_db_send_email():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1346,6 +1504,7 @@ def sql_db_send_email():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'database'
                 threat_policy = subprocess.check_output(['az sql db threat-policy show --resource-group %s --server %s --name %s --query \'emailAddresses\' --output tsv' %(resource_group, name, database)], shell=True).strip()
                 if threat_policy == "Disabled":
                     j_res['type'] = 'WARNING'
@@ -1354,7 +1513,9 @@ def sql_db_send_email():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s has some email set for alerts' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1374,8 +1535,11 @@ def sql_db_email_admin():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1386,6 +1550,7 @@ def sql_db_email_admin():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'database'
                 email_policy = subprocess.check_output(['az sql db threat-policy show --resource-group %s --server %s --name %s --query \'emailAccountAdmins\' --output tsv' %(resource_group, name, database)], shell=True).strip()
                 if email_policy == "Disabled":
                     j_res['type'] = 'WARNING'
@@ -1394,7 +1559,9 @@ def sql_db_email_admin():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s has some Admin email set for alerts' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1414,8 +1581,11 @@ def sql_db_encryption():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1426,6 +1596,7 @@ def sql_db_encryption():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'database'
                 encryption = subprocess.check_output(['az sql db tde show --resource-group %s --server %s --database %s --query \'status\' --output tsv' %(resource_group, name, database)], shell=True).strip()
                 if encryption == "Disabled":
                     j_res['type'] = 'WARNING'
@@ -1434,7 +1605,9 @@ def sql_db_encryption():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s has Transparent Data Encryption enabled' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1454,8 +1627,11 @@ def sql_db_audit_retention():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1466,6 +1642,7 @@ def sql_db_audit_retention():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'database'
                 days = subprocess.check_output(['az sql db audit-policy show --resource-group %s --server %s --name %s --query \'retentionDays\' --output tsv' %(resource_group, name, database)], shell=True).strip()
                 if int(days) <= 90:
                     j_res['type'] = 'WARNING'
@@ -1474,7 +1651,9 @@ def sql_db_audit_retention():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s has AUDIT log retention policy greater than 90 day' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1494,8 +1673,11 @@ def sql_db_threat_retention():
         j_res['region'] = 'null'
         j_res['type'] = 'PASS'
         j_res['value'] = 'No SQL servers/DB to AUDIT'
+        j_res['category'] = 'database'
         data.append(j_res)
-        log.info("azure report", extra=j_res)
+        log_data = dict()
+        log_data["data"] = j_res["value"]
+        log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
             name,resource_group = server.split()
@@ -1506,6 +1688,7 @@ def sql_db_threat_retention():
                 j_res['level'] = 'INFO'
                 j_res['score'] = 'Scored'
                 j_res['region'] = 'null'
+                j_res['category'] = 'database'
                 days = subprocess.check_output(['az sql db threat-policy show --resource-group %s --server %s --name %s --query \'retentionDays\' --output tsv' %(resource_group, name, database)], shell=True).strip()
                 if int(days) <= 90:
                     j_res['type'] = 'WARNING'
@@ -1514,7 +1697,9 @@ def sql_db_threat_retention():
                     j_res['type'] = 'PASS'
                     j_res['value'] = 'The SQL DB %s on server %s has THREAT log retention policy greater than 90 day' % (database,name)
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data["data"] = j_res["value"]
+                log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
@@ -1663,8 +1848,8 @@ def azure_audit():
     merge_json()
     persistent_files()
     subprocess.check_output(
-        ['cp -R ./tools/template/* ./reports/AZURE/%s/%s/final_report/' % (account_name, timestmp)], shell=True)
-    subprocess.check_output(['rm ./reports/AZURE/%s/%s/final_report/report.html' %(account_name, timestmp)], shell=True)
+        ['cp -R ./tools/template/* ./reports/AZURE/"%s"/%s/final_report/' % (account_name, timestmp)], shell=True)
+    subprocess.check_output(['rm ./reports/AZURE/"%s"/%s/final_report/report.html' % (account_name, timestmp)], shell=True)
     webbrowser.open('file://' + os.path.realpath("./reports/AZURE/%s/%s/final_report/report_azure.html")
                     % (account_name, timestmp))
     fin = os.path.realpath("./reports/AZURE/%s/%s/final_report/report_azure.html") % (account_name, timestmp)

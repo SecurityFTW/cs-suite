@@ -110,24 +110,27 @@ def json_to_final_json():
     with open('reports/AWS/aws_audit/%s/%s/delta/final_json' % (account_name, timestmp), 'w') as f:
          f.write(json.dumps(script_json))
 
-
     for i in script_json['report']:
         if i['check'] in ['CDN_AUDIT', 'CERT_AUDIT', 'DNS_AUDIT', 'ELB_AUDIT']:
+            i['category'] = "network"
             with open('reports/AWS/aws_audit/%s/%s/delta/webnet.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
             log.info("aws final report - webnet", extra=i)
         elif i['check'] in ['ELASTIC_CACHE_AUDIT', 'ELASTIC_SEARCH_AUDIT', 'RDS_AUDIT', 'REDSHIFT_AUDIT']:
+            i['category'] = "database"
             with open('reports/AWS/aws_audit/%s/%s/delta/datastores.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
             log.info("aws final report - datastores", extra=i)
         elif i['check'] in ['CLOUD_FORMATION_AUDIT', 'SES_AUDIT', 'SNS_AUDIT']:
+            i['category'] = "management"
             with open('reports/AWS/aws_audit/%s/%s/delta/notification.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
             log.info("aws final report - notification", extra=i)
         else:
+            i['category'] = "management"
             with open('reports/AWS/aws_audit/%s/%s/delta/configs.json' % (account_name, timestmp), 'a+') as f:
                 f.write(json.dumps(i))
                 f.write('\n')
@@ -142,28 +145,37 @@ def json_to_html_prowler():
              final = json.load(json_data)
 
              for i in final['report']:
-                  log.info("aws prowler report", extra=i)
-                  f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
-                  f.write('<div class="thumbnail">\n')
-		  f.write('<div class="caption">\n')
-                  flag = 0
-                  for g in i['data']:
-                     if g['type'] == 'WARNING':
-                         flag = 1
-                  if flag == 0:
-                     f.write('<div class="grid" style="background-color: green;">')
-                  else:
-                     f.write('<div class="grid" style="background-color: red;">')
-                  f.write('<h5>%s</h5>\n' %(i['check']))
-                  f.write('</div>')
-                  for k in i['data']:
-                       if k['type'] == 'WARNING':
+                for check in i['data']:
+                   if check['check_no'][0] == "4":
+                      i['category'] = "network"
+                   elif check['check_no'][0] == "1":
+                      i['category'] = "security"
+                   elif check['check_no'][0] == "2":
+                      i['category'] = "management"
+                   elif check['check_no'][0] == "3":
+                      i['category'] = "management"
+                log.info("aws prowler report", extra=i)
+                f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
+                f.write('<div class="thumbnail">\n')
+		f.write('<div class="caption">\n')
+                flag = 0
+                for g in i['data']:
+                    if g['type'] == 'WARNING':
+                        flag = 1
+                if flag == 0:
+                    f.write('<div class="grid" style="background-color: green;">')
+                else:
+                    f.write('<div class="grid" style="background-color: red;">')
+                f.write('<h5>%s</h5>\n' %(i['check']))
+                f.write('</div>')
+                for k in i['data']:
+                    if k['type'] == 'WARNING':
                            f.write('<p><span style="color:red">Warning: </span>%s</p>\n' %(k['value']))
-                       else:
-                           f.write('<p>%s</p>\n' %(k['value']))
-                  f.write('</div>\n')
-                  f.write('</div>\n')
-                  f.write('</div>\n')
+                    else:
+                        f.write('<p>%s</p>\n' %(k['value']))
+                f.write('</div>\n')
+                f.write('</div>\n')
+                f.write('</div>\n')
         with open('./tools/prowler/template2.txt', 'r') as k:
              for line in k:
                  f.write(line)
