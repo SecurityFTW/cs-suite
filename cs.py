@@ -11,9 +11,9 @@ def main():
     parser = argparse.ArgumentParser(description='this is to get IP address for lynis audit only')
     parser.add_argument('-env', '--environment', required=True, help='The cloud on which the test-suite is to be run',
                         choices=['aws', 'gcp', 'azure'])
-    parser.add_argument('-aip', '--audit_ip', required=True, help='The IP for which lynis Audit needs to be done .... by default tries root/Administrator if username not provided')
-    parser.add_argument('-u', '--user_name', required=True, help='The username of the user to be logged in,for a specific user')
-    parser.add_argument('-pem', '--pem_file', required=True, help='The pem file to access to AWS instance')
+    parser.add_argument('-aip', '--audit_ip', required=False, help='The IP for which lynis Audit needs to be done .... by default tries root/Administrator if username not provided')
+    parser.add_argument('-u', '--user_name', required=False, help='The username of the user to be logged in,for a specific user')
+    parser.add_argument('-pem', '--pem_file', required=False, help='The pem file to access to AWS instance')
     parser.add_argument('-p', '--password', required=False, action='store_true', dest='password', help='hidden password prompt')
     parser.add_argument('-pId', '--project_id', help='Project ID for which GCP Audit needs to be run. Can be retrivied using `gcloud projects list`')
     parser.add_argument('-az_u', '--azure_user', required=False, help='username of azure account, optionally used if you want to run the azure audit with no user interaction.')
