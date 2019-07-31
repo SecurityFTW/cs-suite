@@ -35,9 +35,9 @@ def json_to_html(file, new_file):
                  f.write('</div>')
                  for k in final['data']:
                      if k['type'] == 'WARNING':
-                          f.write('<p><span style="color:red">Warning: </span>%s</p>\n' %(k['value']))
+                          f.write('<p><span style="color:red">Warning: </span>%s</p>\n' %(k['data']))
                      else:
-                          f.write('<p>%s<p>\n' %(k['value']))
+                          f.write('<p>%s<p>\n' % (k['data']))
                  f.write('</div>')
                  f.write('</div>')
                  f.write('</div>')
@@ -86,7 +86,8 @@ def automatic_provising_agent():
         j_res['value'] = 'Automatic provisioning of monitoring agent is ON'
     data.append(j_res)
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/security_center.json' %(account_name, timestmp), 'a+') as f:
@@ -113,7 +114,8 @@ def system_update():
         j_res['type'] = 'PASS'
         j_res['value'] = 'System updates are turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -140,7 +142,8 @@ def security_configuration():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security Configurations are turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -167,7 +170,8 @@ def endpoint_protection():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Endpoint Protection are turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -194,7 +198,8 @@ def disk_encryption():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Disk Encryption is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -221,7 +226,8 @@ def network_security():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Network security groups is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -248,7 +254,8 @@ def web_app_firewall():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Web application firewall is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -275,7 +282,8 @@ def next_gen_firewall():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Next generation firewall is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -302,7 +310,8 @@ def vuln_assessment():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Vulnerability assessment firewall is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -329,7 +338,8 @@ def storage_encyption():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Storage encryption is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -356,7 +366,8 @@ def jit_network_access():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Just in Time Network Access is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -383,7 +394,8 @@ def adaptive_application_control():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Adaptive Application Control is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -410,7 +422,8 @@ def sql_auditing():
         j_res['type'] = 'PASS'
         j_res['value'] = 'SQL AUDITING AND THREAT DETECTION is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -437,7 +450,8 @@ def sql_encryption():
         j_res['type'] = 'PASS'
         j_res['value'] = 'SQL encryption is turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -464,7 +478,8 @@ def security_email_set():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security Contact Email is SET'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -491,7 +506,8 @@ def security_contact_phone():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security Phone Contact  is SET'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -518,7 +534,8 @@ def email_for_alert():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security email alerts are turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -545,7 +562,8 @@ def email_for_subs_owners():
         j_res['type'] = 'PASS'
         j_res['value'] = 'Security email alerts to subscription owners are turned ON'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -575,7 +593,8 @@ def secure_transfer():
             j_res['value'] = 'The storage account %s does have HTTPS only traffic enabled' % words[0]
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
@@ -605,7 +624,8 @@ def storage_service_encryption():
             j_res['value'] = 'The storage account %s does have its associated BLOB service encryption enabled' % words[0]
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/storage_account.json' %(account_name, timestmp), 'a+') as f:
@@ -645,7 +665,8 @@ def encrption_file_service():
             j_res['type'] = 'PASS'
             j_res['value'] = 'The storage account %s does have its associated FILE service encryption enabled' % words[0]
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
@@ -673,7 +694,8 @@ def log_profile():
         j_res['type'] = 'PASS'
         j_res['value'] = 'There is LOG PROFILE which exists'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -705,7 +727,8 @@ def log_retention():
             j_res['type'] = 'PASS'
             j_res['value'] = 'The  LOG RETENTION policy is good'
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     data.append(j_res)
     result['data'] = data
@@ -736,7 +759,8 @@ def alert_for_create_policy():
             j_res['type'] = 'PASS'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -765,7 +789,8 @@ def alert_group_create_network():
             j_res['value'] = "The resource group %s has an alert for Create or Update Network Security GROUP" % resource_group
             j_res['type'] = 'PASS'
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
@@ -796,7 +821,8 @@ def alert_group_network_delete():
             j_res['type'] = 'PASS'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -825,7 +851,8 @@ def alert_rule_network_create():
             j_res['value'] = "The resource group %s has an alert for Create or Update Security GROUP RULE" % resource_group
             j_res['type'] = 'PASS'
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
@@ -855,7 +882,8 @@ def alert_rule_network_delete():
             j_res['value'] = "The resource group %s has an alert for Delete Network Security GROUP RULE" % resource_group
             j_res['type'] = 'PASS'
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
@@ -887,7 +915,8 @@ def alert_create_security():
             j_res['type'] = 'PASS'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -915,7 +944,8 @@ def alert_delete_security():
             j_res['value'] = "The resource group %s has an alert for DELETE Security Solution" % resource_group
             j_res['type'] = 'PASS'
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
         data.append(j_res)
     result['data'] = data
@@ -945,7 +975,8 @@ def alert_create_sql_rule():
             j_res['type'] = 'PASS'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -974,7 +1005,8 @@ def alert_delete_sql_rule():
             j_res['type'] = 'PASS'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -1003,7 +1035,8 @@ def alert_update_security_policy():
             j_res['type'] = 'PASS'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/logging_monitoring.json' %(account_name, timestmp), 'a+') as f:
@@ -1032,7 +1065,8 @@ def rdp_public():
                 j_res['type'] = 'WARNING'
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
                 flag = 1
                 break
@@ -1042,7 +1076,8 @@ def rdp_public():
             j_res['category'] = 'network'
             data.append(j_res)
             log_data = dict()
-            log_data["data"] = j_res["value"]
+            log_data = j_res
+            log_data["data"] = log_data.pop("value")
             log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/network.json' %(account_name, timestmp), 'a+') as f:
@@ -1077,7 +1112,8 @@ def ssh_public():
             j_res['type'] = 'PASS'
             j_res['category'] = 'network'
             log_data = dict()
-            log_data["data"] = j_res["value"]
+            log_data = j_res
+            log_data["data"] = log_data.pop("value")
             log.info("azure report", extra=log_data)
             data.append(j_res)
     result['data'] = data
@@ -1105,7 +1141,8 @@ def network_watcher():
         j_res['value'] = 'Network Watcher is enabled for your account'
     data.append(j_res)
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/network.json' %(account_name, timestmp), 'a+') as f:
@@ -1137,7 +1174,8 @@ def vm_agent():
                 j_res['value'] = 'The VM %s does have virtual agent enabled' % (name)
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
@@ -1167,7 +1205,8 @@ def vm_os_disk():
             j_res['value'] = 'The VM %s does have OS DISK ENCRYPTION enabled' %(name)
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
@@ -1197,7 +1236,8 @@ def vm_data_disk():
             j_res['value'] = 'The VM %s does have DATA DISK ENCRYPTION enabled' %(name)
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
@@ -1231,7 +1271,8 @@ def approved_extension():
         j_res['value'] = 'Please manually check for approval for these extensions %s' % list(set(extensions))
     data.append(j_res)
     log_data = dict()
-    log_data["data"] = j_res["value"]
+    log_data = j_res
+    log_data["data"] = log_data.pop("value")
     log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vm.json' %(account_name, timestmp), 'a+') as f:
@@ -1254,7 +1295,8 @@ def vault_key():
         j_res['region'] = 'null'
         j_res['category'] = 'security'
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for vault in check_vault_exists.splitlines():
@@ -1279,7 +1321,8 @@ def vault_key():
                     j_res['value'] = 'Access Denied could not check for expiration in vault %s' %(expiry)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vault.json' %(account_name, timestmp), 'a+') as f:
@@ -1303,7 +1346,8 @@ def vault_secret():
         j_res['value'] = 'VAULT NOT SET UP FOR THE ACCOUNT'
         j_res['category'] = 'security'
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for vault in check_vault_exists.splitlines():
@@ -1329,7 +1373,8 @@ def vault_secret():
 
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/vault.json' %(account_name, timestmp), 'a+') as f:
@@ -1353,7 +1398,8 @@ def sql_db_audit():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1374,7 +1420,8 @@ def sql_db_audit():
                     j_res['value'] = 'The SQL DB %s on server %s does have AUDIT Policy enabled' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
@@ -1398,7 +1445,8 @@ def sql_db_threat():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1420,7 +1468,8 @@ def sql_db_threat():
                     j_res['value'] = 'The SQL DB %s on server %s does have Threat Detection enabled' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
@@ -1444,7 +1493,8 @@ def sql_db_disabled_alert():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1466,7 +1516,8 @@ def sql_db_disabled_alert():
                     j_res['value'] = 'The SQL DB %s on server %s does not have alerts disabled' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
@@ -1490,7 +1541,8 @@ def sql_db_send_email():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1512,7 +1564,8 @@ def sql_db_send_email():
                     j_res['value'] = 'The SQL DB %s on server %s has some email set for alerts' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
@@ -1536,7 +1589,8 @@ def sql_db_email_admin():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1558,7 +1612,8 @@ def sql_db_email_admin():
                     j_res['value'] = 'The SQL DB %s on server %s has some Admin email set for alerts' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
@@ -1582,7 +1637,8 @@ def sql_db_encryption():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1604,7 +1660,8 @@ def sql_db_encryption():
                     j_res['value'] = 'The SQL DB %s on server %s has Transparent Data Encryption enabled' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
@@ -1628,7 +1685,8 @@ def sql_db_audit_retention():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1650,7 +1708,8 @@ def sql_db_audit_retention():
                     j_res['value'] = 'The SQL DB %s on server %s has AUDIT log retention policy greater than 90 day' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
@@ -1674,7 +1733,8 @@ def sql_db_threat_retention():
         j_res['category'] = 'database'
         data.append(j_res)
         log_data = dict()
-        log_data["data"] = j_res["value"]
+        log_data = j_res
+        log_data["data"] = log_data.pop("value")
         log.info("azure report", extra=log_data)
     else:
         for server in check_server_exists.splitlines():
@@ -1696,7 +1756,8 @@ def sql_db_threat_retention():
                     j_res['value'] = 'The SQL DB %s on server %s has THREAT log retention policy greater than 90 day' % (database,name)
                 data.append(j_res)
                 log_data = dict()
-                log_data["data"] = j_res["value"]
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
                 log.info("azure report", extra=log_data)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/sql_db.json' %(account_name, timestmp), 'a+') as f:
