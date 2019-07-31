@@ -8,8 +8,6 @@ import glob
 from modules import logger
 
 log = logger.get()
-
-subprocess.call(['az', 'login'])
 account_name = subprocess.check_output(['az account list --all --query [*].[name,isDefault] --output tsv | grep True | cut -f1'], shell=True).strip()
 timestmp = time.strftime("%Y%m%d-%H%M%S")
 

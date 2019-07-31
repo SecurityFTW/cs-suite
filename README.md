@@ -2,13 +2,16 @@
 
 ## Usage
 ```
-usage: cs.py [-h] [-aip AUDIT_IP] [-u USER_NAME] [-pem PEM_FILE] [-p] -env
-             {aws,gcp,azure} [-pId PROJECT_ID] [-o OUTPUT] [-w]
+usage: cs.py [-h] -env {aws,gcp,azure} -aip AUDIT_IP -u USER_NAME -pem
+             PEM_FILE [-p] [-pId PROJECT_ID] [-az_u AZURE_USER]
+             [-az_p AZURE_PASS] [-o OUTPUT] [-w]
 
 this is to get IP address for lynis audit only
 
 optional arguments:
   -h, --help            show this help message and exit
+  -env {aws,gcp,azure}, --environment {aws,gcp,azure}
+                        The cloud on which the test-suite is to be run
   -aip AUDIT_IP, --audit_ip AUDIT_IP
                         The IP for which lynis Audit needs to be done .... by
                         default tries root/Administrator if username not
@@ -19,11 +22,15 @@ optional arguments:
   -pem PEM_FILE, --pem_file PEM_FILE
                         The pem file to access to AWS instance
   -p, --password        hidden password prompt
-  -env {aws,gcp,azure}, --environment {aws,gcp,azure}
-                        The cloud on which the test-suite is to be run
   -pId PROJECT_ID, --project_id PROJECT_ID
                         Project ID for which GCP Audit needs to be run. Can be
                         retrivied using `gcloud projects list`
+  -az_u AZURE_USER, --azure_user AZURE_USER
+                        username of azure account, optionally used if you want
+                        to run the azure audit with no user interaction.
+  -az_p AZURE_PASS, --azure_pass AZURE_PASS
+                        username of azure password, optionally used if you
+                        want to run the azure audit with no user interaction.
   -o OUTPUT, --output OUTPUT
                         writes a log in JSON of an audit, ideal for
                         consumptions into SIEMS like ELK and Splunk. Defaults

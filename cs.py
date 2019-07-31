@@ -4,16 +4,20 @@ from getpass import getpass
 import argparse
 from modules import logger
 import rm
+import subprocess
          
 def main():
     """ main function """
     parser = argparse.ArgumentParser(description='this is to get IP address for lynis audit only')
-    parser.add_argument('-aip', '--audit_ip', help='The IP for which lynis Audit needs to be done .... by default tries root/Administrator if username not provided')
-    parser.add_argument('-u', '--user_name', help='The username of the user to be logged in,for a specific user')
-    parser.add_argument('-pem', '--pem_file', help='The pem file to access to AWS instance')
-    parser.add_argument('-p', '--password', action='store_true', dest='password', help='hidden password prompt')
-    parser.add_argument('-env', '--environment', help='The cloud on which the test-suite is to be run', choices=['aws', 'gcp', 'azure'], required=True)
+    parser.add_argument('-env', '--environment', required=True, help='The cloud on which the test-suite is to be run',
+                        choices=['aws', 'gcp', 'azure'])
+    parser.add_argument('-aip', '--audit_ip', required=True, help='The IP for which lynis Audit needs to be done .... by default tries root/Administrator if username not provided')
+    parser.add_argument('-u', '--user_name', required=True, help='The username of the user to be logged in,for a specific user')
+    parser.add_argument('-pem', '--pem_file', required=True, help='The pem file to access to AWS instance')
+    parser.add_argument('-p', '--password', required=False, action='store_true', dest='password', help='hidden password prompt')
     parser.add_argument('-pId', '--project_id', help='Project ID for which GCP Audit needs to be run. Can be retrivied using `gcloud projects list`')
+    parser.add_argument('-az_u', '--azure_user', required=False, help='username of azure account, optionally used if you want to run the azure audit with no user interaction.')
+    parser.add_argument('-az_p', '--azure_pass', required=False, help='username of azure password, optionally used if you want to run the azure audit with no user interaction.')
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=True, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
@@ -68,8 +72,14 @@ def main():
             exit(0)
 
     elif args.environment == 'azure':
-        from modules import azureaudit
+        if args.azure_user and args.azure_pass:
+            print("using azure credentials passed via cli")
+            subprocess.call(['az', 'login', '-u', args.azure_user, '-p', args.azure_pass])
+        else:
+            print("azure authentication required")
+            subprocess.call(['az', 'login'])
         log.info("running azure audit")
+        from modules import azureaudit
         azureaudit.azure_audit()
         log.info("completed azure audit")
         exit(0)
