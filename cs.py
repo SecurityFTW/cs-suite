@@ -19,7 +19,7 @@ def main():
     parser.add_argument('-az_u', '--azure_user', required=False, help='username of azure account, optionally used if you want to run the azure audit with no user interaction.')
     parser.add_argument('-az_p', '--azure_pass', required=False, help='username of azure password, optionally used if you want to run the azure audit with no user interaction.')
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
-    parser.add_argument("-w", "--wipe", required=False, default=True, action='store_true',
+    parser.add_argument("-w", "--wipe", required=False, default=False, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
 
     args = parser.parse_args()
