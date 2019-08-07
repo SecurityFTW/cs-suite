@@ -1,3 +1,0 @@
-tinydb==3.2.2
-google_api_python_client==1.6.1
-jinja2==2.9.5

@@ -9,6 +9,7 @@ from multiprocessing import Process
 from multiprocessing import Pool
 import boto3
 
+
 def get_account_alias():
     account_details = subprocess.check_output(['aws iam list-account-aliases'], shell=True)
     account_details = json.loads(str(account_details))
@@ -58,6 +59,7 @@ def prowler(check):
 def multi_threaded_prowler():
     """ this function using multi-threading for prowler """
     print ("Started Prowler")
+
     checks = ['check13', 'check14', 'check15', 'check16', 'check17', 'check18', 'check19',\
               'check114', 'check115', 'check116', 'check118', 'check122', 'check123', 'check124',\
               'check21', 'check23', 'check24', 'check25', 'check26', 'check27', 'check28', 'check31',\
@@ -97,6 +99,7 @@ def multi_threaded_prowler():
         os.remove(f)
     with open('tools/prowler/final_json', 'w') as f:
         f.write(json.dumps(final_json))
+
     print ("Prowler Audit Done")
     return 0
 
