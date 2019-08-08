@@ -1104,18 +1104,21 @@ def ssh_public():
                 j_res['value'] = "Please check %s network group for SSH public access" % network_group
                 j_res['type'] = 'WARNING'
                 data.append(j_res)
-                log.info("azure report", extra=j_res)
+                log_data = dict()
+                log_data = j_res
+                log_data["data"] = log_data.pop("value")
+                log.info("azure report", extra=log_data)
                 flag = 1
                 break
         if flag == 0:
             j_res['value'] = "The network group %s does not allow public SSH access" % network_group
             j_res['type'] = 'PASS'
             j_res['category'] = 'network'
+            data.append(j_res)
             log_data = dict()
             log_data = j_res
             log_data["data"] = log_data.pop("value")
             log.info("azure report", extra=log_data)
-            data.append(j_res)
     result['data'] = data
     with open('./reports/AZURE/%s/%s/network.json' %(account_name, timestmp), 'a+') as f:
         f.write(json.dumps(result))
