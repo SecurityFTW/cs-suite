@@ -1,0 +1,28 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../../../assets/templates/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../assets/templates/custom.css"/>
+  <script src="../../../assets/templates/jquery.min.js"></script>
+  <script src="../../../assets/templates/bootstrap.min.js"></script>
+  <link rel="shortcut icon" type="image/png" href="../../../assets/icon.png"/>
+</head>
+<nav class="navbar navbar-default">
+<a href="../" class="navbar-left">
+<img src="../../../assets/icon.png" height="42" width="42"></a>
+<ul class="nav nav-tabs">
+{% for category in dropdowns %}
+    <li role="presentation" class="dropdown">
+    <a href="buckets_acls.html" class="dropdown-toggle" data-toggle="dropdown">
+    {{category}}<span class="caret"></span></a>
+    <ul class="dropdown-menu">
+    <li><a href="../Information/{{category}}s.html">{{category}}s</a></li>
+    <li class="divider"></li>
+    {% for finding in dropdowns[category] %}
+      <li><a href="../Findings/{{finding}}.html">{{finding}}</a></li>
+    {% endfor %}
+    </ul>
+    </li>
+{% endfor %}
+</ul></nav>
+{% block content %}
+{% endblock %}

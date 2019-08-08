@@ -1,0 +1,4 @@
+tinydb==3.6.0
+google_api_python_client==1.6.1
+jinja2==2.9.5
+ipaddress
