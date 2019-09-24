@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 from __future__ import print_function
 from getpass import getpass
@@ -21,6 +22,7 @@ def main():
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=False, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
+    parser.add_argument('-n', '--number', required=False, type=int, help='Number of reports to store A particular User')
 
     args = parser.parse_args()
 
@@ -29,13 +31,15 @@ def main():
 
     log.info("starting cloud security suite v1.0")
 
+    if args.password:
+        password = getpass()
+
+    
     if args.wipe:
         log.info("wiping reports/ folder before running")
         rm.rm("reports/")
+    
 
-
-    if args.password:
-        password = getpass()
 
     if args.environment == 'gcp':
         from modules import gcpaudit
@@ -69,7 +73,7 @@ def main():
             awsaudit.aws_audit()
             merger.merge()
             log.info("completed aws audit")
-            exit(0)
+        #    exit(0)
 
     elif args.environment == 'azure':
         if args.azure_user and args.azure_pass:
@@ -82,6 +86,13 @@ def main():
         from modules import azureaudit
         azureaudit.azure_audit()
         log.info("completed azure audit")
+        #exit(0)
+
+    
+    if args.number:
+        
+        from modules import manageReports
+        manageReports.numberOfReports(args.environment, args.number)
         exit(0)
 
 
