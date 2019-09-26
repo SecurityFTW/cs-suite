@@ -79,8 +79,8 @@ def main():
             exit(0)
         else:
             log.info("running aws audit")
-#            awsaudit.aws_audit()
-#            merger.merge()
+            awsaudit.aws_audit()
+            merger.merge()
             log.info("completed aws audit")
         
 

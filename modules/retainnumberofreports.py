@@ -9,8 +9,6 @@ from modules import gcpaudit
 from modules import awsaudit
 from modules import azureaudit
 
-
-  
 def getListOfFoldersToDelete(directory, number):
     try:
         list_of_all_folders = sorted(glob.glob(os.path.join(directory, '*/')))
