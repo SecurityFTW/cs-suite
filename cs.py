@@ -36,7 +36,7 @@ def main():
         exit(1)
     elif args.number:
         try:
-            number = int(args.number)
+           int(args.number)
         except Exception as _:
             print("Please provide a number for -n option only. ")
             print("EXITTING!!")
@@ -79,8 +79,8 @@ def main():
             exit(0)
         else:
             log.info("running aws audit")
-            awsaudit.aws_audit()
-            merger.merge()
+        #    awsaudit.aws_audit()
+        #    merger.merge()
             log.info("completed aws audit")
         
 
@@ -97,9 +97,9 @@ def main():
         log.info("completed azure audit")
 
 
-    if args.number < 0 and args.wipe == False:    
+    if args.number > 0 and args.wipe == False:
         from modules import retainnumberofreports
-        retainnumberofreports.retainReports(args.environment,args.number)
+        retainnumberofreports.retainReports(args.environment, int(args.number))
         exit(0)
 
 
