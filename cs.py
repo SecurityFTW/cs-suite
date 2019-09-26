@@ -36,7 +36,7 @@ def main():
         exit(1)
     elif args.number:
         try:
-            number = int(args.number)
+           int(args.number)
         except Exception as _:
             print("Please provide a number for -n option only. ")
             print("EXITTING!!")
@@ -97,9 +97,9 @@ def main():
         log.info("completed azure audit")
 
 
-    if args.number < 0 and args.wipe == False:    
+    if args.number > 0 and args.wipe == False:
         from modules import retainnumberofreports
-        retainnumberofreports.retainReports(args.environment,number)
+        retainnumberofreports.retainReports(args.environment, int(args.number))
         exit(0)
 
 
