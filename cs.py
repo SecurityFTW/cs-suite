@@ -22,7 +22,7 @@ def main():
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=False, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
-    parser.add_argument('-n', '--number', required=False, type=int, help='Number of reports to store A particular User')
+    parser.add_argument('-n', '--number', required=False, help='Retain number of report to store for a particular environment and user/project.')
 
     args = parser.parse_args()
 
@@ -30,6 +30,17 @@ def main():
     log = logger.setup_logging(args.output, "INFO")
 
     log.info("starting cloud security suite v1.0")
+
+    if args.number and args.wipe == True:
+        print("Warning you can't use -w or -n flag at same time")
+        exit(1)
+    elif args.number:
+        try:
+            number = int(args.number)
+        except Exception as _:
+            print("Please provide a number for -n option only. ")
+            print("EXITTING!!")
+            exit(1)
 
     if args.password:
         password = getpass()
@@ -39,7 +50,6 @@ def main():
         log.info("wiping reports/ folder before running")
         rm.rm("reports/")
     
-
 
     if args.environment == 'gcp':
         from modules import gcpaudit
@@ -51,7 +61,6 @@ def main():
             log.info("running gcp audit")
             gcpaudit.gcp_audit(args.project_id)
             log.info("completed gcp audit")
-            exit(0)
 
     elif args.environment == 'aws':
         from modules import awsaudit
@@ -70,10 +79,10 @@ def main():
             exit(0)
         else:
             log.info("running aws audit")
-            awsaudit.aws_audit()
-            merger.merge()
+#            awsaudit.aws_audit()
+#            merger.merge()
             log.info("completed aws audit")
-        #    exit(0)
+        
 
     elif args.environment == 'azure':
         if args.azure_user and args.azure_pass:
@@ -86,14 +95,15 @@ def main():
         from modules import azureaudit
         azureaudit.azure_audit()
         log.info("completed azure audit")
-        #exit(0)
 
-    
-    if args.number:
-        
-        from modules import manageReports
-        manageReports.numberOfReports(args.environment, args.number)
-        exit(0)
+
+    if args.number and args.wipe == False:    
+        if(number < 0):
+            exit(1)
+        else:
+            from modules import retainnumberofreports
+            retainnumberofreports.retainReports(args.environment,number)
+            exit(0)
 
 
 if __name__ == '__main__':
