@@ -79,8 +79,8 @@ def main():
             exit(0)
         else:
             log.info("running aws audit")
-            awsaudit.aws_audit()
-            merger.merge()
+        #    awsaudit.aws_audit()
+        #    merger.merge()
             log.info("completed aws audit")
         
 
@@ -99,7 +99,7 @@ def main():
 
     if args.number < 0 and args.wipe == False:    
         from modules import retainnumberofreports
-        retainnumberofreports.retainReports(args.environment,number)
+        retainnumberofreports.retainReports(args.environment,args.number)
         exit(0)
 
 
