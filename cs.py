@@ -97,13 +97,10 @@ def main():
         log.info("completed azure audit")
 
 
-    if args.number and args.wipe == False:    
-        if(number < 0):
-            exit(1)
-        else:
-            from modules import retainnumberofreports
-            retainnumberofreports.retainReports(args.environment,number)
-            exit(0)
+    if args.number < 0 and args.wipe == False:    
+        from modules import retainnumberofreports
+        retainnumberofreports.retainReports(args.environment,number)
+        exit(0)
 
 
 if __name__ == '__main__':
