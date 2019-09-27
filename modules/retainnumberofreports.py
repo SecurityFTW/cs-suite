@@ -1,15 +1,19 @@
 #!/usr/bin/env python
+"""
+This module is to define the retention period for reports
+"""
+
 import os
 import pathlib
 import glob
-import time
 import shutil
 import logging
 from modules import gcpaudit
 from modules import awsaudit
 from modules import azureaudit
 
-def getListOfFoldersToDelete(directory, number):
+def get_folders_list(directory, number):
+    """Function to get folder list"""
     try:
         list_of_all_folders = sorted(glob.glob(os.path.join(directory, '*/')), reverse=True)
         list_of_all_folders = list_of_all_folders[number:]
@@ -18,10 +22,11 @@ def getListOfFoldersToDelete(directory, number):
         logging.exception(identifier)
 
 
-def deleteUnrequiredFolder(directory, number):
+def delete_folder(directory, number):
+    """Function to delete the folder"""
     try:
-        deletingList = getListOfFoldersToDelete(directory, number)
-        for folder in deletingList:
+        deleting_list = get_folders_list(directory, number)
+        for folder in deleting_list:
             shutil.rmtree(folder)
     except IndexError as identifier:
         print("There is an Index Error.")
@@ -29,22 +34,24 @@ def deleteUnrequiredFolder(directory, number):
         logging.exception(identifier)
 
 
-def retainReports(enviroment, number):
+def retain_reports(enviroment, number):
+    """Function to retain reports on the basis days"""
     aws_report_path = 'reports/AWS/aws_audit'
     gcp_report_path = 'reports/GCP'
     azure_report_path = 'reports/AZURE'
     current_path = os.getcwd()
-    if(enviroment == "aws"):
-        cleanReports(current_path, aws_report_path, number, awsaudit.account_name)
-        
-    elif(enviroment == "azure"):
-        cleanReports(current_path, azure_report_path, number, azureaudit.account_name)
+    if enviroment == "aws":
+        clean_reports(current_path, aws_report_path, number, awsaudit.account_name)
 
-    elif(enviroment == 'gcp'):
-        cleanReports(current_path, gcp_report_path, number, gcpaudit.project_name)
+    elif enviroment == "azure":
+        clean_reports(current_path, azure_report_path, number, azureaudit.account_name)
+
+    elif enviroment == 'gcp':
+        clean_reports(current_path, gcp_report_path, number, gcpaudit.project_name)
 
 
-def cleanReports(current_path, cloud_report_default_path, number, account_name):
+def clean_reports(current_path, cloud_report_default_path, number, account_name):
+    """Function to cleanup reports"""
     try:
         report_default_path = os.path.join(current_path, cloud_report_default_path)
         os.chdir(report_default_path)
@@ -52,6 +59,6 @@ def cleanReports(current_path, cloud_report_default_path, number, account_name):
         if cloud_account_final_path.exists():
             cloud_account_path = os.path.join(report_default_path, account_name)
             os.chdir(cloud_account_path)
-            deleteUnrequiredFolder(cloud_account_path, number)
+            delete_folder(cloud_account_path, number)
     except Exception as identifier:
         logging.exception(identifier)
