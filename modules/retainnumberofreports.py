@@ -11,7 +11,7 @@ from modules import azureaudit
 
 def getListOfFoldersToDelete(directory, number):
     try:
-        list_of_all_folders = sorted(glob.glob(os.path.join(directory, '*/')))
+        list_of_all_folders = sorted(glob.glob(os.path.join(directory, '*/')), reverse=True)
         list_of_all_folders = list_of_all_folders[number:]
         return list_of_all_folders
     except Exception as identifier:
