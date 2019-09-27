@@ -36,6 +36,8 @@ optional arguments:
                         consumptions into SIEMS like ELK and Splunk. Defaults
                         to cs-audit.log
   -w, --wipe            rm -rf reports/ folder before executing an audit
+  -n, --number          Retain number of report to store for a particular environment 
+                        and user/project.
 ```
 ## Requirements
 * Operating System **OSX** or **Linux** only
