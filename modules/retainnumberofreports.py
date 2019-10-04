@@ -8,9 +8,6 @@ import pathlib
 import glob
 import shutil
 import logging
-from modules import gcpaudit
-from modules import awsaudit
-from modules import azureaudit
 
 def get_folders_list(directory, number):
     """Function to get folder list"""
@@ -41,12 +38,15 @@ def retain_reports(enviroment, number):
     azure_report_path = 'reports/AZURE'
     current_path = os.getcwd()
     if enviroment == "aws":
+        from modules import awsaudit
         clean_reports(current_path, aws_report_path, number, awsaudit.account_name)
 
     elif enviroment == "azure":
+        from modules import azureaudit
         clean_reports(current_path, azure_report_path, number, azureaudit.account_name)
 
     elif enviroment == 'gcp':
+        from modules import gcpaudit
         clean_reports(current_path, gcp_report_path, number, gcpaudit.project_name)
 
 
