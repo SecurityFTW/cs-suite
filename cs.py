@@ -49,7 +49,6 @@ def main():
     if args.wipe:
         log.info("wiping reports/ folder before running")
         rm.rm("reports/")
-    
 
     if args.environment == 'gcp':
         from modules import gcpaudit
@@ -61,6 +60,7 @@ def main():
             log.info("running gcp audit")
             gcpaudit.gcp_audit(args.project_id)
             log.info("completed gcp audit")
+
 
     elif args.environment == 'aws':
         from modules import awsaudit
@@ -82,7 +82,6 @@ def main():
             awsaudit.aws_audit()
             merger.merge()
             log.info("completed aws audit")
-        
 
     elif args.environment == 'azure':
         if args.azure_user and args.azure_pass:
@@ -95,7 +94,6 @@ def main():
         from modules import azureaudit
         azureaudit.azure_audit()
         log.info("completed azure audit")
-
 
     if args.number > 0 and args.wipe == False:
         from modules import retainnumberofreports
