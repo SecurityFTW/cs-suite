@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 from __future__ import print_function
 from getpass import getpass
@@ -21,6 +22,7 @@ def main():
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=False, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
+    parser.add_argument('-n', '--number', required=False, help='Retain number of report to store for a particular environment and user/project.')
 
     args = parser.parse_args()
 
@@ -29,13 +31,25 @@ def main():
 
     log.info("starting cloud security suite v1.0")
 
-    if args.wipe:
-        log.info("wiping reports/ folder before running")
-        rm.rm("reports/")
-
+    if args.number and args.wipe == True:
+        print("Warning you can't use -w or -n flag at same time")
+        exit(1)
+    elif args.number:
+        try:
+           int(args.number)
+        except Exception as _:
+            print("Please provide a number for -n option only. ")
+            print("EXITTING!!")
+            exit(1)
 
     if args.password:
         password = getpass()
+
+    
+    if args.wipe:
+        log.info("wiping reports/ folder before running")
+        rm.rm("reports/")
+    
 
     if args.environment == 'gcp':
         from modules import gcpaudit
@@ -47,7 +61,6 @@ def main():
             log.info("running gcp audit")
             gcpaudit.gcp_audit(args.project_id)
             log.info("completed gcp audit")
-            exit(0)
 
     elif args.environment == 'aws':
         from modules import awsaudit
@@ -69,7 +82,7 @@ def main():
             awsaudit.aws_audit()
             merger.merge()
             log.info("completed aws audit")
-            exit(0)
+        
 
     elif args.environment == 'azure':
         if args.azure_user and args.azure_pass:
@@ -82,6 +95,11 @@ def main():
         from modules import azureaudit
         azureaudit.azure_audit()
         log.info("completed azure audit")
+
+
+    if args.number > 0 and args.wipe == False:
+        from modules import retainnumberofreports
+        retainnumberofreports.retain_reports(args.environment, int(args.number))
         exit(0)
 
 

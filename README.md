@@ -4,7 +4,7 @@
 ```
 usage: cs.py [-h] -env {aws,gcp,azure} -aip AUDIT_IP -u USER_NAME -pem
              PEM_FILE [-p] [-pId PROJECT_ID] [-az_u AZURE_USER]
-             [-az_p AZURE_PASS] [-o OUTPUT] [-w]
+             [-az_p AZURE_PASS] [-o OUTPUT] [-w] [-n NUMBER]
 
 this is to get IP address for lynis audit only
 
@@ -36,6 +36,8 @@ optional arguments:
                         consumptions into SIEMS like ELK and Splunk. Defaults
                         to cs-audit.log
   -w, --wipe            rm -rf reports/ folder before executing an audit
+  -n, --number          Retain number of report to store for a particular 
+                        environment and user/project.
 ```
 ## Requirements
 * Operating System **OSX** or **Linux** only
