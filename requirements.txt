@@ -38,3 +38,4 @@ uritemplate==3.0.0
 urllib3==1.22
 values==2019.4.13
 zope.interface==4.6.0
+pathlib
