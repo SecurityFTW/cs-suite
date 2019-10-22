@@ -35,7 +35,7 @@ def main():
         print("Warning you can't use -w or -n flag at same time")
         exit(1)
     elif args.number:
-        try:
+        try:  
            int(args.number)
         except Exception as _:
             print("Please provide a number for -n option only. ")
