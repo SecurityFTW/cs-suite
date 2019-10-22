@@ -15,9 +15,6 @@ def check_run_time_argument(args):
     data = dict(zip(list_of_run_time_argumnet, list_of_values))
     return data
 
-
-
-
 def read_config_file(section):
     list_of_keys = []
     list_of_values = []
@@ -28,12 +25,9 @@ def read_config_file(section):
         list_of_keys.append(tmp[i][0])
         list_of_values.append(tmp[i][1])
     data = dict(zip(list_of_keys, list_of_values))
-    # print(data)
     return data
 
-
-
-def getEnvironment():
+def get_environment():
     config = ConfigParser.ConfigParser()
     config.read('config.ini')
     value = config.get('default','environment')
@@ -41,9 +35,7 @@ def getEnvironment():
         value = None
     return value
 
-
-
-def correctFalseValues(args):
+def correct_false_values(args):
     args = vars(args)
     for key in args:
         if args[key] == 'None':
@@ -55,16 +47,12 @@ def correctFalseValues(args):
     args = Namespace(**args)
     return args
     
-
-
-
-def test(args):
-    
+def property_or_argument_read(args):
     sections = ['default']
     if args.environment != None:
         sections.append(args.environment)
-    elif getEnvironment() != None :
-        sections.append(getEnvironment())
+    elif get_environment() != None :
+        sections.append(get_environment())
     else:
         print("No environment defined to run audit upon!")
         exit(0)
@@ -72,21 +60,19 @@ def test(args):
     config_file_data = {}
     for section in sections:
         config_file_data[section] = read_config_file(section)
-    args = putConfigFileData(sections,config_file_data,args,data_from_cli)
-    args = putRuntimeArguments(data_from_cli,args)
-    args = correctFalseValues(args)
+    args = put_config_file_data(sections,config_file_data,args)
+    args = put_runtime_arguments(data_from_cli,args)
+    args = correct_false_values(args)
     return args
 
-
-def putRuntimeArguments(data,args):
+def put_runtime_arguments(data,args):
     args = vars(args)
     for single_data in data:
         args[single_data] = data[single_data]
     args = Namespace(**args)
     return args
 
-
-def putConfigFileData(sections,config_file_data,args,data_from_cli):
+def put_config_file_data(sections,config_file_data,args):
     args = vars(args)
     for section in sections:
         for i in config_file_data[section]:
