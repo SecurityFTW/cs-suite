@@ -8,7 +8,6 @@ import rm
 import subprocess
 from modules import config
 
-         
 def main():
     """ main function """
     parser = argparse.ArgumentParser(description='this is to get IP address for lynis audit only')
@@ -48,7 +47,6 @@ def main():
     if args.password:
         password = getpass()
 
-    
     if args.wipe:
         log.info("wiping reports/ folder before running")
         rm.rm("reports/")
@@ -63,7 +61,6 @@ def main():
             log.info("running gcp audit")
             gcpaudit.gcp_audit(args.project_id)
             log.info("completed gcp audit")
-
 
     elif args.environment == 'aws':
         from modules import awsaudit
@@ -103,6 +100,6 @@ def main():
         retainnumberofreports.retain_reports(args.environment, int(args.number))
         exit(0)
 
-
 if __name__ == '__main__':
     main()
+ 
