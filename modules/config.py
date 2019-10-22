@@ -43,8 +43,18 @@ def getEnvironment():
 
 
 
-def onefunc():
-    pass
+def correctFalseValues(args):
+    args = vars(args)
+    for key in args:
+        if args[key] == 'None':
+            args[key] = None
+        if args[key] == 'False':
+            args[key] = False
+        if args[key] == 'True':
+            args[key] = True
+    args = Namespace(**args)
+    return args
+    
 
 
 
@@ -64,6 +74,7 @@ def test(args):
         config_file_data[section] = read_config_file(section)
     args = putConfigFileData(sections,config_file_data,args,data_from_cli)
     args = putRuntimeArguments(data_from_cli,args)
+    args = correctFalseValues(args)
     return args
 
 

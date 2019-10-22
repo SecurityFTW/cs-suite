@@ -28,9 +28,6 @@ def main():
 
     args = parser.parse_args()
     args = config.test(args)
-    print(args.user_name)
-    if args.user_name == None:
-        print("asdfasdf")
 
     # # set up logging
     # log = logger.setup_logging(args.output, "INFO")
