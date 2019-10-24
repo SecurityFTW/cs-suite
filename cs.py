@@ -6,7 +6,7 @@ import argparse
 from modules import logger
 import rm
 import subprocess
-from modules import config
+from modules import argspopulator
 
 def main():
     """ main function """
@@ -26,7 +26,7 @@ def main():
     parser.add_argument('-n', '--number', required=False, help='Retain number of report to store for a particular environment and user/project.')
 
     args = parser.parse_args()
-    args = config.property_or_argument_read(args)
+    args = argspopulator.property_or_argument_read(args)
     
     # set up logging
     log = logger.setup_logging(args.output, "INFO")
