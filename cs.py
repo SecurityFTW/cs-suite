@@ -6,11 +6,12 @@ import argparse
 from modules import logger
 import rm
 import subprocess
-         
+
+
 def main():
     """ main function """
     parser = argparse.ArgumentParser(description='this is to get IP address for lynis audit only')
-    parser.add_argument('-env', '--environment', required=True, help='The cloud on which the test-suite is to be run',
+    parser.add_argument('-env', '--environment', required=False, help='The cloud on which the test-suite is to be run',
                         choices=['aws', 'gcp', 'azure'])
     parser.add_argument('-aip', '--audit_ip', required=False, help='The IP for which lynis Audit needs to be done .... by default tries root/Administrator if username not provided')
     parser.add_argument('-u', '--user_name', required=False, help='The username of the user to be logged in,for a specific user')
@@ -26,6 +27,7 @@ def main():
 
     args = parser.parse_args()
 
+    
     # set up logging
     log = logger.setup_logging(args.output, "INFO")
 
@@ -35,7 +37,7 @@ def main():
         print("Warning you can't use -w or -n flag at same time")
         exit(1)
     elif args.number:
-        try:
+        try:  
            int(args.number)
         except Exception as _:
             print("Please provide a number for -n option only. ")
@@ -45,11 +47,9 @@ def main():
     if args.password:
         password = getpass()
 
-    
     if args.wipe:
         log.info("wiping reports/ folder before running")
         rm.rm("reports/")
-    
 
     if args.environment == 'gcp':
         from modules import gcpaudit
@@ -82,7 +82,6 @@ def main():
             awsaudit.aws_audit()
             merger.merge()
             log.info("completed aws audit")
-        
 
     elif args.environment == 'azure':
         if args.azure_user and args.azure_pass:
@@ -96,12 +95,11 @@ def main():
         azureaudit.azure_audit()
         log.info("completed azure audit")
 
-
     if args.number > 0 and args.wipe == False:
         from modules import retainnumberofreports
-        retainnumberofreports.retain_reports(args.environment, int(args.number))
+        retainnumberofreports.retain_reports(args.environment, int(args.number), args.project_id )
         exit(0)
-
 
 if __name__ == '__main__':
     main()
+ 
