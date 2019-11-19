@@ -54,7 +54,7 @@ def merge_json():
 
 
 def no_guest_user():
-    """ The response is empty,need to dig in further """
+    """ The response is empty, need to dig in further """
     guest_user_list = subprocess.check_output(['az ad user list --query "[?additionalProperties.userType==\'Guest\']"'], shell=True)
     result = {}
     result['check'] = 'NO_GUEST_USER'
@@ -62,12 +62,12 @@ def no_guest_user():
         f.write(guest_user_list)
 
 def custom_owner_role():
-    """ The response is huge need to break down and analyse """
+    """ The response is huge, need to break down and analyse """
     definition_list = subprocess.check_output(['az role definition list'], shell=True)
     print definition_list
 
 def automatic_provising_agent():
-    print "2.2: Checking for Automatic Provising Agent\n\n"
+    print "2.2: Checking for Automatic Provisioning Agent\n\n"
     agent_provising = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type:application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'| jq \'.properties.logCollection\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'AUTOMATIC_PROVISING_AGENT'
