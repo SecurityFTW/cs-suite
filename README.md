@@ -51,7 +51,7 @@ optional arguments:
 * Azure Audit - Azure user read-only access
 
 ## Installation
-(in order to avoid missing with the already installed python libraries)
+(in order to avoid messing with the already installed python libraries)
 
  - get project `git clone https://github.com/SecurityFTW/cs-suite.git &&
 cd cs-suite/`   
@@ -77,7 +77,7 @@ cd cs-suite/`
 
 - signup and have logged in already to [azure.microsoft.com](https://azure.microsoft.com)
 - install azure CLI `brew install az`
-- authenticate the azure cli `az login`, you should see your subscription type if it was successful, simiarly to the response below:
+- authenticate the azure cli `az login`, you should see your subscription type if it was successful, similar to the response below:
 
 
 ```
