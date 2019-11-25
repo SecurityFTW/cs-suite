@@ -29,6 +29,7 @@ def main():
     args = parser.parse_args()
     args = argspopulator.update_args(args)
     
+    
     # set up logging
     log = logger.setup_logging(args.output, "INFO")
 

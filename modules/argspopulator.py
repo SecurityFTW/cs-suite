@@ -26,14 +26,14 @@ def get_environment():
 
 def put_env_variables(args_dict):
     try:
-        print(os.environ['password'])
+        
         list_of_env_variables = ['password','azure_pass']
         for env_variable in list_of_env_variables:
-            if os.environ[env_variable] != None and os.environ[env_variable] != 'None' :
+            if os.environ[env_variable] != None and os.environ[env_variable] != 'None' : 
                 args_dict[env_variable] = os.environ[env_variable]
-        return args_dict 
-    except Exception as identifier:
-        logging.exception(identifier)
+        return args_dict
+    except Exception as _:
+        return args_dict
 
 def update_args(args_namespace):
     args_dict = vars(args_namespace)
@@ -51,9 +51,10 @@ def update_args(args_namespace):
         config_file_data[section] = readconfigfile.get_section_data(section)
     args_dict = put_config_file_data(sections,config_file_data,args_dict)
     args_dict = put_runtime_arguments(data_from_cli,args_dict)
-    args_dict = put_env_variables(args_dict)    
+    args_dict = put_env_variables(args_dict)
     args_namespace = Namespace(**args_dict)
     return args_namespace
+
 
 def put_runtime_arguments(data,args_dict):
     for single_data in data:
