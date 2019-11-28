@@ -4,6 +4,7 @@ from __future__ import print_function
 from getpass import getpass
 import argparse
 from modules import logger
+import os
 import rm
 import subprocess
 
@@ -100,12 +101,15 @@ def main():
 
     elif args.environment == 'digitalocean':
         from modules import doaudit
-        if not (args.digitalocean_api_key and args.digitalocean_access_key and args.digitalocean_secret_key):
-            print ("Please pass the API-key,Access key and Secret Key for Digital Ocean Audit")
+        try:
+            do_api_key = os.environ['DO_KEY']
+            do_access_key = os.environ['DO_ACCESS_KEY'] 
+            do_secret_key = os.environ['DO_SECRET_KEY']
+        except Exception as e:
+            print ("Please export DO key/access and secret as DO_KEY,DO_ACCESS_KEY,DO_SECRET_KEY")
             print ("Exiting !!!")
             exit(0)
-        else:
-            doaudit.do_audit(args.digitalocean_api_key, args.digitalocean_access_key, args.digitalocean_secret_key)
+        doaudit.do_audit(do_api_key, do_access_key, do_secret_key)
 
     if args.number > 0 and args.wipe == False:
         from modules import retainnumberofreports
