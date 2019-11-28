@@ -12,7 +12,7 @@ def main():
     """ main function """
     parser = argparse.ArgumentParser(description='this is to get IP address for lynis audit only')
     parser.add_argument('-env', '--environment', required=True, help='The cloud on which the test-suite is to be run',
-                        choices=['aws', 'gcp', 'azure'])
+                        choices=['aws', 'gcp', 'azure', 'digitalocean'])
     parser.add_argument('-aip', '--audit_ip', required=False, help='The IP for which lynis Audit needs to be done .... by default tries root/Administrator if username not provided')
     parser.add_argument('-u', '--user_name', required=False, help='The username of the user to be logged in,for a specific user')
     parser.add_argument('-pem', '--pem_file', required=False, help='The pem file to access to AWS instance')
@@ -20,6 +20,9 @@ def main():
     parser.add_argument('-pId', '--project_id', help='Project ID for which GCP Audit needs to be run. Can be retrivied using `gcloud projects list`')
     parser.add_argument('-az_u', '--azure_user', required=False, help='username of azure account, optionally used if you want to run the azure audit with no user interaction.')
     parser.add_argument('-az_p', '--azure_pass', required=False, help='username of azure password, optionally used if you want to run the azure audit with no user interaction.')
+    parser.add_argument('-do_api', '--digitalocean_api_key', required=False, help='The api key for auditing Digital Ocean Resources')
+    parser.add_argument('-do_key', '--digitalocean_access_key', required=False, help='Access key for auditing Digital Ocean Spaces')
+    parser.add_argument('-do_secret', '--digitalocean_secret_key', required=False, help='Secret key for auditing Digital Ocean Spaces')
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=False, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
@@ -94,6 +97,15 @@ def main():
         from modules import azureaudit
         azureaudit.azure_audit()
         log.info("completed azure audit")
+
+    elif args.environment == 'digitalocean':
+        from modules import doaudit
+        if not (args.digitalocean_api_key and args.digitalocean_access_key and args.digitalocean_secret_key):
+            print ("Please pass the API-key,Access key and Secret Key for Digital Ocean Audit")
+            print ("Exiting !!!")
+            exit(0)
+        else:
+            doaudit.do_audit(args.digitalocean_api_key, args.digitalocean_access_key, args.digitalocean_secret_key)
 
     if args.number > 0 and args.wipe == False:
         from modules import retainnumberofreports
