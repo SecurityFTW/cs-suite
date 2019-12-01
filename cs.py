@@ -21,9 +21,6 @@ def main():
     parser.add_argument('-pId', '--project_id', help='Project ID for which GCP Audit needs to be run. Can be retrivied using `gcloud projects list`')
     parser.add_argument('-az_u', '--azure_user', required=False, help='username of azure account, optionally used if you want to run the azure audit with no user interaction.')
     parser.add_argument('-az_p', '--azure_pass', required=False, help='username of azure password, optionally used if you want to run the azure audit with no user interaction.')
-    parser.add_argument('-do_api', '--digitalocean_api_key', required=False, help='The api key for auditing Digital Ocean Resources')
-    parser.add_argument('-do_key', '--digitalocean_access_key', required=False, help='Access key for auditing Digital Ocean Spaces')
-    parser.add_argument('-do_secret', '--digitalocean_secret_key', required=False, help='Secret key for auditing Digital Ocean Spaces')
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=False, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
