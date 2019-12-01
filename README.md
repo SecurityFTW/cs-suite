@@ -102,9 +102,13 @@ cd cs-suite/`
 
 - create Personal Access Tokens and Spaces Access keys [cloud.digitalocean.com](https://cloud.digitalocean.com/account/api/tokens)
 - set the credentials by running export
+
 export DO_KEY=*********************
+
 export DO_ACCESS_KEY=*******************
+
 export DO_SECRET_KEY=****************************
+
 
 ## Running cs-suite
 
