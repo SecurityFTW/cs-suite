@@ -2,7 +2,7 @@
 
 ## Usage
 ```
-usage: cs.py [-h] -env {aws,gcp,azure} -aip AUDIT_IP -u USER_NAME -pem
+usage: cs.py [-h] -env {aws,gcp,azure,digitalocean} -aip AUDIT_IP -u USER_NAME -pem
              PEM_FILE [-p] [-pId PROJECT_ID] [-az_u AZURE_USER]
              [-az_p AZURE_PASS] [-o OUTPUT] [-w] [-n NUMBER]
 
@@ -10,7 +10,7 @@ this is to get IP address for lynis audit only
 
 optional arguments:
   -h, --help            show this help message and exit
-  -env {aws,gcp,azure}, --environment {aws,gcp,azure}
+  -env {aws,gcp,azure,digitalocean}, --environment {aws,gcp,azure,digitalocean}
                         The cloud on which the test-suite is to be run
   -aip AUDIT_IP, --audit_ip AUDIT_IP
                         The IP for which lynis Audit needs to be done .... by
@@ -49,6 +49,7 @@ optional arguments:
 * AWS Audit - AWS ReadOnly Keys
 * GCP Audit - gcloud setup
 * Azure Audit - Azure user read-only access
+* DigitalOcean Audit - DigitalOcean API key and SPACES access_key and access_secret
 
 ## Installation
 (in order to avoid missing with the already installed python libraries)
@@ -97,12 +98,21 @@ cd cs-suite/`
 ]
 ```
 
+### DigitalOcean Configuration
+
+- create Personal Access Tokens and Spaces Access keys [cloud.digitalocean.com](https://cloud.digitalocean.com/account/api/tokens)
+- set the credentials by running export
+export DO_KEY=*********************
+export DO_ACCESS_KEY=*******************
+export DO_SECRET_KEY=****************************
+
 ## Running cs-suite
 
 ```
 To run AWS Audit - python cs.py -env aws
 To run GCP Audit - python cs.py -env gcp -pId <project_name>
 To run Azure Audit - python cs.py -env azure
+To run DigitalOcean Audit - python cs.py -env digitalocean
 ```
 
 - The final report will be available in `reports` directory
