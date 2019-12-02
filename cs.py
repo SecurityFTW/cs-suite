@@ -4,6 +4,7 @@ from __future__ import print_function
 from getpass import getpass
 import argparse
 from modules import logger
+import os
 import rm
 import subprocess
 
@@ -12,7 +13,7 @@ def main():
     """ main function """
     parser = argparse.ArgumentParser(description='this is to get IP address for lynis audit only')
     parser.add_argument('-env', '--environment', required=True, help='The cloud on which the test-suite is to be run',
-                        choices=['aws', 'gcp', 'azure'])
+                        choices=['aws', 'gcp', 'azure', 'digitalocean'])
     parser.add_argument('-aip', '--audit_ip', required=False, help='The IP for which lynis Audit needs to be done .... by default tries root/Administrator if username not provided')
     parser.add_argument('-u', '--user_name', required=False, help='The username of the user to be logged in,for a specific user')
     parser.add_argument('-pem', '--pem_file', required=False, help='The pem file to access to AWS instance')
@@ -94,6 +95,18 @@ def main():
         from modules import azureaudit
         azureaudit.azure_audit()
         log.info("completed azure audit")
+
+    elif args.environment == 'digitalocean':
+        from modules import doaudit
+        try:
+            do_api_key = os.environ['DO_KEY']
+            do_access_key = os.environ['DO_ACCESS_KEY'] 
+            do_secret_key = os.environ['DO_SECRET_KEY']
+        except Exception as e:
+            print ("Please export DO key/access and secret as DO_KEY,DO_ACCESS_KEY,DO_SECRET_KEY")
+            print ("Exiting !!!")
+            exit(0)
+        doaudit.do_audit(do_api_key, do_access_key, do_secret_key)
 
     if args.number > 0 and args.wipe == False:
         from modules import retainnumberofreports
