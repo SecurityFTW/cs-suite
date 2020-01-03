@@ -97,3 +97,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Artifacts and downloads
+reports/
+tools/

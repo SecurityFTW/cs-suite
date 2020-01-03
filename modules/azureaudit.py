@@ -18,7 +18,7 @@ def json_to_html(file, new_file):
                 f.write(line)
         with open(file, 'r') as json_data:
              for line in json_data:
-                 line = str(line)
+                 line = line.decode('utf-8')
                  final = json.loads(line)
                  f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
                  f.write('<div class="thumbnail">\n')
@@ -64,10 +64,10 @@ def no_guest_user():
 def custom_owner_role():
     """ The response is huge need to break down and analyse """
     definition_list = subprocess.check_output(['az role definition list'], shell=True)
-    print definition_list
+    print (definition_list)
 
 def automatic_provising_agent():
-    print "2.2: Checking for Automatic Provising Agent\n\n"
+    print ("2.2: Checking for Automatic Provising Agent\n\n")
     agent_provising = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type:application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'| jq \'.properties.logCollection\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'AUTOMATIC_PROVISING_AGENT'
@@ -96,7 +96,7 @@ def automatic_provising_agent():
 
 
 def system_update():
-    print "2.3: Checking if System Updates are enabled\n\n"
+    print ("2.3: Checking if System Updates are enabled\n\n")
     system_update = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type:application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'| jq \'.properties.recommendations.patch\' | tr -d \'"\' '], shell=True).strip()
     result = {}
     result['check'] = 'SYSTEM_UPDATES'
@@ -124,7 +124,7 @@ def system_update():
         f.write("\n")
 
 def security_configuration():
-    print "2.4: Checking if Security Configurations are enabled\n\n"
+    print ("2.4: Checking if Security Configurations are enabled\n\n")
     sec_config = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.baseline\' | tr -d \'"\' '], shell=True).strip()
     result = {}
     result['check'] = 'SECURITY_CONFIGURATIONS'
@@ -152,7 +152,7 @@ def security_configuration():
         f.write("\n")
 
 def endpoint_protection():
-    print "2.5: Checking if Endpoint protection is enabled\n\n"
+    print ("2.5: Checking if Endpoint protection is enabled\n\n")
     end_protect = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.antimalware\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'ENDPOINT_PROTECTION'
@@ -180,7 +180,7 @@ def endpoint_protection():
         f.write("\n")
 
 def disk_encryption():
-    print "2.6: Checking if Disk Encryption is set On\n\n"
+    print ("2.6: Checking if Disk Encryption is set On\n\n")
     encrypt_disk = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.diskEncryption\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'DISK_ENCRYPTION'
@@ -208,7 +208,7 @@ def disk_encryption():
         f.write("\n")
 
 def network_security():
-    print "2.7: Checking if Network security groups recommendations is enabled\n\n"
+    print ("2.7: Checking if Network security groups recommendations is enabled\n\n")
     nsg = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.nsgs\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'SECURITY_GROUPS'
@@ -236,7 +236,7 @@ def network_security():
         f.write("\n")
 
 def web_app_firewall():
-    print "2.8: Checking if Web Application Firewall is Enabled\n\n"
+    print ("2.8: Checking if Web Application Firewall is Enabled\n\n")
     waf = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.waf\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'WEB_APPLICATION_FIREWALL'
@@ -264,7 +264,7 @@ def web_app_firewall():
         f.write("\n")
 
 def next_gen_firewall():
-    print "2.9: Checking if Next generation firewall recommendations are Enabled\n\n"
+    print ("2.9: Checking if Next generation firewall recommendations are Enabled\n\n")
     ngfw = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.ngfw\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'NEXT_GENERATION_FIREWALL'
@@ -292,7 +292,7 @@ def next_gen_firewall():
         f.write("\n")
 
 def vuln_assessment():
-    print "2.10: Checking if Vulnerability assessment recommendations are Enabled\n\n"
+    print ("2.10: Checking if Vulnerability assessment recommendations are Enabled\n\n")
     va = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.vulnerabilityAssessment\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'VULNERABILITY_ASSESSMENT'
@@ -320,7 +320,7 @@ def vuln_assessment():
         f.write("\n")
 
 def storage_encyption():
-    print "2.11: Checking if Storage Encryption is Enabled\n\n"
+    print ("2.11: Checking if Storage Encryption is Enabled\n\n")
     encrypt_disk = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.storageEncryption\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'STORAGE_ENCRYPTION'
@@ -348,7 +348,7 @@ def storage_encyption():
         f.write("\n")
 
 def jit_network_access():
-    print "2.12: Checking if JIT Network Access is set to ON\n\n"
+    print ("2.12: Checking if JIT Network Access is set to ON\n\n")
     jit_net_access = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.jitNetworkAccess\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'JIT_NETWORK_ACCESS'
@@ -376,7 +376,7 @@ def jit_network_access():
         f.write("\n")
 
 def adaptive_application_control():
-    print "2.13: Checking if Adaptive Application Controls is set to ON\n\n"
+    print ("2.13: Checking if Adaptive Application Controls is set to ON\n\n")
     app_control = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.appWhitelisting\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'ADAPTIVE_APPLICATION_CONTROL'
@@ -404,7 +404,7 @@ def adaptive_application_control():
         f.write("\n")
 
 def sql_auditing():
-    print "2.14: Checking if SQL auditing & Threat detection is set to ON\n\n"
+    print ("2.14: Checking if SQL auditing & Threat detection is set to ON\n\n")
     sql_detect = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.sqlAuditing\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'SQL_AUDITING_&_THREAT_DETECTION'
@@ -432,7 +432,7 @@ def sql_auditing():
         f.write("\n")
 
 def sql_encryption():
-    print "2.15: Checking if SQL Encryption is set to ON\n\n"
+    print ("2.15: Checking if SQL Encryption is set to ON\n\n")
     encrypt_sql = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.recommendations.sqlTde\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'SQL_ENCRYPTION'
@@ -460,7 +460,7 @@ def sql_encryption():
         f.write("\n")
 
 def security_email_set():
-    print "2.16: Checking if Security contact emails is SET\n\n"
+    print ("2.16: Checking if Security contact emails is SET\n\n")
     email_config = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.securityContactConfiguration.securityContactEmails\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'SECURITY_CONTACT_EMAIL'
@@ -488,7 +488,7 @@ def security_email_set():
         f.write("\n")
 
 def security_contact_phone():
-    print "2.17: Checking if Security contact Phone Number is SET\n\n"
+    print ("2.17: Checking if Security contact Phone Number is SET\n\n")
     phone_config = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.securityContactConfiguration.securityContactPhone\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'SECURITY_CONTACT_PHONE'
@@ -516,7 +516,7 @@ def security_contact_phone():
         f.write("\n")
 
 def email_for_alert():
-    print "2.18: Checking if security e-mail alerts are enabled\n\n"
+    print ("2.18: Checking if security e-mail alerts are enabled\n\n")
     alert_email = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.securityContactConfiguration.areNotificationsOn\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'SECURITY_EMAIL_ALERTS'
@@ -544,7 +544,7 @@ def email_for_alert():
         f.write("\n")
 
 def email_for_subs_owners():
-    print "2.19: Checking if security alerts for subscription owners are enabled\n\n"
+    print ("2.19: Checking if security alerts for subscription owners are enabled\n\n")
     email_owner = subprocess.check_output(['az account get-access-token --query "{subscripton:subscription,accessToken:accessToken}" --out tsv | xargs -L1 bash -c \'curl -s -X GET -H "Authorization: Bearer $1" -H "Content-Type: application/json" https://management.azure.com/subscriptions/$0/providers/microsoft.Security/policies?api-version=2015-06-01-preview\' | jq \'.|.value[] | select(.name=="default")\'|jq \'.properties.securityContactConfiguration.sendToAdminOn\' | tr -d \'"\''], shell=True).strip()
     result = {}
     result['check'] = 'SECURITY EMAIL ALERTS TO OWNERS'
@@ -572,7 +572,7 @@ def email_for_subs_owners():
         f.write("\n")
 
 def secure_transfer():
-    print "3.1: Checking if storage accounts have HTTPS only traffic enabled \n\n"
+    print ("3.1: Checking if storage accounts have HTTPS only traffic enabled \n\n")
     https_enabled = subprocess.check_output(['az storage account list --query \[*\].\[name,enableHttpsTrafficOnly,primaryLocation\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'SECURE TRANSFER STORAGE ACCOUNT'
@@ -603,7 +603,7 @@ def secure_transfer():
         f.write("\n")
 
 def storage_service_encryption():
-    print "3.2: Checking if storage accounts has its associated BLOB service encryption enabled \n\n"
+    print ("3.2: Checking if storage accounts has its associated BLOB service encryption enabled \n\n")
     storage_encryption = subprocess.check_output(['az storage account list --query \[*\].\[name,encryption.services.blob.enabled,primaryLocation\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'STORAGE SERVICE ENCRYPTION BLOB'
@@ -642,10 +642,10 @@ def access_key_rotation():
     for id in set(ids):
         time_stmp = subprocess.check_output(['az monitor activity-log list --resource-id %s --query [*].[eventTimestamp,resourceGroup] --output tsv' % id], shell=True)
         if time_stmp:
-            print time_stmp.strip()
+            print (time_stmp.strip())
 
 def encrption_file_service():
-    print "3.6: Checking if storage accounts has its associated FILE service encryption enabled \n\n"
+    print ("3.6: Checking if storage accounts has its associated FILE service encryption enabled \n\n")
     file_encryption = subprocess.check_output(['az storage account list --query \[*\].\[name,encryption.services.file.enabled,primaryLocation\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'FILE_SERVICE_ENCRYPTION'
@@ -676,7 +676,7 @@ def encrption_file_service():
 
 
 def log_profile():
-    print "5.1: Checking if Log profile exists or not\n\n"
+    print ("5.1: Checking if Log profile exists or not\n\n")
     check_profile = subprocess.check_output(['az monitor log-profiles list --query [*].[id,name]'], shell=True).strip()
     result = {}
     j_res = {}
@@ -704,7 +704,7 @@ def log_profile():
         f.write("\n")
 
 def log_retention():
-    print "5.2: Checking the retention policy of the log profile\n\n"
+    print ("5.2: Checking the retention policy of the log profile\n\n")
     retention_policy = subprocess.check_output(['az monitor log-profiles list --query [*].retentionPolicy.enabled --output tsv'],shell=True).strip()
     result = {}
     j_res = {}
@@ -738,7 +738,7 @@ def log_retention():
 
 
 def alert_for_create_policy():
-    print "5.3: Checking if alert for Create Policy Assignment event exists\n\n"
+    print ("5.3: Checking if alert for Create Policy Assignment event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'CREATE_POLICY_ASSIGNMENT'
@@ -769,7 +769,7 @@ def alert_for_create_policy():
 
 
 def alert_group_create_network():
-    print "5.4: Checking if alert for Create or Update Network Security GROUP event exists\n\n"
+    print ("5.4: Checking if alert for Create or Update Network Security GROUP event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'CREATE_NETWORK_GROUP'
@@ -800,7 +800,7 @@ def alert_group_create_network():
 
 
 def alert_group_network_delete():
-    print "5.5: Checking if alert for Delete Network Security GROUP event exists\n\n"
+    print ("5.5: Checking if alert for Delete Network Security GROUP event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'DELETE_NETWORK_GROUP'
@@ -831,7 +831,7 @@ def alert_group_network_delete():
 
 
 def alert_rule_network_create():
-    print "5.6: Checking if alert for Create or Update Network Security GROUP RULE event exists\n\n"
+    print ("5.6: Checking if alert for Create or Update Network Security GROUP RULE event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'CREATE_NETWORK_RULES'
@@ -862,7 +862,7 @@ def alert_rule_network_create():
 
 
 def alert_rule_network_delete():
-    print "5.7: Checking if alert for Delete Network Security GROUP RULE event exists\n\n"
+    print ("5.7: Checking if alert for Delete Network Security GROUP RULE event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'DELETE_NETWORK_RULES'
@@ -894,7 +894,7 @@ def alert_rule_network_delete():
 
 
 def alert_create_security():
-    print "5.8: Checking if alert for Create/Update Security Solution event exists\n\n"
+    print ("5.8: Checking if alert for Create/Update Security Solution event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'CREATE_SECURITY_SOLUTION'
@@ -924,7 +924,7 @@ def alert_create_security():
         f.write("\n")
 
 def alert_delete_security():
-    print "5.9: Checking if alert for DELETE Security Solution event exists\n\n"
+    print ("5.9: Checking if alert for DELETE Security Solution event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'DELETE_SECURITY_SOLUTION'
@@ -954,7 +954,7 @@ def alert_delete_security():
         f.write("\n")
 
 def alert_create_sql_rule():
-    print "5.10: Checking if alert for Create or Update SQL Server Firewall Rule event exists\n\n"
+    print ("5.10: Checking if alert for Create or Update SQL Server Firewall Rule event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'CREATE_SQL_FIREWALL_RULE'
@@ -984,7 +984,7 @@ def alert_create_sql_rule():
         f.write("\n")
 
 def alert_delete_sql_rule():
-    print "5.11: Checking if alert for Delete SQL Server Firewall Rule event exists\n\n"
+    print ("5.11: Checking if alert for Delete SQL Server Firewall Rule event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'DELETE_SQL_FIREWALL_RULE'
@@ -1014,7 +1014,7 @@ def alert_delete_sql_rule():
         f.write("\n")
 
 def alert_update_security_policy():
-    print "5.12: Checking if alert for changes in Security Policy event exists\n\n"
+    print ("5.12: Checking if alert for changes in Security Policy event exists\n\n")
     resource_groups = subprocess.check_output(['az monitor activity-log alert list --query \[*\].\[resourceGroup\] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'UPDATE_SECURITY_POLICY'
@@ -1044,7 +1044,7 @@ def alert_update_security_policy():
         f.write("\n")
 
 def rdp_public():
-    print "6.1: Checking if any network group allows public access to RDP\n\n"
+    print ("6.1: Checking if any network group allows public access to RDP\n\n")
     network_list = subprocess.check_output([' az network nsg list --query [*].name --output tsv'], shell=True).strip()
     result = {}
     data =[]
@@ -1085,7 +1085,7 @@ def rdp_public():
         f.write("\n")
 
 def ssh_public():
-    print "6.2: Checking if any network group allows public access to SSH\n\n"
+    print ("6.2: Checking if any network group allows public access to SSH\n\n")
     network_list = subprocess.check_output([' az network nsg list --query [*].name --output tsv'], shell=True).strip()
     result = {}
     data =[]
@@ -1125,7 +1125,7 @@ def ssh_public():
         f.write("\n")
 
 def network_watcher():
-    print "6.5: Checking if network watcher is enabled\n\n"
+    print ("6.5: Checking if network watcher is enabled\n\n")
     check = subprocess.check_output(['az network watcher list'], shell=True).strip()
     result = {}
     data =[]
@@ -1153,7 +1153,7 @@ def network_watcher():
         f.write("\n")
 
 def vm_agent():
-    print "7.1: Checking if virtual agent is enabled on Virtual Machines\n\n"
+    print ("7.1: Checking if virtual agent is enabled on Virtual Machines\n\n")
     lines = subprocess.check_output(['az vm list --query [*].[resourceGroup,name] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'VM_AGENT'
@@ -1186,7 +1186,7 @@ def vm_agent():
         f.write("\n")
 
 def vm_os_disk():
-    print "7.2: Checking if OS disk encryption is enabled\n\n"
+    print ("7.2: Checking if OS disk encryption is enabled\n\n")
     lines = subprocess.check_output(['az vm list --query [*].[resourceGroup,name] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'VM_OS_DISK_ENCRYPTION'
@@ -1217,7 +1217,7 @@ def vm_os_disk():
         f.write("\n")
 
 def vm_data_disk():
-    print "7.3: Checking if DATA disk encryption is enabled\n\n"
+    print ("7.3: Checking if DATA disk encryption is enabled\n\n")
     lines = subprocess.check_output(['az vm list --query [*].[resourceGroup,name] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'VM_DATA_DISK_ENCRYPTION'
@@ -1249,7 +1249,7 @@ def vm_data_disk():
 
 
 def approved_extension():
-    print "7.4: Checking if the extensions are approved\n\n"
+    print ("7.4: Checking if the extensions are approved\n\n")
     lines = subprocess.check_output(['az vm list --query [*].[resourceGroup,name] --output tsv'], shell=True).strip()
     result = {}
     result['check'] = 'APPROVED_EXTENSION'
@@ -1283,7 +1283,7 @@ def approved_extension():
         f.write("\n")
 
 def vault_key():
-    print "8.1: Checking if expiry is enabled for vault keys\n\n"
+    print ("8.1: Checking if expiry is enabled for vault keys\n\n")
     result = {}
     result['check'] = 'VAULT_KEY_EXPIRY'
     data = []
@@ -1334,7 +1334,7 @@ def vault_key():
 
 
 def vault_secret():
-    print "8.2: Checking if expiry is enabled for vault secret\n\n"
+    print ("8.2: Checking if expiry is enabled for vault secret\n\n")
     result = {}
     result['check'] = 'VAULT_SECRET_EXPIRY'
     data = []
@@ -1385,7 +1385,7 @@ def vault_secret():
         f.write("\n")
 
 def sql_db_audit():
-    print "4.2.1: Checking if SQL DB has AUDIT policy enabled\n\n"
+    print ("4.2.1: Checking if SQL DB has AUDIT policy enabled\n\n")
     result = {}
     result['check'] = 'SQL_DB_AUDIT'
     data = []
@@ -1432,7 +1432,7 @@ def sql_db_audit():
         f.write("\n")
 
 def sql_db_threat():
-    print "4.2.2: Checking if SQL DB has Threat Detection enabled\n\n"
+    print ("4.2.2: Checking if SQL DB has Threat Detection enabled\n\n")
     result = {}
     result['check'] = 'SQL_DB_THREAT_DETECTION'
     data = []
@@ -1480,7 +1480,7 @@ def sql_db_threat():
         f.write("\n")
 
 def sql_db_disabled_alert():
-    print "4.2.3: Checking if SQL DB has any alerts disabled\n\n"
+    print ("4.2.3: Checking if SQL DB has any alerts disabled\n\n")
     result = {}
     result['check'] = 'SQL_DB_DISABLED_ALERT'
     data = []
@@ -1528,7 +1528,7 @@ def sql_db_disabled_alert():
         f.write("\n")
 
 def sql_db_send_email():
-    print "4.2.4: Checking if SQL DB has any email alerts enabled\n\n"
+    print ("4.2.4: Checking if SQL DB has any email alerts enabled\n\n")
     result = {}
     result['check'] = 'SQL_DB_EMAIL_ALERT'
     data = []
@@ -1576,7 +1576,7 @@ def sql_db_send_email():
         f.write("\n")
 
 def sql_db_email_admin():
-    print "4.2.5: Checking if SQL DB has any Admin email alerts enabled\n\n"
+    print ("4.2.5: Checking if SQL DB has any Admin email alerts enabled\n\n")
     result = {}
     result['check'] = 'SQL_DB_EMAIL_ADMIN'
     data = []
@@ -1624,7 +1624,7 @@ def sql_db_email_admin():
         f.write("\n")
 
 def sql_db_encryption():
-    print "4.2.6: Checking if SQL DB has Transparent Data Encryption enabled\n\n"
+    print ("4.2.6: Checking if SQL DB has Transparent Data Encryption enabled\n\n")
     result = {}
     result['check'] = 'SQL_DB_DATA_ENCRYPTION'
     data = []
@@ -1672,7 +1672,7 @@ def sql_db_encryption():
         f.write("\n")
 
 def sql_db_audit_retention():
-    print "4.2.7: Checking if SQL DB has AUDIT log retention policy greater than 90 days\n\n"
+    print ("4.2.7: Checking if SQL DB has AUDIT log retention policy greater than 90 days\n\n")
     result = {}
     result['check'] = 'SQL_DB_AUDIT_RETENTION'
     data = []
@@ -1720,7 +1720,7 @@ def sql_db_audit_retention():
         f.write("\n")
 
 def sql_db_threat_retention():
-    print "4.2.8: Checking if SQL DB has THREAT log retention policy greater than 90 days\n\n"
+    print ("4.2.8: Checking if SQL DB has THREAT log retention policy greater than 90 days\n\n")
     result = {}
     result['check'] = 'SQL_DB_THREAT_RETENTION'
     data = []
@@ -1826,7 +1826,7 @@ def persistent(latest, last):
 def persistent_files():
     dirs = os.listdir("./reports/AZURE/%s/" % (account_name))
     if len(dirs) == 1:
-        print "This is the first audit run for the account, diff will be shown in the next run"
+        print ("This is the first audit run for the account, diff will be shown in the next run")
         with open("./reports/AZURE/%s/%s/diff.html" %(account_name, timestmp), 'w') as f:
             f.write("This is the first audit run for the account, diff will be shown in the next run")
     else:

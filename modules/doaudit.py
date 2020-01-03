@@ -14,7 +14,7 @@ timestmp = time.strftime("%Y%m%d-%H%M%S")
 def spaces_audit(do_key, do_secret):
     # Initialize a session using DigitalOcean Spaces.
     session = boto3.session.Session()
-    print "\n\n*********** SPACES AUDIT **************\n\n"
+    print ("\n\n*********** SPACES AUDIT **************\n\n")
     # Regions available for DigitalOcean Spaces - 'nyc3', 'ams3', etc etc
     regions = ['nyc3', 'ams3', 'sgp1', 'sfo2', 'fra1']
     result = {}
@@ -39,11 +39,11 @@ def spaces_audit(do_key, do_secret):
                 if resp.status_code == 200:
                     j_res['type'] = 'WARNING'
                     j_res['value'] = "WARNING! The space %s is open to the public in region %s" % (space['Name'], region)
-                    print "WARNING! The space %s is open to the public in region %s\n" % (space['Name'], region)
+                    print ("WARNING! The space %s is open to the public in region %s\n" % (space['Name'], region))
                 elif resp.status_code == 403:
                     j_res['type'] = 'PASS'
                     j_res['value'] = "OK! the space %s is not open to the public in region %s\n" % (space['Name'], region)  
-                    print "OK! the space %s is not open to the public in region %s" % (space['Name'], region)
+                    print ("OK! the space %s is not open to the public in region %s" % (space['Name'], region))
                 data.append(j_res)
     result['data'] = data
     result['check'] = 'SPACES_AUDIT'
@@ -60,7 +60,7 @@ def database_audit(do_api):
     response = json.loads(response.text)
     result = {}
     data = []
-    print "\n\n*********** DATABASES AUDIT **************\n\n"
+    print ("\n\n*********** DATABASES AUDIT **************\n\n")
     for database in response['databases']:
         j_res = {}
         j_res['check_no'] = '1.2'
@@ -76,11 +76,11 @@ def database_audit(do_api):
             if resp['eviction_policy'] == "noeviction":
                 j_res['type'] = 'WARNING'
                 j_res['value'] = "WARNING! The database %s has no eviction/firewall policy" % (database['name']) 
-                print "WARNING! The redis cluster %s has no eviction policy\n" % (database['name'])
+                print ("WARNING! The redis cluster %s has no eviction policy\n" % (database['name']))
             else:
                 j_res['type'] = 'PASS'
                 j_res['value'] = "OK! The redis cluster %s has a eviction/restriction policy" %(database['name'])
-                print "OK! The redis cluster %s has a eviction/restriction policy\n" %(database['name'])
+                print ("OK! The redis cluster %s has a eviction/restriction policy\n" %(database['name']))
 
         elif database['engine'] == 'mysql' or database['engine'] == 'postgresql':
             ev_policy_url = url + '/' + id + '/firewall'
@@ -89,11 +89,11 @@ def database_audit(do_api):
             if not resp['rules']:
                 j_res['type'] = 'WARNING'
                 j_res['value'] = "WARNING! The database %s has no eviction/firewall policy" % (database['name'])
-                print "WARNING! The database %s has no eviction/firewall policy\n" % (database['name'])
+                print ("WARNING! The database %s has no eviction/firewall policy\n" % (database['name']))
             else:
                 j_res['type'] = 'PASS'
                 j_res['value'] = "OK! The database %s has a eviction/firewall policy" % (database['name'])
-                print "OK! The database %s has a eviction/firewall policy\n" % (database['name'])
+                print ("OK! The database %s has a eviction/firewall policy\n" % (database['name']))
         data.append(j_res)
     result['data'] = data
     result['check'] = 'DATABASES_AUDIT'
@@ -109,7 +109,7 @@ def firewall_audit(do_api):
     resp = json.loads(response.text)
     result = {}
     data = []
-    print "\n\n*********** FIREWALL AUDIT **************\n\n"
+    print ("\n\n*********** FIREWALL AUDIT **************\n\n")
     for firewall in resp['firewalls']:
     	j_res = {}
         j_res['check_no'] = '1.3'
@@ -125,12 +125,12 @@ def firewall_audit(do_api):
                         rules['ports'] = "1-65535"
                     j_res['type'] = 'WARNING'
                     j_res['value'] = "WARNING! The firewall %s has port %s accessible to the world" %(name, rules['ports'])
-                    print "WARNING! The firewall %s has port %s accessible to the world\n" %(name, rules['ports'])
+                    print ("WARNING! The firewall %s has port %s accessible to the world\n" %(name, rules['ports']))
                     break
                 else:
                     j_res['type'] = 'PASS'
                     j_res['value'] = "OK! The firewall %s does not allow port %s accessible to the world" %(name, rules['ports'])
-                    print "OK! The firewall %s does not allow port %s accessible to the world\n" %(name, rules['ports'])
+                    print ("OK! The firewall %s does not allow port %s accessible to the world\n" %(name, rules['ports']))
             data.append(j_res.copy())
     result['data'] = data
     result['check'] = 'FIREWALL_AUDIT'
@@ -146,7 +146,7 @@ def droplet_audit(do_api):
     resp = json.loads(response.text)
     result = {}
     data = []
-    print "\n\n*********** DROPLET AUDIT **************\n\n"
+    print ("\n\n*********** DROPLET AUDIT **************\n\n")
     for droplet in resp['droplets']:
     	j_res = {}
         j_res['check_no'] = '1.4'
@@ -157,11 +157,11 @@ def droplet_audit(do_api):
         if droplet['image']['slug'] in ['ubuntu-19-x64', 'fedora-30-x64', 'freebsd-12-x64-zfs', 'debian-10-x64', 'centos-7.6-x64']:
             j_res['type'] = 'PASS'
             j_res['value'] = "OK! The droplet %s has the latest version of OS being used" % droplet['name']
-            print "OK! The droplet %s has the latest version of OS being used\n" % droplet['name']
+            print ("OK! The droplet %s has the latest version of OS being used\n" % droplet['name'])
         else:
             j_res['type'] = 'WARNING'
             j_res['value'] = "WARNING! The droplet %s has older version of OS being used" % droplet['name']
-            print "WARNING! The droplet %s has older version of OS being used\n" % droplet['name']
+            print ("WARNING! The droplet %s has older version of OS being used\n" % droplet['name'])
         data.append(j_res)
     result['data'] = data
     result['check'] = 'DROPLET_AUDIT'
@@ -177,7 +177,7 @@ def load_balancer_audit(do_api):
     resp = json.loads(response.text)
     result = {}
     data = []
-    print "\n\n*********** LOAD BALANCER AUDIT **************\n\n"
+    print ("\n\n*********** LOAD BALANCER AUDIT **************\n\n")
     for load_balancer in resp['load_balancers']:
     	j_res = {}
         j_res['check_no'] = '1.4'
@@ -191,28 +191,28 @@ def load_balancer_audit(do_api):
             if rule['entry_port'] == 443 and rule['tls_passthrough'] == True:
             	j_res['type'] = 'WARNING'
             	j_res['value'] = "WARNING! The load-balancer %s is running on https without SSL/TLS certificate\n" % load_balancer['name']
-                print "WARNING! The load-balancer %s is running on https without SSL/TLS certificate" % load_balancer['name']
+                print ("WARNING! The load-balancer %s is running on https without SSL/TLS certificate" % load_balancer['name'])
                 data.append(j_res.copy())
             elif rule['entry_port'] == 443 and rule['tls_passthrough'] == False:
             	j_res['type'] = 'PASS'
             	j_res['value'] = "OK! The load-balancer %s is running on https with a SSL/TLS certificate" % load_balancer['name']
-                print "OK! The load-balancer %s is running on https with a SSL/TLS certificate\n" % load_balancer['name']
+                print ("OK! The load-balancer %s is running on https with a SSL/TLS certificate\n" % load_balancer['name'])
                 data.append(j_res.copy())
         if 80 and 443 in port:
             if load_balancer['redirect_http_to_https']:
             	j_res['type'] = 'PASS'
             	j_res['value'] = "OK! The load-balancer %s is running on https with a SSL/TLS certificate" % load_balancer['name']
-                print "OK! Port 80 and 443 are open for load-balancer %s and redirect http to https is set to True\n" % load_balancer['name']
+                print ("OK! Port 80 and 443 are open for load-balancer %s and redirect http to https is set to True\n" % load_balancer['name'])
                 data.append(j_res.copy())
             else:
             	j_res['type'] = 'WARNING'
             	j_res['value'] = "WARNING! The load-balancer %s is running on https without SSL/TLS certificate" % load_balancer['name']
-                print "WARNING! Port 80 and 443 are open for load-balancer %s and redirect http to https is set to False\n" % load_balancer['name']
+                print ("WARNING! Port 80 and 443 are open for load-balancer %s and redirect http to https is set to False\n" % load_balancer['name'])
                 data.append(j_res.copy())
         if (80 in port) and (443 not in port):
             j_res['type'] = 'WARNING'
             j_res['value'] = "WARNING! The load-balancer %s is running on https without SSL/TLS certificate" % load_balancer['name']
-            print "WARNING! The load balancer %s is running on http only\n" % load_balancer['name']
+            print ("WARNING! The load balancer %s is running on http only\n" % load_balancer['name'])
             data.append(j_res.copy())
     result['data'] = data
     result['check'] = 'LOAD_BALANCER_AUDIT'
@@ -227,7 +227,7 @@ def json_to_html(file, new_file):
                 f.write(line)
         with open(file, 'r') as json_data:
              for line in json_data:
-                 line = str(line)
+                 line = line.decode('utf-8')
                  final = json.loads(line)
                  f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
                  f.write('<div class="thumbnail">\n')

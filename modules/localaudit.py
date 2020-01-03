@@ -5,7 +5,7 @@ from IPy import IP
 
 def get_account_alias():
     account_details = subprocess.check_output(['aws iam list-account-aliases'], shell=True)
-    account_details = json.loads(str(account_details))
+    account_details = json.loads(account_details.decode('utf-8'))
     try:
         return account_details['AccountAliases'][0]
     except IndexError:
@@ -13,7 +13,7 @@ def get_account_alias():
 
 def get_account_id():
     caller_identity = subprocess.check_output(['aws sts get-caller-identity'], shell=True)
-    caller_identity = json.loads(str(caller_identity))
+    caller_identity = json.loads(caller_identity.decode('utf-8'))
     try:
         return caller_identity['Account']
     except IndexError:
