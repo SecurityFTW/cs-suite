@@ -1175,6 +1175,9 @@ def vm_agent():
             if list[1] == "Succeeded" and list[0] != "":
                 j_res['type'] = 'PASS'
                 j_res['value'] = 'The VM %s does have virtual agent enabled' % (name)
+            elif list[1] == "Failed" and list[0] != "":
+                j_res['type'] = 'WARNING'
+                j_res['value'] = 'The VM %s has a virtual agent in a failed state' % (name)
         data.append(j_res)
         log_data = dict()
         log_data = j_res
