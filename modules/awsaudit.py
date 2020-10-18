@@ -57,7 +57,7 @@ def prowler(check):
 
 
 def multi_threaded_prowler():
-    """ this function using multi-threading for prowler """
+    """ this function uses multi-threading for prowler """
     print ("Started Prowler")
 
     checks = ['check13', 'check14', 'check15', 'check16', 'check17', 'check18', 'check19',\
@@ -161,7 +161,7 @@ def audit_aws_config():
 
 
 def audit_aws_dns():
-    """ this function is to DNS """
+    """ this function is to perform DNS audit """
     print ("Started AWS DNS Audit ")
     with open('reports/AWS/aws_audit/%s/%s/delta/dns' % (account_name, timestmp), 'w') as output:
         subprocess.call(['./scripts/audit_aws_dns.sh'], stdout=output)

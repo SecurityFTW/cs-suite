@@ -13,7 +13,7 @@ def main():
         subprocess.call(['sudo', 'tar', '-xvf', 'sshpass-1.06.tar.gz'], cwd = './tools')
         subprocess.check_output(['sudo', './configure'], cwd='tools/sshpass-1.06')
         subprocess.call(['sudo', 'make', 'install'], cwd='tools/sshpass-1.06/')
-        print ("Please enter your AWS credetionals")
+        print ("Please enter your AWS credentials")
         subprocess.call(['aws', 'configure'])
     except:
         print ("FAILED in one of the steps")
