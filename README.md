@@ -41,7 +41,6 @@ optional arguments:
 ```
 ## Requirements
 * Operating System **OSX** or **Linux** only
-* python 2.7
 * pip
 * git
 * jq

@@ -12,7 +12,7 @@ import boto3
 
 def get_account_alias():
     account_details = subprocess.check_output(['aws iam list-account-aliases'], shell=True)
-    account_details = json.loads(str(account_details))
+    account_details = json.loads(account_details.decode('utf-8'))
     try:
         return account_details['AccountAliases'][0]
     except IndexError:
@@ -20,7 +20,7 @@ def get_account_alias():
 
 def get_account_id():
     caller_identity = subprocess.check_output(['aws sts get-caller-identity'], shell=True)
-    caller_identity = json.loads(str(caller_identity))
+    caller_identity = json.loads(caller_identity.decode('utf-8'))
     try:
         return caller_identity['Account']
     except IndexError:
@@ -35,7 +35,7 @@ script_json['account_info'].update({'date':timestmp})
 script_json['account_info'].update({'aws_api_region':['us-east-1']})
 script_json['account_info'].update({'aws_filter_region':['all']})
 identity = subprocess.check_output(['aws', 'sts', 'get-caller-identity'])
-identity = json.loads(str(identity))
+identity = json.loads(identity.decode('utf-8'))
 script_json['account_info'].update({'caller_identity':identity})
 
 
@@ -74,7 +74,7 @@ def multi_threaded_prowler():
     final_json['account_info'].update({'aws_api_region':['us-east-1']})
     final_json['account_info'].update({'aws_filter_region':['all']})
     identity = subprocess.check_output(['aws', 'sts', 'get-caller-identity'])
-    identity = json.loads(str(identity))
+    identity = json.loads(identity.decode('utf-8'))
     final_json['account_info'].update({'caller_identity':identity})
     report = []
     for check in checks:

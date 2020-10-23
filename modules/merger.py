@@ -1,9 +1,11 @@
+from __future__ import print_function
+
 import glob
 import json
 import os
 import webbrowser
 import subprocess
-import awsaudit
+from modules import awsaudit
 from modules import logger
 
 log = logger.get()
@@ -157,7 +159,7 @@ def json_to_html_prowler():
                 log.info("aws prowler report", extra=i)
                 f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
                 f.write('<div class="thumbnail">\n')
-		f.write('<div class="caption">\n')
+                f.write('<div class="caption">\n')
                 flag = 0
                 for g in i['data']:
                     if g['type'] == 'WARNING':
@@ -187,7 +189,7 @@ def json_to_html(file, new_file):
                 f.write(line)
         with open(file, 'r') as json_data:
              for line in json_data:
-                 line = str(line)
+                 line = line.decode('utf-8')
                  final = json.loads(line)
                  f.write('<div class="col-xs-6 col-sm-3 col-md-3 item">\n')
                  f.write('<div class="thumbnail">\n')
@@ -281,7 +283,7 @@ def persistent(latest, last):
 def persistent_files():
     dirs = os.listdir("./reports/AWS/aws_audit/%s/" % (account_name))
     if len(dirs) == 1:
-        print "This is the first audit run for the account, diff will be shown in the next run"
+        print( "This is the first audit run for the account, diff will be shown in the next run")
         with open('./reports/AWS/aws_audit/%s/%s/delta/diff.html' % (account_name, timestmp), 'w') as f:
             f.write("This is the first audit for the account, diff will be shown in the next run")
     else:
@@ -314,4 +316,4 @@ def merge():
     webbrowser.open('file://' + os.path.realpath("./reports/AWS/aws_audit/%s/%s/final_report/report.html")
                     % (account_name, timestmp))
     fin = os.path.realpath("./reports/AWS/aws_audit/%s/%s/final_report/report.html") % (account_name, timestmp)
-    print ("THE FINAL REPORT IS LOCATED AT -------->  %s" % (fin))
+    print("THE FINAL REPORT IS LOCATED AT -------->  %s" % (fin))
