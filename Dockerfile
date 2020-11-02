@@ -13,4 +13,4 @@ RUN apk update && apk add --no-cache grep sshpass curl bash \
     && pip install -r requirements.txt \
     && pip install awscli --ignore-installed six
 
-ENTRYPOINT ["python", "/app/cs.py"]
+ENTRYPOINT ["python", "/app/cs.py", "-env", "aws"]
