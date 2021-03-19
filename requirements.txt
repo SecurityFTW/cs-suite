@@ -13,7 +13,7 @@ iampoliciesgonewild==1.0.6.2
 idna==2.6
 ipaddress==1.0.22
 IPy==0.83
-Jinja2==2.9.5
+Jinja2==2.11.3
 jmespath==0.9.3
 logger==1.4
 MarkupSafe==1.1.1
