@@ -21,6 +21,7 @@ def main():
     parser.add_argument('-pId', '--project_id', help='Project ID for which GCP Audit needs to be run. Can be retrivied using `gcloud projects list`')
     parser.add_argument('-az_u', '--azure_user', required=False, help='username of azure account, optionally used if you want to run the azure audit with no user interaction.')
     parser.add_argument('-az_p', '--azure_pass', required=False, help='username of azure password, optionally used if you want to run the azure audit with no user interaction.')
+    parser.add_argument('-az_t', '--use_service_principal', required=False, help='uses a service principal instead of a user account. This does require providing an azure tenant to associate with the actions')
     parser.add_argument('-o', '--output', required=False, default="cs-audit.log", help='writes a log in JSON of an audit, ideal for consumptions into SIEMS like ELK and Splunk. Defaults to cs-audit.log')
     parser.add_argument("-w", "--wipe", required=False, default=False, action='store_true',
                         help="rm -rf reports/ folder before executing an audit")
@@ -85,9 +86,13 @@ def main():
             log.info("completed aws audit")
 
     elif args.environment == 'azure':
-        if args.azure_user and args.azure_pass:
-            print("using azure credentials passed via cli")
+        if args.azure_user and args.azure_pass and args.use_service_principal:
+            print("using azure service principal passed via cli")
             subprocess.call(['az', 'login', '-u', args.azure_user, '-p', args.azure_pass])
+
+        elif args.azure_user and args.azure_pass:
+            print("using azure credentials passed via cli")
+            subprocess.call(['az', 'login', '--service-principal', '-t',args.use_service_principal, '-u', args.azure_user, '-p', args.azure_pass])
         else:
             print("azure authentication required")
             subprocess.call(['az', 'login'])
