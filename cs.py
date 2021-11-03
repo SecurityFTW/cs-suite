@@ -88,11 +88,10 @@ def main():
     elif args.environment == 'azure':
         if args.azure_user and args.azure_pass and args.use_service_principal:
             print("using azure service principal passed via cli")
-            subprocess.call(['az', 'login', '-u', args.azure_user, '-p', args.azure_pass])
-
+            subprocess.call(['az', 'login', '--service-principal', '-t', args.use_service_principal, '-u', args.azure_user, '-p', args.azure_pass])
         elif args.azure_user and args.azure_pass:
             print("using azure credentials passed via cli")
-            subprocess.call(['az', 'login', '--service-principal', '-t',args.use_service_principal, '-u', args.azure_user, '-p', args.azure_pass])
+            subprocess.call(['az', 'login', '-u', args.azure_user, '-p', args.azure_pass])
         else:
             print("azure authentication required")
             subprocess.call(['az', 'login'])
